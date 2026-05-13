@@ -1,0 +1,17 @@
+{
+    "name": "ElephantUsercentrics",
+    "rootNamespace": "",
+    "references": [
+        "GUID:84290b801f0ff428d8636cf70aca6c76",
+        "GUID:2264e81f395be433c9da65501336cc47"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

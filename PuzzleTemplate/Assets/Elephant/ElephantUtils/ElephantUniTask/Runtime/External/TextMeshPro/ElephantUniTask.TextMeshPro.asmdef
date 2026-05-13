@@ -1,0 +1,27 @@
+{
+    "name": "ElephantUniTask.TextMeshPro",
+    "references": [
+        "ElephantUniTask",
+        "Unity.TextMeshPro"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.textmeshpro",
+            "expression": "",
+            "define": "ELEPHANT_UNITASK_TEXTMESHPRO_SUPPORT"
+        },
+        {
+            "name": "com.unity.ugui",
+            "expression": "2.0.0",
+            "define": "ELEPHANT_UNITASK_TEXTMESHPRO_SUPPORT"
+        }
+    ],
+    "noEngineReferences": false
+}

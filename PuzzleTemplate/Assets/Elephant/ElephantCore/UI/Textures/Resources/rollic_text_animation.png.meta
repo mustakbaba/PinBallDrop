@@ -1,0 +1,3693 @@
+fileFormatVersion: 2
+guid: 91f28d639861b490a94a843e7d2ae322
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 12
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMasterTextureLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 0
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 2
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: rollic_text_animation_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1913
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 60579dd7cac7042e8b84f073836af507
+      internalID: -1977194782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_1
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 1913
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ee64b0505d7ab4f13bd0f4cb2f0f2e60
+      internalID: -1920235722
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_2
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 1913
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: df148788125f24c51b6a959a60f38322
+      internalID: 1002597651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_3
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 1913
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6d7e46a0ec4c84370bf607a4e06d0132
+      internalID: -582591506
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_4
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 1913
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2eeb993b1ca2b489abb27d842bbf0684
+      internalID: -518198093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_5
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 1913
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: be26a30106a2442ad9a12c4024c03242
+      internalID: -822107900
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_6
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1913
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4a847870ebb834bbc9645f5a875d2b63
+      internalID: -948248290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_7
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 1913
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 533ac512553c74e8ab5dd3473a7eaae0
+      internalID: 1646707317
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_8
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 1913
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6ea92b7af23184671ac7a903dbacbe44
+      internalID: -1994321663
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_9
+      rect:
+        serializedVersion: 2
+        x: 2304
+        y: 1913
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4c414b39c20b14fa18612c6da9df56a3
+      internalID: 947437375
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_10
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 1913
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d2f80b4d6572d443eafc82ad161bd3d9
+      internalID: 531090936
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_11
+      rect:
+        serializedVersion: 2
+        x: 2816
+        y: 1913
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4cc14d7247ee04f1b8da3bb899f10e26
+      internalID: 1033895062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_12
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 1913
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0cd5e4cd9cca2433e9c728f444dca680
+      internalID: -225651285
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_13
+      rect:
+        serializedVersion: 2
+        x: 3328
+        y: 1913
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5289300138dff4e55b797698e0e53e96
+      internalID: -331738099
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_14
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 1913
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ea81325660b1b4050bbde524f1a68328
+      internalID: -1658715457
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_15
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 1913
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3af127c8a9b7a490d835242b0f5d25d8
+      internalID: 767969236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_16
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1778
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 470686615362c4534b401a257fc3d9d3
+      internalID: 956104674
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_17
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 1778
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 76a16552839ab4acc81c5e20f78ac78a
+      internalID: -1433859248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_18
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 1778
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a8715d8bd94a24f5695c141a11ffa775
+      internalID: 615288528
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_19
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 1778
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b0f72b95443194a129ae0e9072e1305a
+      internalID: -1251714658
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_20
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 1778
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a6839fd54c1d345d6b3ae2ba220de103
+      internalID: 429814746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_21
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 1778
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ba7c260d661634c93ac0baa4675a2109
+      internalID: 298478568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_22
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1778
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9c5f289d8a05a46779be8a9dbd52bd6f
+      internalID: 2146707533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_23
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 1778
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e5a4c30f6fe6e465885d34fe2317510c
+      internalID: -1718071382
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_24
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 1778
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 246de2cd7139847e999fb34e80f5ddf5
+      internalID: 636619832
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_25
+      rect:
+        serializedVersion: 2
+        x: 2304
+        y: 1778
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 65e55a040c50d4410824cc681ff68d6f
+      internalID: -848983233
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_26
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 1778
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ba5f9948e38684973b86138ddecdec12
+      internalID: 2052305403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_27
+      rect:
+        serializedVersion: 2
+        x: 2816
+        y: 1778
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f8579b666f5a448bba8b16def6751c9d
+      internalID: -431766339
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_28
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 1778
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c9697ecee62af48ab8116f5f5611a4cd
+      internalID: 1937264696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_29
+      rect:
+        serializedVersion: 2
+        x: 3328
+        y: 1778
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b6b5c77a43eea4cf4a239097c9258cc6
+      internalID: 1947608291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_30
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 1778
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c83df7073d0394dfab5e3723e6756a9b
+      internalID: -1083439733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_31
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 1778
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 717ddf2d407dc418b9637c81394f54d1
+      internalID: 228445707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_32
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1643
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 23d2f9702828847c18b3a6a1f2792775
+      internalID: 1910509434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_33
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 1643
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d73d9f175f7304ee495717c15e619a29
+      internalID: -12347283
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_34
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 1643
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bb73756b4ab6f4c5a9007efabcedffd9
+      internalID: -1318074230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_35
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 1643
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 33eae96ddde214113820aa1314962025
+      internalID: -257260532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_36
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 1643
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4dd9101096c1d48d9960e5a6328acd2f
+      internalID: 946078131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_37
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 1643
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1a4f46a198ce8479796b28986c1bf884
+      internalID: -1217843167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_38
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1643
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 969ffaaa49ff44234bcad1115e250353
+      internalID: 596990272
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_39
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 1643
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 98ce1a207e7de4da79e1c6c23df9559d
+      internalID: -977547126
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_40
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 1643
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 149fc9bf0b89c410ea67a3e6b85c2317
+      internalID: -1518877440
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_41
+      rect:
+        serializedVersion: 2
+        x: 2304
+        y: 1643
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fd610b3740c4044e0ba4c3e0978fca46
+      internalID: 605608422
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_42
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 1643
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 413b6cb2ee09c41aaa501c41fa6b6f64
+      internalID: -1721754105
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_43
+      rect:
+        serializedVersion: 2
+        x: 2816
+        y: 1643
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9c230352ead8a4115aa6cacc3c7d1687
+      internalID: 801847281
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_44
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 1643
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 74a2622e0e669416782bfeb453020ef8
+      internalID: -527582611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_45
+      rect:
+        serializedVersion: 2
+        x: 3328
+        y: 1643
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 235f0eccbcf634a628046088dfdb475a
+      internalID: 476379774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_46
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 1643
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ef3ea7d3a1c6f44a59a7b566e484c54a
+      internalID: 1706941003
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_47
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 1643
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3d2cb87faf7d947729bd70a36c0289ee
+      internalID: 170835577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_48
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1508
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8424381128289432aa1319bd473af59e
+      internalID: -29303652
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_49
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 1508
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6dfd1e2ac7fd94c2bb30130f5c7c985c
+      internalID: 1960104136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_50
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 1508
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 39a2f7034a21f40608d4bee8d2e4d38e
+      internalID: -846541466
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_51
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 1508
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2cdd82502a2d34892a7045d762e868c3
+      internalID: -769346476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_52
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 1508
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f7777565a1f1649b99a78364acfaba05
+      internalID: 1302547606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_53
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 1508
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 84c91823b377847ba96994274d66260a
+      internalID: -1380419363
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_54
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1508
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c831f2353efb1403d9a042c0d7675cc5
+      internalID: -1957940373
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_55
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 1508
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f4f5e3fca78c41edb2daff5fae4a1d6
+      internalID: -1924304194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_56
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 1508
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 42798220afdb24f43814bb49ce0dbfe7
+      internalID: 1974516157
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_57
+      rect:
+        serializedVersion: 2
+        x: 2304
+        y: 1508
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 376ef5228c9b04040a3cfa2e79215671
+      internalID: -1446070912
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_58
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 1508
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aa1eacc8a9cd04748abc1e135c5a7bd8
+      internalID: -828368011
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_59
+      rect:
+        serializedVersion: 2
+        x: 2816
+        y: 1508
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d88480a29826a41878f3bafa71b987f3
+      internalID: 1071417708
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_60
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 1508
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7c2d90c690789450093715a211e2708a
+      internalID: 1504651683
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_61
+      rect:
+        serializedVersion: 2
+        x: 3328
+        y: 1508
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c45d9eb6d98184c7baa18c0418de999d
+      internalID: 1824089007
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_62
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 1508
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 61651ff8c78184ede8c99995255a464e
+      internalID: -1909043274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_63
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 1508
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 82ba29e4b37c549e094646fab919f044
+      internalID: -1382321216
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_64
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1373
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cfea5b8c9a1d045af97d5e5249564c42
+      internalID: -1454592078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_65
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 1373
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7792bfd5e8ddd4aee902a40fd57e555d
+      internalID: -464127730
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_66
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 1373
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ba4c72d99fa25400f911ed42d2f53562
+      internalID: -2094661408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_67
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 1373
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 49391c7bd07e84f72b37baa388aeab12
+      internalID: 745422355
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_68
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 1373
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4af6bfe83ee654309994bc82281a7306
+      internalID: -329561176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_69
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 1373
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dee7a7caa7e7f47148c080be7353e54b
+      internalID: -1726309760
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_70
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1373
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c8fe4246b1fa14c1b89cb33a63211158
+      internalID: -944212442
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_71
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 1373
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 38af3bae104e042d899273a7b6c255e3
+      internalID: 1229994133
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_72
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 1373
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 43030f7be58774c9b9199e6591c0c490
+      internalID: 1265962380
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_73
+      rect:
+        serializedVersion: 2
+        x: 2304
+        y: 1373
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 71f54c30e0ac74f3a954badc1357cbf7
+      internalID: 1367294350
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_74
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 1373
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2b9b8f83f12174c6aaad2bfedeac2365
+      internalID: 719906450
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_75
+      rect:
+        serializedVersion: 2
+        x: 2816
+        y: 1373
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 985fd1a7ee0eb4f049194742ed4efee1
+      internalID: 96542225
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_76
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 1373
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fd9a8d885081e45c3a793cd420d10c18
+      internalID: -820569381
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_77
+      rect:
+        serializedVersion: 2
+        x: 3328
+        y: 1373
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3e201b59a384d428e8af738be75a957b
+      internalID: 628861141
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_78
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 1373
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7bd6a0e2d976041bd9f8d1ee625246b7
+      internalID: 887230529
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_79
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 1373
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f15c01df90a64865a017eb1311d69f1
+      internalID: -478675007
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_80
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1238
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 28b772156b8e94bafb07943d306e3e72
+      internalID: 730327332
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_81
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 1238
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e575e3bff11f54b38ad70bbc00f081e5
+      internalID: -144967991
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_82
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 1238
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4dad3e7cebe8e4093871b8cd010e91da
+      internalID: -554807187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_83
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 1238
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 784db00b28d46493a8d81c7b6eb526a7
+      internalID: -1816214619
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_84
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 1238
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 65af95a747747428bab4ed03446ac6be
+      internalID: 454484017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_85
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 1238
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 938ede1f739124543b4a0c993a57bc64
+      internalID: 2072795366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_86
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1238
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 42fe80d0faa7247ffbe6479e0551a648
+      internalID: 1164895568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_87
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 1238
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aa654c33d4793496682e8fdaa3702ade
+      internalID: -1101989797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_88
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 1238
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a0350aa503f4c40139c6a7b541d6edc2
+      internalID: -984784047
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_89
+      rect:
+        serializedVersion: 2
+        x: 2304
+        y: 1238
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 088e5eb1b24614a9bb98cf36b974550a
+      internalID: -538011617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_90
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 1238
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cb99878ce07054773bb272552a805621
+      internalID: -281161161
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_91
+      rect:
+        serializedVersion: 2
+        x: 2816
+        y: 1238
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 78db5df7b5e074038ac9cf62ff7f154a
+      internalID: -132736137
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_92
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 1238
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ffb334873476947d8b186beed045ed1d
+      internalID: 679785509
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_93
+      rect:
+        serializedVersion: 2
+        x: 3328
+        y: 1238
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d8cff66ebe9224493901473b13cdc7b8
+      internalID: -1249951612
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_94
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 1238
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 418a59f5d166a46c09e40e3212795d9b
+      internalID: -760181776
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_95
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 1238
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 389c3fcee5f424723a0539d4e88e9457
+      internalID: -1533020224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_96
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1103
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 54900c07976fe4718b4a4cbd27309ea0
+      internalID: -1321613486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_97
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 1103
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c0772948e022041a0820912ab5fab06b
+      internalID: -48448839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_98
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 1103
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2753b8ca4ffaa4f86b2f5ecf81bb4b47
+      internalID: -1713600440
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_99
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 1103
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eaedacc4f64894a758e31a3b54062ffa
+      internalID: 1741897637
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_100
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 1103
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cdafbac6cb54a4bcf86518f3cd0f7f91
+      internalID: -2130801649
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_101
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 1103
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 94b2b9806f06246b4ac6292ddfec4d73
+      internalID: 2075559578
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_102
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 1103
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2c8abca8b7d174ce1a10ff482f991f57
+      internalID: 928369774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_103
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 1103
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e83ccefff8d874b16b38d8d43ef65921
+      internalID: -558611372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_104
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 1103
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7b551346c37de4938819ac4a93d3e875
+      internalID: 909366046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_105
+      rect:
+        serializedVersion: 2
+        x: 2304
+        y: 1103
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0275f3c94b82b4d40bd3b65fcbd3b407
+      internalID: 1567867032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_106
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 1103
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dd19d1efb3de44783bc5faae2bb93525
+      internalID: 389311783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_107
+      rect:
+        serializedVersion: 2
+        x: 2816
+        y: 1103
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 33cc118804ced424c8743d3907c610c6
+      internalID: -212655669
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_108
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 1103
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cfa26d68ea60a4b27ac9ca520abcec76
+      internalID: -697530727
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_109
+      rect:
+        serializedVersion: 2
+        x: 3328
+        y: 1103
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1522347eb6025458b8f39d379f80353e
+      internalID: 1689202184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_110
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 1103
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c70e2e8b2693c471aa82e394d427a120
+      internalID: 1305356417
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_111
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 1103
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bebfa306d4cf3453592442e4ed04892d
+      internalID: 869450045
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_112
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 968
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 569d00f43c75948b1920cd77dfd668d7
+      internalID: -1551385326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_113
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 968
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0d4ca375f463a4e74b716042a1f9181e
+      internalID: -393737567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_114
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 968
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: baeb27fdab6d34b79b6e206dedf2ac74
+      internalID: -1974253226
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_115
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 968
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fd4dcb9f7a1504897959c54a24845a4d
+      internalID: 2104773653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_116
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 968
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d0b5c7d27207644acac1bc07abf33ee7
+      internalID: 784054248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_117
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 968
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 543079d6b723d4324b3042bf12dbdad2
+      internalID: 1943546095
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_118
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 968
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 48f61dd6983194f97bf707266c875087
+      internalID: -250978160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_119
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 968
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c91b10562dec54c3981c5b27dd0241d7
+      internalID: 825621694
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_120
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 968
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 82e7e54d4b0e6488294177403af6ff40
+      internalID: 1424112165
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_121
+      rect:
+        serializedVersion: 2
+        x: 2304
+        y: 968
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6a0053fc32a7a40bbaa56df4955d752c
+      internalID: 1147305347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_122
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 968
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 674d5847aa4344717b47d52202b27c03
+      internalID: -1579597833
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_123
+      rect:
+        serializedVersion: 2
+        x: 2816
+        y: 968
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a6f99bc480d3444289c9d620653a1a03
+      internalID: -1113368860
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_124
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 968
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dbba295ca4dc740dea259e9020373ba2
+      internalID: 1673536199
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_125
+      rect:
+        serializedVersion: 2
+        x: 3328
+        y: 968
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e40a7114ba15849db85b5c6004c51f7f
+      internalID: 127801418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_126
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 968
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e644cea5621c245c1908274362be1aa8
+      internalID: 1340601931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_127
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 968
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 41f43527ed8be40a2b8ca0327ab767bc
+      internalID: 112201607
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_128
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 833
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 85d0ec3d56a604e89973eb8542cb8399
+      internalID: -552674108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_129
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 833
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aefae092ecf304a47b94b80b2f50da03
+      internalID: -972654723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_130
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 833
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 05f97f85edee74e14a9bcc542e6fc9b8
+      internalID: -1136418744
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_131
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 833
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: caa6644277cae47a0a664fb36bdc7a1c
+      internalID: -2141563499
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_132
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 833
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 28570eb8010ea4922b49e359e413f6fb
+      internalID: 1240362430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_133
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 833
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 14290ee9ca6404ce5b82189e7f3d8f46
+      internalID: 1559920399
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_134
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 833
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 085dff567affa4a908e2e5c23a4e9eff
+      internalID: -1153088612
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_135
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 833
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cc16bdd2689e44554af34f4e9ad4881c
+      internalID: -1382601065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_136
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 833
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 58cb73727091b45bfb5d033603686b32
+      internalID: -707092531
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_137
+      rect:
+        serializedVersion: 2
+        x: 2304
+        y: 833
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c0ce09d326d214f68a9bdae86a192f18
+      internalID: 126671952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_138
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 833
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b853ae1c1c53c40b589ae18de9662570
+      internalID: -232624951
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_139
+      rect:
+        serializedVersion: 2
+        x: 2816
+        y: 833
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 278a7c5ed518d4e0096ed43e1695d203
+      internalID: 1112338334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_140
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 833
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f45c287e10f374050931c9f766e4a7df
+      internalID: -85480476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_141
+      rect:
+        serializedVersion: 2
+        x: 3328
+        y: 833
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 30560f4389f7844298ad4953d5462eab
+      internalID: 1016203951
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_142
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 833
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 867c2e8567e3f4462a8e0aef9cb5f5ee
+      internalID: 622161277
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_143
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 833
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b5da3dbd369074976861734ee76f5eeb
+      internalID: -900625348
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_144
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 698
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 30c9a35eb15a64fcf8bf4400d327a2da
+      internalID: -1435617894
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_145
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 698
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c184aaeca0ef040d6b3bf0c7a5eb675a
+      internalID: -147648030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_146
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 698
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4c9237a7fdcfa47498414fbf80b4c4cc
+      internalID: 1323678694
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_147
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 698
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b347c3e1f3cff44f0b4e569e1d044a80
+      internalID: -848786719
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_148
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 698
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d397378c9fd1a4c80b8701e2c92f0e7f
+      internalID: -1601403764
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_149
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 698
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 20d189c952fd34f02bfc90c51b894736
+      internalID: 822289468
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_150
+      rect:
+        serializedVersion: 2
+        x: 1536
+        y: 698
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 768e4248d83784101bbc1e7783826a50
+      internalID: -3527813
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_151
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 698
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 11f7f725ad15149769af24026dfc2846
+      internalID: 449992511
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_152
+      rect:
+        serializedVersion: 2
+        x: 2048
+        y: 698
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 99adc730de456428186c725253e5a412
+      internalID: -996761408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_153
+      rect:
+        serializedVersion: 2
+        x: 2304
+        y: 698
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ac13bdf59fedc40afb15d6b75256375d
+      internalID: -1521623451
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_154
+      rect:
+        serializedVersion: 2
+        x: 2560
+        y: 698
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 38037ee9fc38040c9a965c2a839dc2d2
+      internalID: -1181897387
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_155
+      rect:
+        serializedVersion: 2
+        x: 2816
+        y: 698
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 810ffe022e52f4029b7bae862baadf55
+      internalID: 369037469
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_156
+      rect:
+        serializedVersion: 2
+        x: 3072
+        y: 698
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 88b30f17658bb45d0a15e15540e9d31d
+      internalID: -333597366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_157
+      rect:
+        serializedVersion: 2
+        x: 3328
+        y: 698
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d4453bab5939f4d0088f9adce57f60ce
+      internalID: -1940028286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_158
+      rect:
+        serializedVersion: 2
+        x: 3584
+        y: 698
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 426a83d57f3b3401ea5a07a61865701c
+      internalID: -1020497708
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_159
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 698
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6447a84a7ecf54e28841813aaafbbef7
+      internalID: 1171189139
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: rollic_text_animation_160
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 563
+        width: 256
+        height: 135
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 33cd1b32f93244c238de560845e07eef
+      internalID: -591745349
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 41ae55bea38a445b0ad0b2cd2eaade2f
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      rollic_text_animation_0: -1977194782
+      rollic_text_animation_1: -1920235722
+      rollic_text_animation_10: 531090936
+      rollic_text_animation_100: -2130801649
+      rollic_text_animation_101: 2075559578
+      rollic_text_animation_102: 928369774
+      rollic_text_animation_103: -558611372
+      rollic_text_animation_104: 909366046
+      rollic_text_animation_105: 1567867032
+      rollic_text_animation_106: 389311783
+      rollic_text_animation_107: -212655669
+      rollic_text_animation_108: -697530727
+      rollic_text_animation_109: 1689202184
+      rollic_text_animation_11: 1033895062
+      rollic_text_animation_110: 1305356417
+      rollic_text_animation_111: 869450045
+      rollic_text_animation_112: -1551385326
+      rollic_text_animation_113: -393737567
+      rollic_text_animation_114: -1974253226
+      rollic_text_animation_115: 2104773653
+      rollic_text_animation_116: 784054248
+      rollic_text_animation_117: 1943546095
+      rollic_text_animation_118: -250978160
+      rollic_text_animation_119: 825621694
+      rollic_text_animation_12: -225651285
+      rollic_text_animation_120: 1424112165
+      rollic_text_animation_121: 1147305347
+      rollic_text_animation_122: -1579597833
+      rollic_text_animation_123: -1113368860
+      rollic_text_animation_124: 1673536199
+      rollic_text_animation_125: 127801418
+      rollic_text_animation_126: 1340601931
+      rollic_text_animation_127: 112201607
+      rollic_text_animation_128: -552674108
+      rollic_text_animation_129: -972654723
+      rollic_text_animation_13: -331738099
+      rollic_text_animation_130: -1136418744
+      rollic_text_animation_131: -2141563499
+      rollic_text_animation_132: 1240362430
+      rollic_text_animation_133: 1559920399
+      rollic_text_animation_134: -1153088612
+      rollic_text_animation_135: -1382601065
+      rollic_text_animation_136: -707092531
+      rollic_text_animation_137: 126671952
+      rollic_text_animation_138: -232624951
+      rollic_text_animation_139: 1112338334
+      rollic_text_animation_14: -1658715457
+      rollic_text_animation_140: -85480476
+      rollic_text_animation_141: 1016203951
+      rollic_text_animation_142: 622161277
+      rollic_text_animation_143: -900625348
+      rollic_text_animation_144: -1435617894
+      rollic_text_animation_145: -147648030
+      rollic_text_animation_146: 1323678694
+      rollic_text_animation_147: -848786719
+      rollic_text_animation_148: -1601403764
+      rollic_text_animation_149: 822289468
+      rollic_text_animation_15: 767969236
+      rollic_text_animation_150: -3527813
+      rollic_text_animation_151: 449992511
+      rollic_text_animation_152: -996761408
+      rollic_text_animation_153: -1521623451
+      rollic_text_animation_154: -1181897387
+      rollic_text_animation_155: 369037469
+      rollic_text_animation_156: -333597366
+      rollic_text_animation_157: -1940028286
+      rollic_text_animation_158: -1020497708
+      rollic_text_animation_159: 1171189139
+      rollic_text_animation_16: 956104674
+      rollic_text_animation_160: -591745349
+      rollic_text_animation_161: -860755420
+      rollic_text_animation_162: -1293498534
+      rollic_text_animation_163: 355635198
+      rollic_text_animation_164: 1965240026
+      rollic_text_animation_165: -252895710
+      rollic_text_animation_166: -220476973
+      rollic_text_animation_167: 996817203
+      rollic_text_animation_168: -2139898523
+      rollic_text_animation_169: -1984290100
+      rollic_text_animation_17: -1433859248
+      rollic_text_animation_170: -1300636753
+      rollic_text_animation_171: 705040388
+      rollic_text_animation_172: -445509051
+      rollic_text_animation_173: 1823629511
+      rollic_text_animation_174: 1799627817
+      rollic_text_animation_175: 995341649
+      rollic_text_animation_176: 357274493
+      rollic_text_animation_18: 615288528
+      rollic_text_animation_19: -1251714658
+      rollic_text_animation_2: 1002597651
+      rollic_text_animation_20: 429814746
+      rollic_text_animation_21: 298478568
+      rollic_text_animation_22: 2146707533
+      rollic_text_animation_23: -1718071382
+      rollic_text_animation_24: 636619832
+      rollic_text_animation_25: -848983233
+      rollic_text_animation_26: 2052305403
+      rollic_text_animation_27: -431766339
+      rollic_text_animation_28: 1937264696
+      rollic_text_animation_29: 1947608291
+      rollic_text_animation_3: -582591506
+      rollic_text_animation_30: -1083439733
+      rollic_text_animation_31: 228445707
+      rollic_text_animation_32: 1910509434
+      rollic_text_animation_33: -12347283
+      rollic_text_animation_34: -1318074230
+      rollic_text_animation_35: -257260532
+      rollic_text_animation_36: 946078131
+      rollic_text_animation_37: -1217843167
+      rollic_text_animation_38: 596990272
+      rollic_text_animation_39: -977547126
+      rollic_text_animation_4: -518198093
+      rollic_text_animation_40: -1518877440
+      rollic_text_animation_41: 605608422
+      rollic_text_animation_42: -1721754105
+      rollic_text_animation_43: 801847281
+      rollic_text_animation_44: -527582611
+      rollic_text_animation_45: 476379774
+      rollic_text_animation_46: 1706941003
+      rollic_text_animation_47: 170835577
+      rollic_text_animation_48: -29303652
+      rollic_text_animation_49: 1960104136
+      rollic_text_animation_5: -822107900
+      rollic_text_animation_50: -846541466
+      rollic_text_animation_51: -769346476
+      rollic_text_animation_52: 1302547606
+      rollic_text_animation_53: -1380419363
+      rollic_text_animation_54: -1957940373
+      rollic_text_animation_55: -1924304194
+      rollic_text_animation_56: 1974516157
+      rollic_text_animation_57: -1446070912
+      rollic_text_animation_58: -828368011
+      rollic_text_animation_59: 1071417708
+      rollic_text_animation_6: -948248290
+      rollic_text_animation_60: 1504651683
+      rollic_text_animation_61: 1824089007
+      rollic_text_animation_62: -1909043274
+      rollic_text_animation_63: -1382321216
+      rollic_text_animation_64: -1454592078
+      rollic_text_animation_65: -464127730
+      rollic_text_animation_66: -2094661408
+      rollic_text_animation_67: 745422355
+      rollic_text_animation_68: -329561176
+      rollic_text_animation_69: -1726309760
+      rollic_text_animation_7: 1646707317
+      rollic_text_animation_70: -944212442
+      rollic_text_animation_71: 1229994133
+      rollic_text_animation_72: 1265962380
+      rollic_text_animation_73: 1367294350
+      rollic_text_animation_74: 719906450
+      rollic_text_animation_75: 96542225
+      rollic_text_animation_76: -820569381
+      rollic_text_animation_77: 628861141
+      rollic_text_animation_78: 887230529
+      rollic_text_animation_79: -478675007
+      rollic_text_animation_8: -1994321663
+      rollic_text_animation_80: 730327332
+      rollic_text_animation_81: -144967991
+      rollic_text_animation_82: -554807187
+      rollic_text_animation_83: -1816214619
+      rollic_text_animation_84: 454484017
+      rollic_text_animation_85: 2072795366
+      rollic_text_animation_86: 1164895568
+      rollic_text_animation_87: -1101989797
+      rollic_text_animation_88: -984784047
+      rollic_text_animation_89: -538011617
+      rollic_text_animation_9: 947437375
+      rollic_text_animation_90: -281161161
+      rollic_text_animation_91: -132736137
+      rollic_text_animation_92: 679785509
+      rollic_text_animation_93: -1249951612
+      rollic_text_animation_94: -760181776
+      rollic_text_animation_95: -1533020224
+      rollic_text_animation_96: -1321613486
+      rollic_text_animation_97: -48448839
+      rollic_text_animation_98: -1713600440
+      rollic_text_animation_99: 1741897637
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

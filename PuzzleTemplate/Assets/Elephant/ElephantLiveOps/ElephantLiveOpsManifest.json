@@ -1,0 +1,6 @@
+{
+  "downloadUrl": "https://elephant-sdks.s3.amazonaws.com/gamekit.unitypackage",
+  "sdkName": "LiveOps",
+  "version": "TEMP_LIVEOPS_SDK_VERSION",
+  "type": "internal"
+}

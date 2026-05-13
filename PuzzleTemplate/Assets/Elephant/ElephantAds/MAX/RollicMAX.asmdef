@@ -1,0 +1,21 @@
+{
+    "name": "RollicMAX",
+    "rootNamespace": "",
+    "references": [
+        "MaxSdk.Scripts",
+        "MaxSdk.Scripts.IntegrationManager.Editor",
+        "Amazon.Scripts",
+        "Elephant"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "!NO_ELEPHANT_APPLOVIN_MAX_SDK"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

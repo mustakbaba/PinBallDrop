@@ -1,0 +1,49 @@
+Tutorial Engine 2.0.1
+===================
+
+
+GETTING STARTED
+===============
+1. Open the TutorialEditor scene to create your first tutorial json file. 
+	a. Click Play
+	b. In the bottom left input field, enter a file name and click save to create a new file
+	c. In the center, add your tutorial steps. Each step can have text and a GameObject name to focus on.
+	d. Click again on Save to save your tutorial, or press Ctrl+S
+	e. Notice that a tutorial file has been created inside the Resources/Tutorials/ folder
+2. In your game scene, drop the prefab inside a Canvas (Exoa/TutorialEngine/Prefab/TutorialController)
+3. Create a script to display the tutorial.
+	a. TutorialLoader.instance.Load("tutorial"); will load your tutorial file named tutorial.json
+	b. TutorialEvents.OnTutorialComplete will be called when a tutorial is completed
+	c. TutorialEvents.OnTutorialFocus will be called when the tutorial focus on any object
+	d. TutorialEvents.OnTutorialProgress will be called at each step
+
+DEMO
+====
+Play the demo inside Exoa/Demo to see how it works.
+You can open Exoa/Demo/DemoScript.cs to have a code sample.
+
+EVENTS
+======
+You can listen to many events, have a look at the TutorialEvents class :
+TutorialEvents.OnTutorialComplete
+TutorialEvents.OnTutorialProgressHandler 
+TutorialEvents.OnTutorialFocusHandler 
+TutorialEvents.OnTutorialEventHandler 
+TutorialEvents.OnTutorialEventHandler 
+
+CLICKABLE UI
+============
+If you check the option "Is Clickable" on the tutorial step, the target object needs to be a UI object with a Button component. 
+The event "onClick" will be triggered when the user click over it. 
+So if your current button is using OnPointerDown/Up event instead of onclick event, make sure you also support onclick event.
+
+If you check the option "Replace Next Button". The popup "next" button will be deactivated, and your button will be used to trigger the next tutorial step.
+This feature makes your own button mandatory to continue on.
+
+
+HOW TO ADD FIELDS ?
+===================
+You can easily add fields to a tutorial step
+- Edit the TutorialStepEditorView prefab to add input fields
+- Edit TutorialSession::TutorialStep to add your fields
+- Edit TutorialStepEditorView::AddTutorialStep() && TutorialStepEditorView::GetStep() to display and get your fields saved

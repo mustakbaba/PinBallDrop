@@ -1,0 +1,45 @@
+{
+    "name": "ElephantUniTask",
+    "rootNamespace": "",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.modules.assetbundle",
+            "expression": "",
+            "define": "ELEPHANT_UNITASK_ASSETBUNDLE_SUPPORT"
+        },
+        {
+            "name": "com.unity.modules.physics",
+            "expression": "",
+            "define": "ELEPHANT_UNITASK_PHYSICS_SUPPORT"
+        },
+        {
+            "name": "com.unity.modules.physics2d",
+            "expression": "",
+            "define": "ELEPHANT_UNITASK_PHYSICS2D_SUPPORT"
+        },
+        {
+            "name": "com.unity.modules.particlesystem",
+            "expression": "",
+            "define": "ELEPHANT_PARTICLESYSTEM_SUPPORT"
+        },
+        {
+            "name": "com.unity.ugui",
+            "expression": "",
+            "define": "ELEPHANT_UGUI_SUPPORT"
+        },
+        {
+            "name": "com.unity.modules.unitywebrequest",
+            "expression": "",
+            "define": "ELEPHANT_WEBREQUEST_SUPPORT"
+        }
+    ],
+    "noEngineReferences": false
+}

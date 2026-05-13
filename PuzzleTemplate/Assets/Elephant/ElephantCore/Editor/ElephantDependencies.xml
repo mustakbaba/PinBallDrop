@@ -1,0 +1,14 @@
+<dependencies>
+    <androidPackages>
+        <androidPackage spec="com.android.volley:volley:1.2.1" />
+        <androidPackage spec="com.google.android.gms:play-services-ads-identifier:17.0.0@aar" />
+        <androidPackage spec="com.google.android.gms:play-services-basement:17.5.0@aar" />
+        <androidPackage spec="com.android.installreferrer:installreferrer:2.2" />
+        <androidPackage spec="com.google.firebase:firebase-messaging:22.0.0" />
+        <androidPackage spec="androidx.work:work-runtime:2.7.1" />
+        <androidPackage spec="androidx.preference:preference:1.2.0" />
+    </androidPackages>
+    <iosPods>
+        <iosPod name="Adjust/AdjustGoogleOdm"/>
+    </iosPods>
+</dependencies>

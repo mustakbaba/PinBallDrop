@@ -1,0 +1,21 @@
+{
+    "name": "RollicGamesMaxEditor",
+    "rootNamespace": "",
+    "references": [
+        "MaxSdk.Scripts.IntegrationManager.Editor",
+        "RollicMAX"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "!NO_ELEPHANT_APPLOVIN_MAX_SDK"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

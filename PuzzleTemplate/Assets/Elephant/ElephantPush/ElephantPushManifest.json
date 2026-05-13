@@ -1,0 +1,6 @@
+{
+  "downloadUrl": "https://elephant-sdks.s3.amazonaws.com/gamekit.unitypackage",
+  "sdkName": "Push",
+  "version": "TEMP_PUSH_SDK_VERSION",
+  "type": "internal"
+}
