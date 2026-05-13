@@ -46,7 +46,20 @@ public class CellController : MonoBehaviour
     public bool HasBlock;
     public void OnMouseDown()
     {
-        Debug.Log($"Cell clicked at position: {Xpos}, {Zpos}");
+        if (CellType != CellTypes.Marble) return;
+
+        // Path kontrolü
+        if (!MarblePathChecker.Instance.HasPathToBottom(Xpos, Zpos))
+        {
+            Debug.Log($"[{Xpos},{Zpos}] marble çıkamaz, blok veya marble var.");
+            return;
+        }
+
+        // Çıkabilir → marble'ı uçur
+        var marbleObj = GetComponentInChildren<MarbleController>();
+        if (marbleObj == null) return;
+        marbleObj.Drop();
+        CellType = CellController.CellTypes.Empty;
     }
 
 #if UNITY_EDITOR

@@ -157,6 +157,7 @@ MonoBehaviour:
   BlockerLockAmount: 0
   Xpos: 0
   Zpos: 0
+  HasBlock: 0
 --- !u!1 &4431675711581666348
 GameObject:
   m_ObjectHideFlags: 0

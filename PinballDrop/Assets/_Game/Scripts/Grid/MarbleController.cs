@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 public class MarbleController : MonoBehaviour
 {
     public ColorTypes ObjectColor { get; set; }
     private MaterialPropertyBlock _propertyBlock;
+
     public void SetColor(ColorTypes objectColor)
     {
         ObjectColor = objectColor;
@@ -23,5 +25,26 @@ public class MarbleController : MonoBehaviour
         {
             renderer.materials[0].color = color;
         }
+    }
+
+    public void Drop()
+    {
+        transform.DOMoveZ(
+                transform.position.z - 5f,
+                0.4f
+            )
+            .SetEase(Ease.InBack)
+            .OnComplete(() =>
+            {
+                // Destroy(gameObject);
+
+                // Diğer marble'lar tekrar kontrol etsin
+                MarblePathChecker.Instance.CheckAllMarbles();
+            });
+        transform.DOMoveY(transform.position.y + .42f, 0.2f).SetEase(Ease.OutQuad)
+       .OnComplete(() =>
+        {
+           
+        });
     }
 }

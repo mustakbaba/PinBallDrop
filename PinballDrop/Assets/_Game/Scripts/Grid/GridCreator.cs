@@ -63,6 +63,14 @@ public class GridCreator : MonoSingleton<GridCreator>
         if (x < 0 || x >= width || z < 0 || z >= height)
             return null;
 
-        return _grid[x, z];
+        if (_grid != null)
+            return _grid[x, z];
+
+        // _grid yoksa sahneden bul
+        var gridHolder = transform.Find("GridHolder");
+        if (gridHolder == null) return null;
+
+        var cell = gridHolder.Find($"Cell_{x}_{z}");
+        return cell != null ? cell.GetComponent<CellController>() : null;
     }
 }
