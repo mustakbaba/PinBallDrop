@@ -18,6 +18,8 @@ public class LevelManager : MonoSingleton<LevelManager>
     public bool IsTimePuzzleActive => _timePuzzle;
     public float DurationSeconds => _durationSeconds;
     public LineBoxController LineBoxPrefab;
+    public BumperController BumperControllerPrefab;
+    public BumperHolderController BumperHolderPrefab;
     public LineBoxConnectorController ConnectorPrefab;
     [SerializeField] private bool _timePuzzle;
 
