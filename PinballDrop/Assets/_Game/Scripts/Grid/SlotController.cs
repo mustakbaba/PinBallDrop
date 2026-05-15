@@ -77,10 +77,11 @@ public class SlotController : MonoBehaviour
     
         if (available <= 0) return;
 
-        // Kaç top gönderebiliriz
         int sendCount = Mathf.Min(_balls.Count, available);
     
-        // Sadece o kadarını al
+        
+        capacityManager.SetAmount(sendCount);
+
         var ballsToProcess = _balls.GetRange(0, sendCount);
         _balls.RemoveRange(0, sendCount);
 
@@ -92,11 +93,7 @@ public class SlotController : MonoBehaviour
             ball.GoToPipe();
         }
 
-        // Slot tamamen boşaldıysa rengi sıfırla
         if (_balls.Count == 0)
-        {
-            // SlotColor sıfırla — IsAvailable artık true döner
             SlotColor = default;
-        }
     }
 }

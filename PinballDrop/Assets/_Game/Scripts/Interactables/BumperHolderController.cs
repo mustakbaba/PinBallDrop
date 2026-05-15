@@ -12,22 +12,21 @@ public class BumperHolderController : MonoBehaviour
 {
     public List<BumperData> TargetObjects = new List<BumperData>();
     public List<Transform> SpawnedObjects = new List<Transform>();
-    private float XOffset=.45f;
+    private float XOffset = .325f;
     private BumperController[] _bumpers;
 
 
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        
-            if (Application.isPlaying)
-                return;
+        if (Application.isPlaying)
+            return;
 
-            if (!gameObject.scene.IsValid())
-                return;
+        if (!gameObject.scene.IsValid())
+            return;
 
-            EditorApplication.delayCall -= SpawnPrefabs;
-            EditorApplication.delayCall += SpawnPrefabs;
+        EditorApplication.delayCall -= SpawnPrefabs;
+        EditorApplication.delayCall += SpawnPrefabs;
     }
 
 #endif
@@ -36,19 +35,19 @@ public class BumperHolderController : MonoBehaviour
     private void Start()
     {
         _bumpers = GetComponentsInChildren<BumperController>();
-    
-            for (int i = 0; i < _bumpers.Length; i++)
+
+        for (int i = 0; i < _bumpers.Length; i++)
+        {
+            if (i == 0)
             {
-                if (i == 0)
-                {
-                    _bumpers[i].IsActiveBumper = true;
-                    _bumpers[i].transform.localScale = Vector3.one;
-                }
-                else
-                {
-                    _bumpers[i].transform.localScale = Vector3.one * 0.5f;
-                }
+                _bumpers[i].IsActiveBumper = true;
+                _bumpers[i].transform.localScale = Vector3.one;
             }
+            else
+            {
+                _bumpers[i].transform.localScale = Vector3.one * 0.5f;
+            }
+        }
     }
 
     public void SpawnPrefabs()
@@ -73,10 +72,11 @@ public class BumperHolderController : MonoBehaviour
             SpawnedObjects.Add(obj.transform);
 
             obj.ObjectColor = TargetObjects[i].Color;
-            if (transform.position.x<0)
+            if (transform.position.x < 0)
             {
-                XOffset = -.45f;
+                XOffset = -.325f;
             }
+
             obj.transform.localPosition = new Vector3(0 + XOffset * i, 0, 0);
             obj.IsHidden = TargetObjects[i].IsHidden;
             obj.Count = TargetObjects[i].Amount;
@@ -84,6 +84,7 @@ public class BumperHolderController : MonoBehaviour
             obj.InitTarget();
         }
     }
+
     // BumperHolderController.cs — GetNextBumper metodu ekle
     public BumperController GetNextBumper(BumperController current)
     {
@@ -97,25 +98,30 @@ public class BumperHolderController : MonoBehaviour
             }
         }
 
-        if (currentIndex >= 0 && currentIndex + 1 < SpawnedObjects.Count)
+        if (currentIndex < 0 || currentIndex + 1 >= SpawnedObjects.Count)
+            return null;
+
+        var next = SpawnedObjects[currentIndex + 1].GetComponent<BumperController>();
+        if (next == null || next.IsActiveBumper) return null;
+
+        // Tüm arkadakileri bir öne kaydır
+        for (int i = currentIndex + 1; i < SpawnedObjects.Count; i++)
         {
-            var next = SpawnedObjects[currentIndex + 1].GetComponent<BumperController>();
-            if (next != null && !next.IsActiveBumper)
-            {
-                next.IsActiveBumper = true;
-                next.transform.DOMove(current.transform.position, 0.3f).SetEase(Ease.OutBack);
-                next.transform.DOScale(1f, 0.3f).SetEase(Ease.OutBack);
+            var bumper = SpawnedObjects[i].GetComponent<BumperController>();
+            if (bumper == null) continue;
 
-                // ActiveBumpers listesinde current'ı next ile değiştir
-                int listIndex = BumperAreaManager.Instance.ActiveBumpers.IndexOf(current);
-                if (listIndex >= 0)
-                    BumperAreaManager.Instance.ActiveBumpers[listIndex] = next;
-
-                return next;
-            }
+            Vector3 targetPos = SpawnedObjects[i - 1].position;
+            bumper.transform.DOMove(targetPos, 0.3f).SetEase(Ease.OutBack);
         }
 
-        return null;
+        next.IsActiveBumper = true;
+        next.transform.DOScale(1f, 0.3f).SetEase(Ease.OutBack);
+
+        int listIndex = BumperAreaManager.Instance.ActiveBumpers.IndexOf(current);
+        if (listIndex >= 0)
+            BumperAreaManager.Instance.ActiveBumpers[listIndex] = next;
+
+        return next;
     }
 }
 

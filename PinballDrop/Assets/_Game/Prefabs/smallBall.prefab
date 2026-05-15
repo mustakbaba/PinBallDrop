@@ -146,4 +146,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09a2f9d75aa4edd4a98b3f5a756ebb08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ObjectColor: 0
   vacuumForce: 8
+  bounceCount: 0

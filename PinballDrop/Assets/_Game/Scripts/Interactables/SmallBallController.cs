@@ -94,7 +94,6 @@ public class SmallBallController : MonoBehaviour
         _grounded = false;
         _goingToVacuum = false;
         bounceCount = 0;
-       AreaCapacityManager.Instance.SetAmount(1);
 
         StopAllCoroutines();
 
