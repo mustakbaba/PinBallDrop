@@ -10,9 +10,10 @@ public class SmallBallController : MonoBehaviour
     private bool _grounded;
     private bool _goingToVacuum;
     private VacuumController _vacuum;
+    public ColorTypes ObjectColor;
 
     public float vacuumForce = 8f;
-    int bounceCount = 0;
+    public int bounceCount = 0;
 
     private void Awake()
     {
@@ -63,21 +64,29 @@ public class SmallBallController : MonoBehaviour
         }
     }
 
+    // SmallBallController.cs — JumpToTargets
+    // SmallBallController.cs
     public void JumpToTargets()
     {
-        bounceCount++;
-        
-        if (BumperAreaManager.Instance.ActiveBumpers.Count > bounceCount)
-        {
-            BumperAreaManager.Instance.ActiveBumpers[bounceCount-1].GetComponent<BumperController>().Bounce();
+        Debug.Log($"JumpToTargets — bounceCount: {bounceCount}, ActiveBumpers: {BumperAreaManager.Instance.ActiveBumpers.Count}");
 
-            transform.DOJump(BumperAreaManager.Instance.ActiveBumpers[bounceCount].BouncePoint.position, 1, 1, .35f)
-                .OnComplete(JumpToTargets).SetEase(Ease.Linear);
-        }
-        else
+        if (BumperAreaManager.Instance.ActiveBumpers.Count <= bounceCount)
         {
-            // Tüm hedeflere zıpladıktan sonra topu yok et
-            // Destroy(gameObject, 1f);
+            SlotHolderManager.Instance.TryPlaceBall(this);
+            return;
         }
+
+        var targetBumper = BumperAreaManager.Instance.ActiveBumpers[bounceCount];
+        transform.DOJump(targetBumper.BouncePoint.position, 1, 1, .35f)
+            .OnComplete(() =>
+            {
+                targetBumper.Bounce(this);
+            }).SetEase(Ease.Linear);
+    }
+    public void SetColor(ColorTypes objectColor)
+    {
+        ObjectColor = objectColor;
+        var mat = GetComponent<MeshRenderer>().material;
+        mat.SetColor("_BaseColor", LevelManager.Instance.ObjectColors[(int)objectColor]);
     }
 }

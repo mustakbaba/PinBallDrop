@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
@@ -35,7 +36,19 @@ public class BumperHolderController : MonoBehaviour
     private void Start()
     {
         _bumpers = GetComponentsInChildren<BumperController>();
-        _bumpers[0].IsActiveBumper = true;
+    
+            for (int i = 0; i < _bumpers.Length; i++)
+            {
+                if (i == 0)
+                {
+                    _bumpers[i].IsActiveBumper = true;
+                    _bumpers[i].transform.localScale = Vector3.one;
+                }
+                else
+                {
+                    _bumpers[i].transform.localScale = Vector3.one * 0.5f;
+                }
+            }
     }
 
     public void SpawnPrefabs()
@@ -59,13 +72,40 @@ public class BumperHolderController : MonoBehaviour
             obj = Instantiate(LevelManager.Instance.BumperControllerPrefab, transform);
             SpawnedObjects.Add(obj.transform);
 
-            obj.ObjectColors = TargetObjects[i].Color;
+            obj.ObjectColor = TargetObjects[i].Color;
             obj.transform.localPosition = new Vector3(0 - XOffset * i, 0, 0);
             obj.IsHidden = TargetObjects[i].IsHidden;
             obj.Count = TargetObjects[i].Amount;
             obj.name = "Spawned";
             obj.InitTarget();
         }
+    }
+    // BumperHolderController.cs — GetNextBumper metodu ekle
+    public BumperController GetNextBumper(BumperController current)
+    {
+        int currentIndex = -1;
+        for (int i = 0; i < SpawnedObjects.Count; i++)
+        {
+            if (SpawnedObjects[i] == current.transform)
+            {
+                currentIndex = i;
+                break;
+            }
+        }
+
+        if (currentIndex >= 0 && currentIndex + 1 < SpawnedObjects.Count)
+        {
+            var next = SpawnedObjects[currentIndex + 1].GetComponent<BumperController>();
+            if (next != null && !next.IsActiveBumper)
+            {
+                next.IsActiveBumper = true; // bunu ekle
+                next.transform.DOMove(current.transform.position, 0.3f).SetEase(Ease.OutBack);
+                next.transform.DOScale(1f, 0.3f).SetEase(Ease.OutBack);
+                return next;
+            }
+        }
+
+        return null;
     }
 }
 

@@ -307,7 +307,7 @@ MonoBehaviour:
   IsActiveBumper: 0
   IsHidden: 0
   IsConnectedBlock: 0
-  ObjectColors: 0
+  ObjectColor: 0
   _boxMesh: {fileID: 5774156562413102310}
   _amountText: {fileID: 20350181930952568}
   BouncePoint: {fileID: 8291876106430182360}
@@ -486,7 +486,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -3846018093981099296, guid: ecd2f452a545f7946bf00457f8ba3200, type: 3}
+  - {fileID: 2100000, guid: 7e32b3e7757b9954b9b3815c9b009ee5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

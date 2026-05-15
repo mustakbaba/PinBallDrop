@@ -12,7 +12,6 @@ public class BallController : MonoBehaviour
     private float upwardForce = 12;
     private float maxY = 899f;
 
-    public GameObject smallBallPrefab;
     private float smallBallSpeed = 4f;
 
     private Rigidbody _rb;
@@ -24,6 +23,7 @@ public class BallController : MonoBehaviour
     private MaterialPropertyBlock _propertyBlock;
     [SerializeField] private TextMeshPro _amountText;
     private MeshRenderer _meshRenderer;
+    public bool IsHidden;
 
     private void Awake()
     {
@@ -63,6 +63,14 @@ public class BallController : MonoBehaviour
 
         if (Application.isPlaying)
             renderer.materials[0].color = color;
+
+        if (IsHidden)
+        {
+            _amountText.text = "?";
+            renderer.GetPropertyBlock(_propertyBlock);
+            _propertyBlock.SetColor("_BaseColor", new Color(0.3f, 0.3f, 0.3f) * .5f);
+            renderer.SetPropertyBlock(_propertyBlock);
+        }
     }
 
     private void FixedUpdate()
@@ -98,6 +106,12 @@ public class BallController : MonoBehaviour
         {
             _amountText.DOFade(1f, .1f);
             _meshRenderer.material.SetFloat("_OutlineWidth", 1);
+            if (IsHidden)
+            {
+                IsHidden = false;
+                _amountText.text = BallAmount.ToString();
+                SetColor();
+            }
         }
         else
         {
@@ -140,8 +154,9 @@ public class BallController : MonoBehaviour
                 0f
             );
 
-            var small = Instantiate(smallBallPrefab, center + offset, Quaternion.identity);
+            var small = Instantiate(LevelManager.Instance.SmallBallPrefab, center + offset, Quaternion.identity);
             var rb = small.GetComponent<Rigidbody>();
+            small.SetColor(ObjectColor);
 
             if (rb != null)
             {
