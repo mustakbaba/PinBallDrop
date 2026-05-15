@@ -27,6 +27,8 @@ public class LevelManager : MonoSingleton<LevelManager>
 
     public int[] NewFeatureUnlockLevels { get; set; } = { 1, 5, 10, 20, 30 };
     public float FillAddAmountEachLevel { get; set; }
+    public Material HalfHalfMaterial;
+    public Material SingleMaterial;
 
     [ShowIf("_timePuzzle")] [SerializeField]
     private float _durationSeconds = 300f;
