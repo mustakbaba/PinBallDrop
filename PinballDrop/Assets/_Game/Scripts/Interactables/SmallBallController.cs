@@ -68,7 +68,6 @@ public class SmallBallController : MonoBehaviour
     // SmallBallController.cs
     public void JumpToTargets()
     {
-        Debug.Log($"JumpToTargets — bounceCount: {bounceCount}, ActiveBumpers: {BumperAreaManager.Instance.ActiveBumpers.Count}");
 
         if (BumperAreaManager.Instance.ActiveBumpers.Count <= bounceCount)
         {
@@ -88,5 +87,57 @@ public class SmallBallController : MonoBehaviour
         ObjectColor = objectColor;
         var mat = GetComponent<MeshRenderer>().material;
         mat.SetColor("_BaseColor", LevelManager.Instance.ObjectColors[(int)objectColor]);
+    }
+    // SmallBallController.cs — ResetBall ekle
+    public void ResetBall()
+    {
+        _grounded = false;
+        _goingToVacuum = false;
+        bounceCount = 0;
+       AreaCapacityManager.Instance.SetAmount(1);
+
+        StopAllCoroutines();
+
+        var rb = GetComponent<Rigidbody>();
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+    }
+
+    public void GoToPipe()
+    {
+        PipeHolderManager pipeHolderManager = PipeHolderManager.Instance;
+
+        transform.DOMoveY(pipeHolderManager.BottomPipe.position.y, 9f)
+            .SetEase(Ease.Linear)
+            .SetSpeedBased()
+            .OnComplete(() =>
+            {
+                transform.DOMoveX(pipeHolderManager.RightPipe.position.x, 9f)
+                    .SetEase(Ease.Linear)
+                    .SetSpeedBased()
+                    .OnComplete(() =>
+                    {
+                        transform.DOMoveY(pipeHolderManager.RightPipeEnd.position.y, 9f)
+                            .SetEase(Ease.Linear)
+                            .SetSpeedBased()
+                            .OnComplete(() =>
+                            {
+                                transform.DOMoveX(transform.position.x - 1.5f, 9).
+                                    SetEase(Ease.Linear).SetSpeedBased()
+                                    .OnComplete(() =>
+                                    {
+                                        // State'i tamamen sıfırla
+                                        ResetBall();
+                                        var col = GetComponent<Collider>();
+
+                                        // Fiziği geri aç
+                                        _rb.isKinematic = false;
+                                        _rb.velocity = Vector3.zero;
+                                        _rb.angularVelocity = Vector3.zero;
+                                        if (col != null) col.enabled = true;
+                                    });
+                            });
+                    });
+            });
     }
 }

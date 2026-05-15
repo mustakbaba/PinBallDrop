@@ -35,6 +35,7 @@ public class SlotHolderManager : MonoSingleton<SlotHolderManager>
 
     private void GameFail()
     {
+        EventManager.OnGameLose.Invoke();
         Debug.Log("FAIL — tüm slotlar dolu!");
         // LevelManager.Instance.Fail(); vs.
     }

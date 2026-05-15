@@ -44,7 +44,7 @@ public class BallController : MonoBehaviour
 
     private void ValidateBall() => SetColor();
 
-    public void SetColor()
+    public void SetColor(bool isPlaying = false)
     {
         var color = LevelManager.Instance.ObjectColors[(int)ObjectColor];
 
@@ -58,7 +58,11 @@ public class BallController : MonoBehaviour
 
         var a = Mathf.InverseLerp(5, 20, BallAmount);
         var scale = Mathf.Lerp(0.5f, 2f, a);
-        transform.localScale = Vector3.one * scale;
+        if (!isPlaying)
+        {
+            transform.localScale = Vector3.one * scale;
+        }
+       
         _amountText.text = BallAmount.ToString();
 
         if (Application.isPlaying)
@@ -139,14 +143,19 @@ public class BallController : MonoBehaviour
         _meshRenderer.enabled = false;
         _amountText.gameObject.SetActive(false);
 
+        // Kaç top sığıyor?
+        var capacityManager = AreaCapacityManager.Instance;
+        int available = capacityManager.CapacityAmount - capacityManager.CurrentAmount;
+        int spawnCount = Mathf.Min(BallAmount, available);
+        int remaining = BallAmount - spawnCount;
+
         float radius = transform.localScale.x * 0.5f;
         Vector3 center = transform.position;
 
-        for (int i = 0; i < BallAmount; i++)
+        for (int i = 0; i < spawnCount; i++)
         {
-            // Fibonacci disk — Z sabit, XY düzleminde eşit dağılım
             float angle = i * 137.5f * Mathf.Deg2Rad;
-            float r = radius * Mathf.Sqrt((float)i / BallAmount);
+            float r = radius * Mathf.Sqrt((float)i / spawnCount);
 
             Vector3 offset = new Vector3(
                 Mathf.Cos(angle) * r,
@@ -160,15 +169,32 @@ public class BallController : MonoBehaviour
 
             if (rb != null)
             {
-                // XY'de hafif dağıl, Z'de öne fırlat
                 Vector3 dir = new Vector3(
                     Random.Range(-0.3f, 0.3f),
                     Random.Range(-0.3f, 0.3f),
                     -1f
                 ).normalized;
-
                 rb.AddForce(dir * smallBallSpeed, ForceMode.Impulse);
             }
+        }
+
+        capacityManager.SetAmount(spawnCount);
+
+        if (remaining > 0)
+        {
+            // Topu yok etme, kalan miktarla geri döndür
+           
+            BallAmount = remaining;
+            var a = Mathf.InverseLerp(5, 20, BallAmount);
+            var scale = Mathf.Lerp(0.5f, 2f, a);
+            _exploded = false;
+            _rb.isKinematic = false;
+            GetComponent<Collider>().enabled = true;
+            _meshRenderer.enabled = true;
+            _amountText.gameObject.SetActive(true);
+            SetColor(true);
+            transform.DOScale( Vector3.one * scale, .2f);
+            yield break;
         }
 
         yield return new WaitForSeconds(0.1f);

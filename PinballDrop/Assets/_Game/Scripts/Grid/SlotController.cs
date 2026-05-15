@@ -63,7 +63,7 @@ public class SlotController : MonoBehaviour
 
         // Parent'a al, sonra hareket et
         ball.transform.SetParent(transform);
-        ball.enabled = false;
+        // ball.enabled = false;
 
         ball.transform.DOLocalMove(localTarget, 0.3f).SetEase(Ease.OutBack);
 
@@ -72,13 +72,31 @@ public class SlotController : MonoBehaviour
 
     private void ClearSlot()
     {
-        foreach (var ball in _balls)
+        var capacityManager = AreaCapacityManager.Instance;
+        int available = capacityManager.CapacityAmount - capacityManager.CurrentAmount;
+    
+        if (available <= 0) return;
+
+        // Kaç top gönderebiliriz
+        int sendCount = Mathf.Min(_balls.Count, available);
+    
+        // Sadece o kadarını al
+        var ballsToProcess = _balls.GetRange(0, sendCount);
+        _balls.RemoveRange(0, sendCount);
+
+        foreach (var ball in ballsToProcess)
         {
             if (ball == null) continue;
-            ball.transform.DOLocalMove(Vector3.up * 1.5f, 0.2f)
-                .OnComplete(() => Destroy(ball.gameObject));
+            ball.transform.DOKill();
+            ball.transform.SetParent(null);
+            ball.GoToPipe();
         }
 
-        _balls.Clear();
+        // Slot tamamen boşaldıysa rengi sıfırla
+        if (_balls.Count == 0)
+        {
+            // SlotColor sıfırla — IsAvailable artık true döner
+            SlotColor = default;
+        }
     }
 }

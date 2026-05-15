@@ -53,6 +53,12 @@ public class BumperAreaManager : MonoSingleton<BumperAreaManager>
             bumperHolder.transform.position = new Vector3(BumperHolders[i].XPos, BumperHolders[i].YPos, bumperHolder.transform.position.z);
         }
     }
+    public void CheckWin()
+    {
+        bool allDone = ActiveBumpers.All(b => b.Count <= 0);
+        if (allDone)
+            EventManager.OnGameWin?.Invoke();
+    }
     
     
 }

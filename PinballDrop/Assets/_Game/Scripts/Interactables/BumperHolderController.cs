@@ -12,7 +12,7 @@ public class BumperHolderController : MonoBehaviour
 {
     public List<BumperData> TargetObjects = new List<BumperData>();
     public List<Transform> SpawnedObjects = new List<Transform>();
-    public float XOffset;
+    private float XOffset=.45f;
     private BumperController[] _bumpers;
 
 
@@ -73,7 +73,11 @@ public class BumperHolderController : MonoBehaviour
             SpawnedObjects.Add(obj.transform);
 
             obj.ObjectColor = TargetObjects[i].Color;
-            obj.transform.localPosition = new Vector3(0 - XOffset * i, 0, 0);
+            if (transform.position.x<0)
+            {
+                XOffset = -.45f;
+            }
+            obj.transform.localPosition = new Vector3(0 + XOffset * i, 0, 0);
             obj.IsHidden = TargetObjects[i].IsHidden;
             obj.Count = TargetObjects[i].Amount;
             obj.name = "Spawned";
@@ -98,9 +102,15 @@ public class BumperHolderController : MonoBehaviour
             var next = SpawnedObjects[currentIndex + 1].GetComponent<BumperController>();
             if (next != null && !next.IsActiveBumper)
             {
-                next.IsActiveBumper = true; // bunu ekle
+                next.IsActiveBumper = true;
                 next.transform.DOMove(current.transform.position, 0.3f).SetEase(Ease.OutBack);
                 next.transform.DOScale(1f, 0.3f).SetEase(Ease.OutBack);
+
+                // ActiveBumpers listesinde current'ı next ile değiştir
+                int listIndex = BumperAreaManager.Instance.ActiveBumpers.IndexOf(current);
+                if (listIndex >= 0)
+                    BumperAreaManager.Instance.ActiveBumpers[listIndex] = next;
+
                 return next;
             }
         }

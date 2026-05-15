@@ -8,6 +8,7 @@ public class VacuumController : MonoBehaviour
 
     public void ShootTheBall(SmallBallController ball)
     {
+        AreaCapacityManager.Instance.SetAmount(-1);
         var rb = ball.GetComponent<Rigidbody>();
         rb.isKinematic = true;
         rb.velocity = Vector3.zero;
