@@ -116,6 +116,8 @@ public class BumperHolderController : MonoBehaviour
 
         next.IsActiveBumper = true;
         next.transform.DOScale(1f, 0.3f).SetEase(Ease.OutBack);
+        next.IsHidden = false;
+        next.SetColor();
 
         int listIndex = BumperAreaManager.Instance.ActiveBumpers.IndexOf(current);
         if (listIndex >= 0)

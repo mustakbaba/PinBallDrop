@@ -18,6 +18,7 @@ public class LevelManager : MonoSingleton<LevelManager>
     public bool IsTimePuzzleActive => _timePuzzle;
     public float DurationSeconds => _durationSeconds;
     public LineBoxController LineBoxPrefab;
+    public BallController BallControllerPrefab;
     public SmallBallController SmallBallPrefab;
 
     public BumperController BumperControllerPrefab;

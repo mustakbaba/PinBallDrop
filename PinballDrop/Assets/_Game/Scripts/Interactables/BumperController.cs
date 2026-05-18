@@ -33,6 +33,10 @@ public class BumperController : MonoBehaviour
         }
     }
 
+    public void SetColor()
+    {
+        InitTarget();
+    }
     public void InitTarget()
     {
         if (_propBlock == null)

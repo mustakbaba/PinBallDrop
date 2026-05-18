@@ -9,6 +9,8 @@ using UnityEditor;
 
 public class BallController : MonoBehaviour
 {
+    public System.Action OnExploded;
+
     public enum BallBlockers
     {
         None,
@@ -23,8 +25,7 @@ public class BallController : MonoBehaviour
     [ShowIf("BallBlocker", BallBlockers.MultiBall)]
     public int MultiAmount = 5;
 
-    [Header("Ayarlar")]
-    private float upwardForce = 12;
+    [Header("Ayarlar")] private float upwardForce = 12;
     private float maxY = 899f;
     private float smallBallSpeed = 4f;
 
@@ -40,6 +41,7 @@ public class BallController : MonoBehaviour
     [SerializeField] private GameObject _innerBallObject;
     private MeshRenderer _meshRenderer;
     public bool IsHidden;
+    public bool IsFromTunnel { get; set; }
 
     private void Awake()
     {
@@ -62,6 +64,7 @@ public class BallController : MonoBehaviour
 
     public void SetColor(bool isPlaying = false)
     {
+        if (this == null) return;
         var color = LevelManager.Instance.ObjectColors[(int)ObjectColor];
 
         var renderer = GetComponentInChildren<MeshRenderer>();
@@ -76,8 +79,8 @@ public class BallController : MonoBehaviour
             _multiAmountText.gameObject.SetActive(true);
             _amountText.transform.localScale = Vector3.one * 0.75f;
             _multiAmountText.transform.localScale = Vector3.one * 0.75f;
-            _amountText.transform.localPosition = Vector3.zero+Vector3.up*.55f+Vector3.left*.25f;
-            _multiAmountText.transform.localPosition = Vector3.zero+Vector3.up*.55f+Vector3.right*.25f;
+            _amountText.transform.localPosition = Vector3.zero + Vector3.up * .55f + Vector3.left * .25f;
+            _multiAmountText.transform.localPosition = Vector3.zero + Vector3.up * .55f + Vector3.right * .25f;
 
             renderer.material = LevelManager.Instance.HalfHalfMaterial;
             _propertyBlock.SetColor("_BaseColor", LevelManager.Instance.ObjectColors[(int)ObjectColor]);
@@ -88,7 +91,7 @@ public class BallController : MonoBehaviour
         {
             _amountText.transform.localScale = Vector3.one;
             _multiAmountText.gameObject.SetActive(false);
-            _amountText.transform.localPosition = Vector3.zero+Vector3.up*.55f;
+            _amountText.transform.localPosition = Vector3.zero + Vector3.up * .55f;
             renderer.material = LevelManager.Instance.SingleMaterial;
             _propertyBlock.SetColor("_BaseColor", LevelManager.Instance.ObjectColors[(int)ObjectColor]);
             renderer.SetPropertyBlock(_propertyBlock);
@@ -96,7 +99,7 @@ public class BallController : MonoBehaviour
 
         var a = Mathf.InverseLerp(5, 20, BallAmount);
         var scale = Mathf.Lerp(0.5f, 2f, a);
-        if (!isPlaying)
+        if (!isPlaying && !IsFromTunnel)
             transform.localScale = Vector3.one * scale;
 
         _amountText.text = BallAmount.ToString();
@@ -198,133 +201,135 @@ public class BallController : MonoBehaviour
         StartCoroutine(SpawnSmallBalls());
     }
 
-   private IEnumerator SpawnSmallBalls()
-{
-    _meshRenderer.enabled = false;
-    _amountText.gameObject.SetActive(false);
-    if (_innerBallObject != null) _innerBallObject.SetActive(false);
-    if (_multiAmountText != null) _multiAmountText.gameObject.SetActive(false);
-
-    var capacityManager = AreaCapacityManager.Instance;
-    int available = capacityManager.CapacityAmount - capacityManager.CurrentAmount;
-
-    if (available <= 0)
+    private IEnumerator SpawnSmallBalls()
     {
-        // Hiç yer yok, geri döndür
-        RestoreBall();
-        yield break;
-    }
+        _meshRenderer.enabled = false;
+        _amountText.gameObject.SetActive(false);
+        if (_innerBallObject != null) _innerBallObject.SetActive(false);
+        if (_multiAmountText != null) _multiAmountText.gameObject.SetActive(false);
 
-    int totalNeeded = BallBlocker == BallBlockers.MultiBall ? BallAmount + MultiAmount : BallAmount;
+        var capacityManager = AreaCapacityManager.Instance;
+        int available = capacityManager.CapacityAmount - capacityManager.CurrentAmount;
 
-    if (available >= totalNeeded)
-    {
-        // Hepsi sığıyor, normal patlat
-        yield return StartCoroutine(SpawnBatch(BallAmount, ObjectColor, capacityManager));
-        if (BallBlocker == BallBlockers.MultiBall)
-            yield return StartCoroutine(SpawnBatch(MultiAmount, MultiColor, capacityManager));
-
-        yield return new WaitForSeconds(0.1f);
-        Destroy(gameObject);
-    }
-    else
-    {
-        // Kısmen sığıyor — orantılı dağıt
-        int mainSpawn, multiSpawn;
-
-        if (BallBlocker == BallBlockers.MultiBall)
+        if (available <= 0)
         {
-            // Orantılı böl
-            float ratio = (float)BallAmount / totalNeeded;
-            mainSpawn = Mathf.FloorToInt(available * ratio);
-            multiSpawn = available - mainSpawn;
-        }
-        else
-        {
-            mainSpawn = available;
-            multiSpawn = 0;
+            // Hiç yer yok, geri döndür
+            RestoreBall();
+            yield break;
         }
 
-        yield return StartCoroutine(SpawnBatch(mainSpawn, ObjectColor, capacityManager));
-        if (BallBlocker == BallBlockers.MultiBall && multiSpawn > 0)
-            yield return StartCoroutine(SpawnBatch(multiSpawn, MultiColor, capacityManager));
+        int totalNeeded = BallBlocker == BallBlockers.MultiBall ? BallAmount + MultiAmount : BallAmount;
 
-        // Kalanları hesapla
-        BallAmount -= mainSpawn;
-        if (BallBlocker == BallBlockers.MultiBall)
-            MultiAmount -= multiSpawn;
-
-        // Sıfırlandıysa yok et
-        bool mainEmpty = BallAmount <= 0;
-        bool multiEmpty = BallBlocker != BallBlockers.MultiBall || MultiAmount <= 0;
-
-        if (mainEmpty && multiEmpty)
+        if (available >= totalNeeded)
         {
+            // Hepsi sığıyor, normal patlat
+            yield return StartCoroutine(SpawnBatch(BallAmount, ObjectColor, capacityManager));
+            if (BallBlocker == BallBlockers.MultiBall)
+                yield return StartCoroutine(SpawnBatch(MultiAmount, MultiColor, capacityManager));
+            
+            OnExploded?.Invoke();
             yield return new WaitForSeconds(0.1f);
             Destroy(gameObject);
         }
         else
         {
-            // Kalan miktarla geri döndür
-            if (mainEmpty && BallBlocker == BallBlockers.MultiBall)
+            // Kısmen sığıyor — orantılı dağıt
+            int mainSpawn, multiSpawn;
+
+            if (BallBlocker == BallBlockers.MultiBall)
             {
-                // Sadece multi kaldı, rengi güncelle
-                ObjectColor = MultiColor;
-                BallAmount = MultiAmount;
-                BallBlocker = BallBlockers.None;
+                // Orantılı böl
+                float ratio = (float)BallAmount / totalNeeded;
+                mainSpawn = Mathf.FloorToInt(available * ratio);
+                multiSpawn = available - mainSpawn;
+            }
+            else
+            {
+                mainSpawn = available;
+                multiSpawn = 0;
             }
 
-            RestoreBall();
+            yield return StartCoroutine(SpawnBatch(mainSpawn, ObjectColor, capacityManager));
+            if (BallBlocker == BallBlockers.MultiBall && multiSpawn > 0)
+                yield return StartCoroutine(SpawnBatch(multiSpawn, MultiColor, capacityManager));
+
+            // Kalanları hesapla
+            BallAmount -= mainSpawn;
+            if (BallBlocker == BallBlockers.MultiBall)
+                MultiAmount -= multiSpawn;
+
+            // Sıfırlandıysa yok et
+            bool mainEmpty = BallAmount <= 0;
+            bool multiEmpty = BallBlocker != BallBlockers.MultiBall || MultiAmount <= 0;
+
+            if (mainEmpty && multiEmpty)
+            {
+                OnExploded?.Invoke();
+                yield return new WaitForSeconds(0.1f);
+                Destroy(gameObject);
+            }
+            else
+            {
+                // Kalan miktarla geri döndür
+                if (mainEmpty && BallBlocker == BallBlockers.MultiBall)
+                {
+                    // Sadece multi kaldı, rengi güncelle
+                    ObjectColor = MultiColor;
+                    BallAmount = MultiAmount;
+                    BallBlocker = BallBlockers.None;
+                }
+
+                RestoreBall();
+            }
         }
     }
-}
 
-private void RestoreBall()
-{
-    _exploded = false;
-    _rb.isKinematic = false;
-    GetComponent<Collider>().enabled = true;
-    _meshRenderer.enabled = true;
-    _amountText.gameObject.SetActive(true);
-
-    var a = Mathf.InverseLerp(5, 20, BallAmount);
-    var scale = Mathf.Lerp(0.5f, 2f, a);
-    SetColor(true);
-    transform.DOScale(Vector3.one * scale, .2f);
-}
-
-private IEnumerator SpawnBatch(int amount, ColorTypes color, AreaCapacityManager capacityManager)
-{
-    float radius = transform.localScale.x * 0.5f;
-    Vector3 center = transform.position;
-
-    for (int i = 0; i < amount; i++)
+    private void RestoreBall()
     {
-        float angle = i * 137.5f * Mathf.Deg2Rad;
-        float r = radius * Mathf.Sqrt((float)i / Mathf.Max(amount, 1));
+        _exploded = false;
+        _rb.isKinematic = false;
+        GetComponent<Collider>().enabled = true;
+        _meshRenderer.enabled = true;
+        _amountText.gameObject.SetActive(true);
 
-        Vector3 offset = new Vector3(
-            Mathf.Cos(angle) * r,
-            Mathf.Sin(angle) * r,
-            0f
-        );
-
-        var small = Instantiate(LevelManager.Instance.SmallBallPrefab, center + offset, Quaternion.identity);
-        var rb = small.GetComponent<Rigidbody>();
-        small.SetColor(color);
-
-        if (rb != null)
-        {
-            Vector3 dir = new Vector3(
-                Random.Range(-0.3f, 0.3f),
-                Random.Range(-0.3f, 0.3f),
-                -1f
-            ).normalized;
-            rb.AddForce(dir * smallBallSpeed, ForceMode.Impulse);
-        }
+        var a = Mathf.InverseLerp(5, 20, BallAmount);
+        var scale = Mathf.Lerp(0.5f, 2f, a);
+        SetColor(true);
+        transform.DOScale(Vector3.one * scale, .2f);
     }
 
-    capacityManager.SetAmount(amount);
-    yield return null;
-}
+    private IEnumerator SpawnBatch(int amount, ColorTypes color, AreaCapacityManager capacityManager)
+    {
+        float radius = transform.localScale.x * 0.5f;
+        Vector3 center = transform.position;
+
+        for (int i = 0; i < amount; i++)
+        {
+            float angle = i * 137.5f * Mathf.Deg2Rad;
+            float r = radius * Mathf.Sqrt((float)i / Mathf.Max(amount, 1));
+
+            Vector3 offset = new Vector3(
+                Mathf.Cos(angle) * r,
+                Mathf.Sin(angle) * r,
+                0f
+            );
+
+            var small = Instantiate(LevelManager.Instance.SmallBallPrefab, center + offset, Quaternion.identity);
+            var rb = small.GetComponent<Rigidbody>();
+            small.SetColor(color);
+
+            if (rb != null)
+            {
+                Vector3 dir = new Vector3(
+                    Random.Range(-0.3f, 0.3f),
+                    Random.Range(-0.3f, 0.3f),
+                    -1f
+                ).normalized;
+                rb.AddForce(dir * smallBallSpeed, ForceMode.Impulse);
+            }
+        }
+
+        capacityManager.SetAmount(amount);
+        yield return null;
+    }
 }
