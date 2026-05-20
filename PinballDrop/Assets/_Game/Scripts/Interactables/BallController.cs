@@ -189,7 +189,7 @@ public class BallController : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (!_isClickable || _exploded) return;
+        // if (!_isClickable || _exploded) return;
         Explode();
     }
 

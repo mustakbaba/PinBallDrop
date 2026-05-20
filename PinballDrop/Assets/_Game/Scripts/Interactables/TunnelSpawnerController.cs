@@ -93,7 +93,8 @@ public class TunnelSpawnerController : MonoBehaviour
 
         var data = _ballDatas[_currentIndex];
         var ball = Instantiate(LevelManager.Instance.BallControllerPrefab, _spawnPoint.position, Quaternion.identity);
-ball.transform.rotation = Quaternion.Euler(-90,0,0);
+        ball.transform.rotation = Quaternion.Euler(-90, 0, 0);
+
         ball.ObjectColor = data.Color;
         ball.BallAmount = data.Amount;
         ball.IsHidden = data.IsHidden;
@@ -103,8 +104,12 @@ ball.transform.rotation = Quaternion.Euler(-90,0,0);
         ball.SetColor();
         ball.GetComponent<Rigidbody>().isKinematic = true;
 
-        // Amount ne olursa olsun sabit scale
-        ball.transform.localScale = Vector3.one * 1.2f;
+        // Sıfırdan şişerek gel
+        ball.transform.localScale = Vector3.zero;
+        ball.transform.position = _spawnPoint.parent.position;
+        ball.transform.DOMove(_spawnPoint.position, .5f);
+        ball.transform.DOScale(Vector3.one * 1.2f, 0.4f)
+            .SetDelay(0.1f);
 
         _activeBall = ball;
         ball.OnExploded = OnBallExploded;
