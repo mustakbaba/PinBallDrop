@@ -102,8 +102,8 @@ public class TunnelSpawnerController : MonoBehaviour
         ball.MultiColor = data.MultiColor;
         ball.MultiAmount = data.MultiAmount;
         ball.SetColor();
+        ball.IsFromTunnel = true;
         ball.GetComponent<Rigidbody>().isKinematic = true;
-
         // Sıfırdan şişerek gel
         ball.transform.localScale = Vector3.zero;
         ball.transform.position = _spawnPoint.parent.position;
