@@ -19,8 +19,9 @@ public class VacuumController : MonoBehaviour
                 .SetEase(Ease.Linear)
                 .OnComplete(() =>
                 {
-                    firstBumper.Bounce(ball); // Bounce içinde JumpToTargets çağrılıyor, burada çağırma
+                    firstBumper.Bounce(ball); 
                 });
         });
     }
+    
 }

@@ -8,12 +8,13 @@ public class SmallBallController : MonoBehaviour
 {
     private Rigidbody _rb;
     private bool _grounded;
-    private bool _goingToVacuum;
+    public bool _goingToVacuum;
     private VacuumController _vacuum;
     public ColorTypes ObjectColor;
 
     public float vacuumForce = 8f;
     public int bounceCount = 0;
+    private bool _wentToVacuum;
 
     private void Awake()
     {
@@ -28,12 +29,26 @@ public class SmallBallController : MonoBehaviour
         // Y hızı durdu ve altında bir şey var
         bool isStopped = Mathf.Abs(_rb.velocity.y) < 0.5f;
         bool hasSupport = Physics.Raycast(transform.position, Vector3.down, 0.8f,
-            LayerMask.GetMask("Obstacle", "SmallBall"));
+            LayerMask.GetMask("Ground", "SmallBall"));
 
         if (isStopped && hasSupport)
         {
             _grounded = true;
             StartCoroutine(GoToVacuum());
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (_wentToVacuum) return; // zaten gitti, tekrar tetiklenmesin
+        if (other.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            var vacuum = other.GetComponent<VacuumController>();
+            if (vacuum != null)
+            {
+                _wentToVacuum = true;
+                vacuum.ShootTheBall(this);
+            }
         }
     }
 
@@ -45,20 +60,28 @@ public class SmallBallController : MonoBehaviour
         while (true)
         {
             if (_vacuum == null) yield break;
+            if (_wentToVacuum) yield break;
 
-            // Sadece XZ düzleminde vacuum'a doğru git, Y'ye dokunma
             Vector3 dir = _vacuum.transform.position - transform.position;
-            dir.y = 0f;
+            dir.z = 0f;
 
             float distance = dir.magnitude;
 
-            if (distance < 0.3f)
+            if (distance < 0.8f) // eşiği büyüt
             {
-                _vacuum.ShootTheBall(this);
-                yield break;
+                // _vacuum.ShootTheBall(this);
+                // yield break;
             }
 
-            _rb.AddForce(dir.normalized * vacuumForce, ForceMode.Force);
+            // Yaklaştıkça force artır
+            float forceMult = Mathf.Clamp(1f / distance, 0.5f, 3f);
+            _rb.AddForce(dir.normalized * vacuumForce * forceMult, ForceMode.Force);
+
+            // Hızı sınırla, geçip gitmesin
+            var vel = _rb.velocity;
+            vel.z = 0f;
+            if (vel.magnitude > 6f)
+                _rb.velocity = vel.normalized * 6f;
 
             yield return new WaitForFixedUpdate();
         }
@@ -68,26 +91,37 @@ public class SmallBallController : MonoBehaviour
     // SmallBallController.cs
     public void JumpToTargets()
     {
-
         if (BumperAreaManager.Instance.ActiveBumpers.Count <= bounceCount)
         {
-            SlotHolderManager.Instance.TryPlaceBall(this);
+            // Slot'a smooth git
+            var slot = SlotHolderManager.Instance.GetAvailableSlot(ObjectColor);
+            if (slot == null)
+            {
+                SlotHolderManager.Instance.TryPlaceBall(this);
+                return;
+            }
+
+            transform.DOJump(slot.transform.position, 1, 1, .35f)
+                .SetEase(Ease.Linear)
+                .OnComplete(() =>
+                {
+                    SlotHolderManager.Instance.TryPlaceBall(this);
+                });
             return;
         }
 
         var targetBumper = BumperAreaManager.Instance.ActiveBumpers[bounceCount];
         transform.DOJump(targetBumper.BouncePoint.position, 1, 1, .35f)
-            .OnComplete(() =>
-            {
-                targetBumper.Bounce(this);
-            }).SetEase(Ease.Linear);
+            .OnComplete(() => { targetBumper.Bounce(this); }).SetEase(Ease.Linear);
     }
+
     public void SetColor(ColorTypes objectColor)
     {
         ObjectColor = objectColor;
         var mat = GetComponent<MeshRenderer>().material;
         mat.SetColor("_BaseColor", LevelManager.Instance.ObjectColors[(int)objectColor]);
     }
+
     // SmallBallController.cs — ResetBall ekle
     public void ResetBall()
     {
@@ -121,8 +155,7 @@ public class SmallBallController : MonoBehaviour
                             .SetSpeedBased()
                             .OnComplete(() =>
                             {
-                                transform.DOMoveX(transform.position.x - 1.5f, 9).
-                                    SetEase(Ease.Linear).SetSpeedBased()
+                                transform.DOMoveX(transform.position.x - 1.5f, 9).SetEase(Ease.Linear).SetSpeedBased()
                                     .OnComplete(() =>
                                     {
                                         // State'i tamamen sıfırla

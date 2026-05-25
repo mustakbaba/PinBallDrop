@@ -1,21 +1,36 @@
 // SlotController.cs
+
+using System;
 using System.Collections.Generic;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 
 public class SlotController : MonoBehaviour
 {
-    public const int Capacity = 12;
-    public const int Columns = 4;
-    public const int Rows = 3;
-    public float Spacing = 0.35f;
+  
 
     public ColorTypes SlotColor { get; private set; }
     public bool IsAvailable => _balls.Count == 0;
-    public bool IsFull => _balls.Count >= Capacity;
+    public bool IsFull => _balls.Count >= Columns * Depths * Rows;
     public bool HasColor(ColorTypes color) => !IsAvailable && SlotColor == color;
 
     private List<SmallBallController> _balls = new List<SmallBallController>();
+    [SerializeField] private TextMeshPro _capacityText;
+    private MeshRenderer _meshRenderer;
+    private Color _defColor;
+
+    private void Awake()
+    {
+        _meshRenderer = GetComponentInChildren<MeshRenderer>();
+        _defColor = _meshRenderer.material.color;
+    }
+
+    private void UpdateText()
+    {
+        _capacityText.text = $"{_balls.Count}/{Capacity}";
+    }
+    
 
     private void OnMouseDown()
     {
@@ -24,6 +39,12 @@ public class SlotController : MonoBehaviour
     }
 
     // SlotController.cs
+    public const int Capacity = 18; // 3x2x3
+    public const int Columns = 3;   // X
+    public const int Depths = 2;    // Z
+    public const int Rows = 3;      // Y
+    public float Spacing = 0.5f;
+
     public bool TryAddBall(SmallBallController ball)
     {
         if (IsFull) return false;
@@ -33,40 +54,38 @@ public class SlotController : MonoBehaviour
         if (IsAvailable)
             SlotColor = ball.ObjectColor;
 
+       
+
         int index = _balls.Count;
         int col = index % Columns;
-        int row = index / Columns;
+        int depth = (index / Columns) % Depths;
+        int row = index / (Columns * Depths);
 
-        float offsetX = (Columns - 1) * Spacing * 0.5f;
-        float offsetY = (Rows - 1) * Spacing * 0.5f;
+    Vector3 startOffset = new Vector3(-0.3f, 0.15f, -0.17f);
 
-        Vector3 localTarget = new Vector3(
-            col * Spacing - offsetX,
-            row * Spacing - offsetY,
-            0f
+        Vector3 localTarget = startOffset + new Vector3(
+            col * Spacing*1.5f,
+            row * Spacing,
+            depth * (Spacing*1.5f)
         );
 
         _balls.Add(ball);
 
-        // Önce tüm tweenleri öldür
         ball.transform.DOKill();
-    
-        // Fiziği tamamen kapat
+
         var rb = ball.GetComponent<Rigidbody>();
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         rb.isKinematic = true;
-    
-        // Collider'ı kapat — diğer toplarla çakışmasın
+
         var col2 = ball.GetComponent<Collider>();
         if (col2 != null) col2.enabled = false;
 
-        // Parent'a al, sonra hareket et
         ball.transform.SetParent(transform);
-        // ball.enabled = false;
-
+        ball.transform.localPosition = new Vector3(0f, 0f, 0f);
         ball.transform.DOLocalMove(localTarget, 0.3f).SetEase(Ease.OutBack);
-
+        _meshRenderer.material.color = LevelManager.Instance.ObjectColors[(int)SlotColor];
+        UpdateText();
         return true;
     }
 
@@ -94,6 +113,13 @@ public class SlotController : MonoBehaviour
         }
 
         if (_balls.Count == 0)
+        {
             SlotColor = default;
+            _meshRenderer.material.color = _defColor;
+        }
+        
+        UpdateText();
+        
+
     }
 }

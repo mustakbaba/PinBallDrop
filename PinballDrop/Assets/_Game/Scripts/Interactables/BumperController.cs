@@ -84,7 +84,6 @@ public class BumperController : MonoBehaviour
     // BumperController.cs — Bounce
     public void Bounce(SmallBallController smallBallController)
     {
-
         transform.DOScale(1.2f, .1f).OnComplete(() => { transform.DOScale(1f, .1f); });
 
         // Aktif değilse etkileme, sadece sonraki bumper'a gönder

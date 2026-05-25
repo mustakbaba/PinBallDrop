@@ -32,7 +32,18 @@ public class SlotHolderManager : MonoSingleton<SlotHolderManager>
         GameFail();
         return false;
     }
+    public SlotController GetAvailableSlot(ColorTypes color)
+    {
+        foreach (var slot in Slots)
+            if (slot.HasColor(color) && !slot.IsFull)
+                return slot;
 
+        foreach (var slot in Slots)
+            if (slot.IsAvailable)
+                return slot;
+
+        return null;
+    }
     private void GameFail()
     {
         EventManager.OnGameLose.Invoke();

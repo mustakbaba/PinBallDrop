@@ -163,33 +163,55 @@ public class BallController : MonoBehaviour
         CheckClickable();
     }
 
-    private void CheckClickable()
-    {
-        Ray ray = new Ray(transform.position, Vector3.down);
-        bool blocked = Physics.Raycast(ray, 3f, LayerMask.GetMask("Collectable"));
-        _isClickable = !blocked;
+  private void CheckClickable()
+{
+    float sideOffset = transform.localScale.x * 0.25f;
+    float horizontalRayLength = transform.localScale.x * 5f;
 
-        if (_isClickable)
+    Vector3 centerOrigin = transform.position;
+    Vector3 leftOrigin = transform.position + Vector3.left * sideOffset;
+    Vector3 rightOrigin = transform.position + Vector3.right * sideOffset;
+    Vector3 horizontalOrigin = transform.position + Vector3.down * 0.1f;
+
+    int mask = LayerMask.GetMask("Collectable", "Obstacle");
+
+    bool centerBlocked = Physics.Raycast(centerOrigin, Vector3.down, 3f, mask);
+    bool leftBlocked = Physics.Raycast(leftOrigin, Vector3.down, 3f, mask);
+    bool rightBlocked = Physics.Raycast(rightOrigin, Vector3.down, 3f, mask);
+    bool leftHBlocked = Physics.Raycast(horizontalOrigin, Vector3.left, horizontalRayLength, mask);
+    bool rightHBlocked = Physics.Raycast(horizontalOrigin, Vector3.right, horizontalRayLength, mask);
+
+    _isClickable = !centerBlocked || !leftBlocked || !rightBlocked || !leftHBlocked || !rightHBlocked;
+
+#if UNITY_EDITOR
+    Debug.DrawLine(centerOrigin, centerOrigin + Vector3.down * 3f, centerBlocked ? Color.red : Color.green);
+    Debug.DrawLine(leftOrigin, leftOrigin + Vector3.down * 3f, leftBlocked ? Color.red : Color.green);
+    Debug.DrawLine(rightOrigin, rightOrigin + Vector3.down * 3f, rightBlocked ? Color.red : Color.green);
+    Debug.DrawLine(horizontalOrigin, horizontalOrigin + Vector3.left * horizontalRayLength, leftHBlocked ? Color.red : Color.cyan);
+    Debug.DrawLine(horizontalOrigin, horizontalOrigin + Vector3.right * horizontalRayLength, rightHBlocked ? Color.red : Color.cyan);
+#endif
+
+    if (_isClickable)
+    {
+        _amountText.DOFade(1f, .1f);
+        _meshRenderer.material.SetFloat("_OutlineWidth", 1);
+        if (IsHidden)
         {
-            _amountText.DOFade(1f, .1f);
-            _meshRenderer.material.SetFloat("_OutlineWidth", 1);
-            if (IsHidden)
-            {
-                IsHidden = false;
-                _amountText.text = BallAmount.ToString();
-                SetColor();
-            }
-        }
-        else
-        {
-            _meshRenderer.material.SetFloat("_OutlineWidth", 0);
-            _amountText.DOFade(.25f, .1f);
+            IsHidden = false;
+            _amountText.text = BallAmount.ToString();
+            SetColor();
         }
     }
+    else
+    {
+        _meshRenderer.material.SetFloat("_OutlineWidth", 0);
+        _amountText.DOFade(.25f, .1f);
+    }
+}
 
     private void OnMouseDown()
     {
-        // if (!_isClickable || _exploded) return;
+         if (!_isClickable || _exploded) return;
         Explode();
     }
 
