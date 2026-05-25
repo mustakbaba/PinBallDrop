@@ -15,9 +15,12 @@ public class SmallBallController : MonoBehaviour
     public float vacuumForce = 8f;
     public int bounceCount = 0;
     private bool _wentToVacuum;
+    private ParticleSystem _trailParticle;
 
     private void Awake()
     {
+        _trailParticle = GetComponentInChildren<ParticleSystem>(true);
+        _trailParticle.gameObject.SetActive(false);
         _rb = GetComponent<Rigidbody>();
         _vacuum = FindObjectOfType<VacuumController>();
     }
@@ -48,6 +51,70 @@ public class SmallBallController : MonoBehaviour
             {
                 _wentToVacuum = true;
                 vacuum.ShootTheBall(this);
+                _trailParticle.gameObject.SetActive(true);
+                var allParticleChildren = _trailParticle.GetComponentsInChildren<ParticleSystem>();
+                for (var i = 0; i < allParticleChildren.Length; i++)
+                {
+                    var ps = allParticleChildren[i];
+                    var clt = ps.colorOverLifetime;
+
+                    if (i == 0)
+                    {
+                        // clt.color = LevelManager.Instance.ObjectColors[(int)ObjectColor];
+
+
+                        Gradient gradient = new Gradient();
+
+                        GradientAlphaKey[] alphaKeys = new GradientAlphaKey[2];
+
+                        alphaKeys[0] = new GradientAlphaKey();
+                        alphaKeys[0].alpha = 1f; // başlangıç alpha
+                        alphaKeys[0].time = 0f; // 0. index
+
+                        alphaKeys[1] = new GradientAlphaKey();
+                        alphaKeys[1].alpha = 0f; // bitiş alpha
+                        alphaKeys[1].time = 1f; // 1. index
+
+                        GradientColorKey[] colorKeys = new GradientColorKey[2];
+
+                        colorKeys[0] = new GradientColorKey(Color.white, 0f);
+                        colorKeys[1] = new GradientColorKey(LevelManager.Instance.ObjectColors[(int)ObjectColor], 1f);
+
+                        gradient.SetKeys(colorKeys, alphaKeys);
+
+                        clt.color = gradient;
+                    }
+
+                    if (i == 1)
+                    {
+                        // clt.color = LevelManager.Instance.ObjectColors[(int)ObjectColor];
+
+
+                        Gradient gradient = new Gradient();
+
+                        GradientAlphaKey[] alphaKeys = new GradientAlphaKey[2];
+
+                        alphaKeys[0] = new GradientAlphaKey();
+                        alphaKeys[0].alpha = 1f; // başlangıç alpha
+                        alphaKeys[0].time = 0f; // 0. index
+
+                        alphaKeys[1] = new GradientAlphaKey();
+                        alphaKeys[1].alpha = 0f; // bitiş alpha
+                        alphaKeys[1].time = 1f; // 1. index
+
+                        GradientColorKey[] colorKeys = new GradientColorKey[2];
+
+                        colorKeys[0] = new GradientColorKey(LevelManager.Instance.ObjectColors[(int)ObjectColor], 0f);
+                        colorKeys[1] = new GradientColorKey(LevelManager.Instance.ObjectColors[(int)ObjectColor], 1f);
+
+                        gradient.SetKeys(colorKeys, alphaKeys);
+
+                        clt.color = gradient;
+                    }
+                    else
+                    {
+                    }
+                }
             }
         }
     }
@@ -103,10 +170,7 @@ public class SmallBallController : MonoBehaviour
 
             transform.DOJump(slot.transform.position, 1, 1, .35f)
                 .SetEase(Ease.Linear)
-                .OnComplete(() =>
-                {
-                    SlotHolderManager.Instance.TryPlaceBall(this);
-                });
+                .OnComplete(() => { SlotHolderManager.Instance.TryPlaceBall(this); });
             return;
         }
 
@@ -128,7 +192,7 @@ public class SmallBallController : MonoBehaviour
         _grounded = false;
         _goingToVacuum = false;
         bounceCount = 0;
-
+        _wentToVacuum = false;
         StopAllCoroutines();
 
         var rb = GetComponent<Rigidbody>();
@@ -139,7 +203,7 @@ public class SmallBallController : MonoBehaviour
     public void GoToPipe()
     {
         PipeHolderManager pipeHolderManager = PipeHolderManager.Instance;
-
+        transform.DOMoveZ(transform.position.z + .5f, .5f);
         transform.DOMoveY(pipeHolderManager.BottomPipe.position.y, 9f)
             .SetEase(Ease.Linear)
             .SetSpeedBased()
@@ -155,6 +219,7 @@ public class SmallBallController : MonoBehaviour
                             .SetSpeedBased()
                             .OnComplete(() =>
                             {
+                                transform.DOMoveZ(pipeHolderManager.RightPipeEnd.position.z, .5f);
                                 transform.DOMoveX(transform.position.x - 1.5f, 9).SetEase(Ease.Linear).SetSpeedBased()
                                     .OnComplete(() =>
                                     {
