@@ -204,7 +204,7 @@ public class SmallBallController : MonoBehaviour
     {
         PipeHolderManager pipeHolderManager = PipeHolderManager.Instance;
         transform.DOMoveZ(transform.position.z + .5f, .5f);
-        transform.DOMoveY(pipeHolderManager.BottomPipe.position.y, 9f)
+        transform.DOMove(pipeHolderManager.BottomPipe.position, 9f)
             .SetEase(Ease.Linear)
             .SetSpeedBased()
             .OnComplete(() =>
