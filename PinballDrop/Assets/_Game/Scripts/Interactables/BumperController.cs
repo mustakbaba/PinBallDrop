@@ -37,6 +37,7 @@ public class BumperController : MonoBehaviour
     {
         InitTarget();
     }
+
     public void InitTarget()
     {
         if (_propBlock == null)
@@ -94,6 +95,8 @@ public class BumperController : MonoBehaviour
             return;
         }
 
+        transform.DOScale(.9f, .1f).OnComplete(() => 
+            { transform.DOScale(1f, .1f); });
         if (ObjectColor != smallBallController.ObjectColor)
         {
             smallBallController.bounceCount++;
@@ -104,7 +107,8 @@ public class BumperController : MonoBehaviour
         smallBallController.transform.DOKill();
         Destroy(smallBallController.gameObject);
         Count--;
-
+        ParticleManager.Instance.BumperBallHitParticle(transform.position, ObjectColor);
+      
         if (Count <= 0)
         {
             IsActiveBumper = false;
@@ -119,6 +123,7 @@ public class BumperController : MonoBehaviour
                 if (next != null)
                     next.IsActiveBumper = true;
             }
+
             BumperAreaManager.Instance.CheckWin();
         }
         else
