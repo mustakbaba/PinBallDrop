@@ -106,7 +106,11 @@ public class BumperHolderController : MonoBehaviour
         }
 
         if (currentIndex < 0 || currentIndex + 1 >= SpawnedObjects.Count)
+        {
+            // Bu holder'da next yok, tüm bumperlar bitti
+            CheckHolderComplete(current);
             return null;
+        }
 
         var next = SpawnedObjects[currentIndex + 1].GetComponent<BumperController>();
         if (next == null || next.IsActiveBumper) return null;
@@ -144,6 +148,18 @@ public class BumperHolderController : MonoBehaviour
             BumperAreaManager.Instance.ActiveBumpers[listIndex] = next;
 
         return next;
+    }
+    private void CheckHolderComplete(BumperController lastBumper)
+    {
+        bool allDone = SpawnedObjects
+            .Select(t => t.GetComponent<BumperController>())
+            .Where(b => b != null)
+            .All(b => b.Count <= 0);
+
+        if (allDone)
+        {
+            var fake = Instantiate(LevelManager.Instance.FakeBumperPrefab, lastBumper.transform.position, lastBumper.transform.rotation);
+        }
     }
 }
 

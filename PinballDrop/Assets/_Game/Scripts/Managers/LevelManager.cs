@@ -20,6 +20,7 @@ public class LevelManager : MonoSingleton<LevelManager>
     public LineBoxController LineBoxPrefab;
     public BallController BallControllerPrefab;
     public SmallBallController SmallBallPrefab;
+    public GameObject FakeBumperPrefab;
 
     public BumperController BumperControllerPrefab;
     public BumperHolderController BumperHolderPrefab;
