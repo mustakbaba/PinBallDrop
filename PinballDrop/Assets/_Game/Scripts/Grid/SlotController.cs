@@ -61,7 +61,7 @@ public class SlotController : MonoBehaviour
         int depth = (index / Columns) % Depths;
         int row = index / (Columns * Depths);
 
-    Vector3 startOffset = new Vector3(-0.3f, 0.15f, -0.17f);
+    Vector3 startOffset = new Vector3(-0.3f, 0.35f, -0.17f);
 
         Vector3 localTarget = startOffset + new Vector3(
             col * Spacing*1.5f,
