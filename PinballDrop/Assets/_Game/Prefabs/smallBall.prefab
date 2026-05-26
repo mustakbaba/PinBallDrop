@@ -149,7 +149,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _goingToVacuum: 0
   ObjectColor: 0
-  vacuumForce: 8
+  vacuumForce: 500
   bounceCount: 0
 --- !u!1001 &726788102378352508
 PrefabInstance:
