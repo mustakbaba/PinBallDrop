@@ -140,7 +140,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 8690591861142563998, guid: 05b7cfa0ceb6f9442be102d2fe70b8d5, type: 2}
+  - {fileID: 7374927986402738804, guid: 317660f0cec49744b8f1a9cca54ff3b4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -184,8 +184,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 3
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 05b7cfa0ceb6f9442be102d2fe70b8d5, type: 2}
-  m_sharedMaterial: {fileID: 8690591861142563998, guid: 05b7cfa0ceb6f9442be102d2fe70b8d5,
+  m_fontAsset: {fileID: 11400000, guid: 317660f0cec49744b8f1a9cca54ff3b4, type: 2}
+  m_sharedMaterial: {fileID: 7374927986402738804, guid: 317660f0cec49744b8f1a9cca54ff3b4,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -309,6 +309,7 @@ MonoBehaviour:
   IsConnectedBlock: 0
   ObjectColor: 0
   _boxMesh: {fileID: 5774156562413102310}
+  _topMesh: {fileID: 2846108741544415382}
   _amountText: {fileID: 20350181930952568}
   BouncePoint: {fileID: 8291876106430182360}
 --- !u!1 &2295413713760101133
@@ -369,8 +370,8 @@ Transform:
   m_GameObject: {fileID: 4866343848715442691}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 5.8026327e-12, y: 0.25144637, z: -0.0000000036672638}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 5.8026327e-12, y: 0.24752, z: 0}
+  m_LocalScale: {x: 1.4732583, y: 1.4732583, z: 1.4732583}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5217657019037141370}
@@ -403,7 +404,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 4874126678125670354, guid: ecd2f452a545f7946bf00457f8ba3200, type: 3}
+  - {fileID: 2100000, guid: e4a3b7d7934ae1d48b9889c0cd3d182e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

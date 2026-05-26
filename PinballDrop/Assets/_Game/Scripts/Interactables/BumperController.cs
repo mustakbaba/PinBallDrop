@@ -15,8 +15,8 @@ public class BumperController : MonoBehaviour
     public bool IsConnectedBlock;
     public ColorTypes ObjectColor;
 
-    [Space(5)] [Header("References")] [SerializeField]
-    private MeshRenderer _boxMesh;
+    [Space(5)] [Header("References")] 
+    [SerializeField] private MeshRenderer _boxMesh,_topMesh;
 
     [SerializeField] private TextMeshPro _amountText;
     public int Count { get; set; }
@@ -51,16 +51,13 @@ public class BumperController : MonoBehaviour
         var clr = LevelManager.Instance.ObjectColors[(int)ObjectColor] * .76f;
         clr.a = 1f;
 
-        var clrCape = clr;
-        clrCape.a = 1;
-
-
         _boxMesh.GetPropertyBlock(_propBlock);
         _propBlock.SetColor("_BaseColor", clr);
         _boxMesh.SetPropertyBlock(_propBlock);
-
-        _propBlock.SetColor("_BaseColor", clrCape);
-
+        
+        _topMesh.GetPropertyBlock(_propBlock);
+        _propBlock.SetColor("_BaseColor", clr * 0.7f);
+        _topMesh.SetPropertyBlock(_propBlock);
 
         _amountText.text = Count.ToString();
 
@@ -85,8 +82,6 @@ public class BumperController : MonoBehaviour
     // BumperController.cs — Bounce
     public void Bounce(SmallBallController smallBallController)
     {
-        transform.DOScale(1.2f, .1f).OnComplete(() => { transform.DOScale(1f, .1f); });
-
         // Aktif değilse etkileme, sadece sonraki bumper'a gönder
         if (!IsActiveBumper)
         {
@@ -95,8 +90,9 @@ public class BumperController : MonoBehaviour
             return;
         }
 
-        transform.DOScale(.9f, .1f).OnComplete(() => 
+        transform.DOScale(.9f, .1f).SetEase(Ease.OutQuart).OnComplete(() => 
             { transform.DOScale(1f, .1f); });
+        
         if (ObjectColor != smallBallController.ObjectColor)
         {
             smallBallController.bounceCount++;
@@ -114,6 +110,7 @@ public class BumperController : MonoBehaviour
             IsActiveBumper = false;
             _amountText.text = "";
             _boxMesh.enabled = false;
+            _topMesh.enabled = false;
 
             // Listeden çıkarma, pozisyon değiştirme — liste sabit kalır
             var holder = GetComponentInParent<BumperHolderController>();
