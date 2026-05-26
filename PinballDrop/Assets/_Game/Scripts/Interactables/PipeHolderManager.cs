@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class PipeHolderManager : MonoSingleton<PipeHolderManager>
 {
-    public Transform BottomPipe, RightPipe,RightPipeEnd;
+    public Transform[] PipePathTransforms;
 }

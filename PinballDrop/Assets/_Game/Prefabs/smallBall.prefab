@@ -149,7 +149,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _goingToVacuum: 0
   ObjectColor: 0
-  vacuumForce: 500
+  vacuumForce: 10
   bounceCount: 0
 --- !u!1001 &726788102378352508
 PrefabInstance:
@@ -247,7 +247,8 @@ PrefabInstance:
       propertyPath: m_Materials.Array.size
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8293320, guid: 7cf0c810c7ede2c42a2e71ac3c0e257d, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

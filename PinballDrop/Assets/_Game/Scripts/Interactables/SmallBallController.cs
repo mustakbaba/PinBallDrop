@@ -1,6 +1,8 @@
 // SmallBallController.cs
 
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using UnityEngine;
 
@@ -203,38 +205,35 @@ public class SmallBallController : MonoBehaviour
     public void GoToPipe()
     {
         PipeHolderManager pipeHolderManager = PipeHolderManager.Instance;
-        transform.DOMoveZ(transform.position.z + .5f, .5f);
-        transform.DOMove(pipeHolderManager.BottomPipe.position, 9f)
+        var points = pipeHolderManager.PipePathTransforms;
+    
+            MoveToPoint(points.ToList(), 0);
+    }
+
+    private void MoveToPoint(List<Transform> points, int index)
+    {
+        if (index >= points.Count)
+        {
+            ResetBall();
+            var col = GetComponent<Collider>();
+            _rb.isKinematic = false;
+            _rb.velocity = Vector3.zero;
+            _rb.angularVelocity = Vector3.zero;
+            if (col != null) col.enabled = true;
+            return;
+        }
+
+        float randX = 0;
+        float randY = 0;
+        if (index == points.Count - 1)
+        {
+            randX = Random.Range(-.5f, 0.5f);
+            randY = Random.Range(-0.5f, 0.5f);
+        }
+
+        transform.DOMove(points[index].position+ new Vector3(randX,randY,0), 9f)
             .SetEase(Ease.Linear)
             .SetSpeedBased()
-            .OnComplete(() =>
-            {
-                transform.DOMoveX(pipeHolderManager.RightPipe.position.x, 9f)
-                    .SetEase(Ease.Linear)
-                    .SetSpeedBased()
-                    .OnComplete(() =>
-                    {
-                        transform.DOMoveY(pipeHolderManager.RightPipeEnd.position.y, 9f)
-                            .SetEase(Ease.Linear)
-                            .SetSpeedBased()
-                            .OnComplete(() =>
-                            {
-                                transform.DOMoveZ(pipeHolderManager.RightPipeEnd.position.z, .5f);
-                                transform.DOMoveX(transform.position.x - 1.5f, 9).SetEase(Ease.Linear).SetSpeedBased()
-                                    .OnComplete(() =>
-                                    {
-                                        // State'i tamamen sıfırla
-                                        ResetBall();
-                                        var col = GetComponent<Collider>();
-
-                                        // Fiziği geri aç
-                                        _rb.isKinematic = false;
-                                        _rb.velocity = Vector3.zero;
-                                        _rb.angularVelocity = Vector3.zero;
-                                        if (col != null) col.enabled = true;
-                                    });
-                            });
-                    });
-            });
+            .OnComplete(() => MoveToPoint(points, index + 1));
     }
 }

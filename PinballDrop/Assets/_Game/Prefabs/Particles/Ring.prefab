@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 206909580955966113}
   - component: {fileID: 6884987992151942385}
   - component: {fileID: 4150029664001252412}
+  - component: {fileID: 3225266491343060769}
   m_Layer: 0
   m_Name: Ring
   m_TagString: Untagged
@@ -4829,6 +4830,19 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!114 &3225266491343060769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5404205825379780633}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fd2e8874f60266498a388d7229a1bac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnlyDeactivate: 0
 --- !u!1001 &4723324861755060595
 PrefabInstance:
   m_ObjectHideFlags: 0

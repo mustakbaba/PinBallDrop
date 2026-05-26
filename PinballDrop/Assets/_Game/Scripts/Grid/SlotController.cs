@@ -19,6 +19,7 @@ public class SlotController : MonoBehaviour
     [SerializeField] private TextMeshPro _capacityText;
     private MeshRenderer _meshRenderer;
     private Color _defColor;
+    private bool _isClearing;
 
     private void Awake()
     {
@@ -32,9 +33,10 @@ public class SlotController : MonoBehaviour
     }
     
 
+
     private void OnMouseDown()
     {
-        if (_balls.Count == 0) return;
+        if (_balls.Count == 0 || _isClearing) return;
         ClearSlot();
     }
 
@@ -93,33 +95,47 @@ public class SlotController : MonoBehaviour
     {
         var capacityManager = AreaCapacityManager.Instance;
         int available = capacityManager.CapacityAmount - capacityManager.CurrentAmount;
-    
+
         if (available <= 0) return;
 
+        _isClearing = true;
+
         int sendCount = Mathf.Min(_balls.Count, available);
-    
-        
         capacityManager.SetAmount(sendCount);
 
         var ballsToProcess = _balls.GetRange(0, sendCount);
         _balls.RemoveRange(0, sendCount);
 
-        foreach (var ball in ballsToProcess)
+        for (int i = 0; i < ballsToProcess.Count; i++)
         {
+            var ball = ballsToProcess[i];
             if (ball == null) continue;
+
+            float delay = i * 0.05f;
             ball.transform.DOKill();
             ball.transform.SetParent(null);
-            ball.GoToPipe();
+
+            // Delay ile sırayla gönder
+            DOVirtual.DelayedCall(delay, () =>
+            {
+                if (ball == null) return;
+                ball.GoToPipe();
+            });
         }
 
-        if (_balls.Count == 0)
+        // Son top gönderildikten sonra unlock
+        float totalDelay = (ballsToProcess.Count - 1) * 0.05f + 0.1f;
+        DOVirtual.DelayedCall(totalDelay, () =>
         {
-            SlotColor = default;
-            _meshRenderer.material.color = _defColor;
-        }
-        
-        UpdateText();
-        
+            _isClearing = false;
 
+            if (_balls.Count == 0)
+            {
+                SlotColor = default;
+                _meshRenderer.material.color = _defColor;
+            }
+
+            UpdateText();
+        });
     }
 }
