@@ -43,9 +43,16 @@ public class BumperHolderController : MonoBehaviour
                 _bumpers[i].IsActiveBumper = true;
                 _bumpers[i].transform.localScale = Vector3.one;
             }
+            else if (i == 1 || i == 2)
+            {
+                // 2. ve 3. görünür ama küçük
+                _bumpers[i].transform.localScale = Vector3.one * 0.5f;
+            }
             else
             {
-                _bumpers[i].transform.localScale = Vector3.one * 0.5f;
+                // 4. ve sonrası gizli, 3. bumper'ın pozisyonunda bekle
+                _bumpers[i].transform.localScale = Vector3.zero;
+                _bumpers[i].transform.position = _bumpers[2].transform.position;
             }
         }
     }
@@ -104,14 +111,27 @@ public class BumperHolderController : MonoBehaviour
         var next = SpawnedObjects[currentIndex + 1].GetComponent<BumperController>();
         if (next == null || next.IsActiveBumper) return null;
 
-        // Tüm arkadakileri bir öne kaydır
+        // Tüm arkadakileri bir öne kaydır — ama sadece görünür olanlar (index <= 2'ye kadar)
         for (int i = currentIndex + 1; i < SpawnedObjects.Count; i++)
         {
             var bumper = SpawnedObjects[i].GetComponent<BumperController>();
             if (bumper == null) continue;
 
-            Vector3 targetPos = SpawnedObjects[i - 1].position;
-            bumper.transform.DOMove(targetPos, 0.3f).SetEase(Ease.OutBack);
+            int newIndex = i - 1; // yeni sıra indexi
+
+            if (newIndex <= 2)
+            {
+                // Görünür sıraya giriyor — pozisyona git ve büyü
+                Vector3 targetPos = SpawnedObjects[i - 1].position;
+                bumper.transform.DOMove(targetPos, 0.3f).SetEase(Ease.OutBack);
+
+                if (newIndex == 2)
+                {
+                    // 3. sıraya yerleşiyor — 3. boyutuna büyü
+                    bumper.transform.DOScale(0.5f, 0.3f).SetEase(Ease.OutBack);
+                }
+            }
+            // 4. ve sonrası hareket etmesin, pozisyonda kalsın
         }
 
         next.IsActiveBumper = true;

@@ -347,8 +347,8 @@ public class BallController : MonoBehaviour
                     Random.Range(-0.3f, 0.3f),
                     -1f
                 ).normalized;
-                rb.AddForce(dir * smallBallSpeed, ForceMode.VelocityChange);
-                Vector3 tunnelBoost = IsFromTunnel ? transform.right * -.5f : Vector3.zero;
+                rb.AddForce(dir * smallBallSpeed + Vector3.down*2f, ForceMode.VelocityChange);
+                Vector3 tunnelBoost = IsFromTunnel ? transform.right * -1.5f : Vector3.zero;
 Debug.Log(tunnelBoost);
                 rb.AddForce((dir * smallBallSpeed) + tunnelBoost, ForceMode.VelocityChange);
             }
