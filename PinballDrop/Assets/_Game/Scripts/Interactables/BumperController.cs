@@ -58,6 +58,13 @@ public class BumperController : MonoBehaviour
         _topMesh.GetPropertyBlock(_propBlock);
         _propBlock.SetColor("_BaseColor", clr * 0.7f);
         _topMesh.SetPropertyBlock(_propBlock);
+            
+        clr *= 0.4f;
+        clr.a = 1f;
+            
+        _amountText.GetComponent<MeshRenderer>().GetPropertyBlock(_propBlock);
+        _propBlock.SetColor("_OutlineColor", clr);
+        _amountText.GetComponent<MeshRenderer>().SetPropertyBlock(_propBlock);
 
         _amountText.text = Count.ToString();
 
@@ -68,6 +75,19 @@ public class BumperController : MonoBehaviour
             _boxMesh.GetPropertyBlock(_propBlock);
             _propBlock.SetColor("_BaseColor", new Color(0.3f, 0.3f, 0.3f) * .5f);
             _boxMesh.SetPropertyBlock(_propBlock);
+            
+            _topMesh.GetPropertyBlock(_propBlock);
+            _propBlock.SetColor("_BaseColor", new Color(0.3f, 0.3f, 0.3f) * .3f);
+            _topMesh.SetPropertyBlock(_propBlock);
+            
+            clr = new Color(0.3f, 0.3f, 0.3f) * .5f * 0.8f;
+            
+            clr *= 0.5f;
+            clr.a = 1f;
+            
+            _amountText.GetComponent<MeshRenderer>().GetPropertyBlock(_propBlock);
+            _propBlock.SetColor("_OutlineColor", clr);
+            _amountText.GetComponent<MeshRenderer>().SetPropertyBlock(_propBlock);
         }
 
 #if UNITY_EDITOR

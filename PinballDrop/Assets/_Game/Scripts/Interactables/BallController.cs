@@ -91,10 +91,20 @@ public class BallController : MonoBehaviour
         {
             _amountText.transform.localScale = Vector3.one;
             _multiAmountText.gameObject.SetActive(false);
-            _amountText.transform.localPosition = Vector3.zero + Vector3.up * .55f;
+            _amountText.transform.localPosition = Vector3.zero + Vector3.up * .55f + Vector3.forward * .1f;
             renderer.material = LevelManager.Instance.SingleMaterial;
-            _propertyBlock.SetColor("_BaseColor", LevelManager.Instance.ObjectColors[(int)ObjectColor]);
+            
+            var clr = LevelManager.Instance.ObjectColors[(int)ObjectColor];
+            
+            _propertyBlock.SetColor("_BaseColor", clr);
             renderer.SetPropertyBlock(_propertyBlock);
+            
+            clr *= 0.4f;
+            clr.a = 1f;
+            
+            _amountText.GetComponent<MeshRenderer>().GetPropertyBlock(_propertyBlock);
+            _propertyBlock.SetColor("_OutlineColor", clr);
+            _amountText.GetComponent<MeshRenderer>().SetPropertyBlock(_propertyBlock);
         }
 
         var a = Mathf.InverseLerp(5, 20, BallAmount);
