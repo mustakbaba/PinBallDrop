@@ -142,7 +142,7 @@ public class SmallBallController : MonoBehaviour
 
             // Yaklaştıkça force artır
             float forceMult = Mathf.Clamp(1f / distance, 0.5f, 3f);
-            _rb.AddForce(dir.normalized * vacuumForce * forceMult, ForceMode.Force);
+            _rb.AddForce(dir.normalized * vacuumForce * forceMult, ForceMode.Acceleration);
 
             // Hızı sınırla, geçip gitmesin
             var vel = _rb.velocity;
