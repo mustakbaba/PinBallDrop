@@ -29,6 +29,8 @@ public class CellInfo
     public Vector2Int GridPos;
 }
 
+[System.Serializable]
+
 public class BumperDatas
 {
     public List<BumperData> TargetObjects = new List<BumperData>();

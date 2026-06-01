@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using Lofelt.NiceVibrations;
 using SincappStudio;
 using TMPro;
 using UnityEditor;
@@ -140,11 +141,14 @@ public class BumperController : MonoBehaviour
                 if (next != null)
                     next.IsActiveBumper = true;
             }
+            
+            HapticPatterns.PlayPreset(HapticPatterns.PresetType.Success);
 
             BumperAreaManager.Instance.CheckWin();
         }
         else
         {
+            HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
             _amountText.text = Count.ToString();
         }
     }

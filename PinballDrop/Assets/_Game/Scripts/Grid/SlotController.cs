@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using DG.Tweening;
+using Lofelt.NiceVibrations;
 using TMPro;
 using UnityEngine;
 
@@ -104,8 +105,7 @@ public class SlotController : MonoBehaviour
         capacityManager.SetAmount(sendCount);
 
         var ballsToProcess = _balls.GetRange(0, sendCount);
-       
-
+        
         for (int i = 0; i < ballsToProcess.Count; i++)
         {
             var ball = ballsToProcess[i];
@@ -123,8 +123,7 @@ public class SlotController : MonoBehaviour
                 UpdateText();
             });
         }
-
-
+        
         // Son top gönderildikten sonra unlock
         float totalDelay = (ballsToProcess.Count - 1) * 0.15f + 0.1f;
         DOVirtual.DelayedCall(totalDelay, () =>
@@ -139,5 +138,7 @@ public class SlotController : MonoBehaviour
 
             UpdateText();
         });
+        
+        HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
     }
 }

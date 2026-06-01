@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using Lofelt.NiceVibrations;
 using SincappStudio;
 using Sirenix.OdinInspector;
 using TMPro;
@@ -233,6 +234,7 @@ public class BallController : MonoBehaviour
         _rb.isKinematic = true;
         GetComponent<Collider>().enabled = false;
         StartCoroutine(SpawnSmallBalls());
+        HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
     }
 
     private IEnumerator SpawnSmallBalls()
@@ -382,5 +384,5 @@ public class BallProperties
     public int MultiAmount = 5;
     public int BallAmount = 10;
     public bool IsHidden;
-    public Vector3 Position { get; set; }
+    public Vector3 Position;
 }

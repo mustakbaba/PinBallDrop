@@ -12,250 +12,117 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa6c11b19bc8c2a43b751e670ab39fe0, type: 3}
   m_Name: Level_002
   m_EditorClassIdentifier: 
-  cells:
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 6, y: 6}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 6, y: 5}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 6, y: 4}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 6, y: 3}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 6, y: 2}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 6, y: 1}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 6, y: 0}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 5, y: 6}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 5, y: 5}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 5, y: 4}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 5, y: 3}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 5, y: 2}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 5, y: 1}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 5, y: 0}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 4, y: 6}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 4, y: 5}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 4, y: 4}
-  - CellType: 0
-    ObjColor: 1
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 4, y: 3}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 4, y: 2}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 4, y: 1}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 4, y: 0}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 3, y: 6}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 3, y: 5}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 3, y: 4}
-  - CellType: 0
-    ObjColor: 5
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 3, y: 3}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 3, y: 2}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 3, y: 1}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 3, y: 0}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 2, y: 6}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 2, y: 5}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 2, y: 4}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 2, y: 3}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 2, y: 2}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 2, y: 1}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 2, y: 0}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 1, y: 6}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 1, y: 5}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 1, y: 4}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 1, y: 3}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 1, y: 2}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 1, y: 1}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 1, y: 0}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 0, y: 6}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 0, y: 5}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 0, y: 4}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 0, y: 3}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 0, y: 2}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 0, y: 1}
-  - CellType: 0
-    ObjColor: 0
-    BlockerType: 0
-    BlockerLockAmount: 0
-    GridPos: {x: 0, y: 0}
-  LevelDifficulty: 2
+  cells: []
+  BumperData:
+  - TargetObjects:
+    - Color: 1
+      Amount: 10
+      IsHidden: 0
+    - Color: 6
+      Amount: 5
+      IsHidden: 0
+    - Color: 0
+      Amount: 25
+      IsHidden: 0
+    - Color: 5
+      Amount: 30
+      IsHidden: 0
+    - Color: 3
+      Amount: 5
+      IsHidden: 0
+    - Color: 1
+      Amount: 5
+      IsHidden: 0
+  - TargetObjects:
+    - Color: 0
+      Amount: 10
+      IsHidden: 0
+    - Color: 4
+      Amount: 5
+      IsHidden: 0
+    - Color: 2
+      Amount: 25
+      IsHidden: 0
+    - Color: 0
+      Amount: 5
+      IsHidden: 0
+    - Color: 6
+      Amount: 30
+      IsHidden: 0
+  - TargetObjects:
+    - Color: 0
+      Amount: 25
+      IsHidden: 0
+    - Color: 1
+      Amount: 10
+      IsHidden: 0
+    - Color: 3
+      Amount: 30
+      IsHidden: 0
+    - Color: 4
+      Amount: 35
+      IsHidden: 0
+    - Color: 0
+      Amount: 5
+      IsHidden: 0
+    - Color: 1
+      Amount: 15
+      IsHidden: 0
+  BallData:
+  - BallBlocker: 0
+    MultiColor: 4
+    ObjectColor: 6
+    MultiAmount: 15
+    BallAmount: 20
+    IsHidden: 0
+    Position: {x: -1.5852123, y: -1.8499963, z: 43.31}
+  - BallBlocker: 0
+    MultiColor: 0
+    ObjectColor: 1
+    MultiAmount: 5
+    BallAmount: 10
+    IsHidden: 0
+    Position: {x: 0.48, y: -0.783, z: 43.31}
+  - BallBlocker: 0
+    MultiColor: 0
+    ObjectColor: 4
+    MultiAmount: 5
+    BallAmount: 25
+    IsHidden: 0
+    Position: {x: 1.47, y: 0.25, z: 43.31}
+  - BallBlocker: 0
+    MultiColor: 0
+    ObjectColor: 0
+    MultiAmount: 5
+    BallAmount: 15
+    IsHidden: 0
+    Position: {x: 1.161, y: -2.435, z: 43.31}
+  - BallBlocker: 0
+    MultiColor: 0
+    ObjectColor: 6
+    MultiAmount: 5
+    BallAmount: 15
+    IsHidden: 0
+    Position: {x: -0.337, y: 1.185, z: 43.31}
+  - BallBlocker: 0
+    MultiColor: 0
+    ObjectColor: 6
+    MultiAmount: 5
+    BallAmount: 15
+    IsHidden: 0
+    Position: {x: -0.43, y: -0.61, z: 43.31}
+  - BallBlocker: 0
+    MultiColor: 0
+    ObjectColor: 0
+    MultiAmount: 5
+    BallAmount: 15
+    IsHidden: 0
+    Position: {x: -1.75, y: 0.75, z: 43.31}
+  - BallBlocker: 0
+    MultiColor: 0
+    ObjectColor: 2
+    MultiAmount: 0
+    BallAmount: 10
+    IsHidden: 0
+    Position: {x: 2.2112002, y: -0.92999476, z: 42.934}
+  LevelDifficulty: 0
