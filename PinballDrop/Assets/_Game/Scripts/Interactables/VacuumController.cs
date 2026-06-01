@@ -15,12 +15,16 @@ public class VacuumController : MonoBehaviour
         rb.transform.DOMove(_exitTransform.position, 5f).SetEase(Ease.Linear).SetSpeedBased().OnComplete(() =>
         {
             var firstBumper = BumperAreaManager.Instance.ActiveBumpers[0];
-            ball.transform.DOJump(firstBumper.BouncePoint.position, 1,1,.35f)
-                .SetEase(Ease.Linear)
-                .OnComplete(() =>
-                {
-                    firstBumper.Bounce(ball); 
-                });
+            ball.transform.DOMove(firstBumper.BouncePoint.position, 5f).SetSpeedBased().SetEase(Ease.Linear).OnComplete(() =>
+             {
+                 firstBumper.Bounce(ball);
+             });
+            // ball.transform.DOJump(firstBumper.BouncePoint.position, 1,1,.35f)
+            //     .SetEase(Ease.Linear)
+            //     .OnComplete(() =>
+            //     {
+            //         firstBumper.Bounce(ball); 
+            //     });
         });
     }
     
