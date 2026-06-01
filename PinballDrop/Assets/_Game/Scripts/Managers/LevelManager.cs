@@ -68,8 +68,16 @@ public class LevelManager : MonoSingleton<LevelManager>
         {
             InGameUIManager.Instance.HardLevelSplash();
         }
-        // LoadLevel(levelData);
 
+        if (Application.isEditor)
+        {
+            // LoadLevel(levelData);
+        }
+        else
+        {
+            LoadLevel(levelData);
+        }
+        
         var currentBlockerLevel =
             NewFeatureUnlockLevels[PersistData.Instance.CurrentBlockerIndex];
         var nextBlockerLevel = LevelManager.Instance.NewFeatureUnlockLevels[
@@ -164,7 +172,7 @@ public class LevelManager : MonoSingleton<LevelManager>
 
             ballProperties.Add(data);
         }
-        
+
         levelToSave.BallData = ballProperties;
     }
 
@@ -205,7 +213,7 @@ public class LevelManager : MonoSingleton<LevelManager>
         var allBalls = FindObjectsOfType<BallController>();
 
         var toDestroy = allBalls.ToList();
-        
+
         for (int i = toDestroy.Count - 1; i >= 0; i--)
         {
             if (Application.isPlaying)
@@ -217,7 +225,7 @@ public class LevelManager : MonoSingleton<LevelManager>
         for (int i = 0; i < level.BallData.Count; i++)
         {
             var ballData = level.BallData[i];
-            var ball = Instantiate(BallControllerPrefab, Vector3.zero, Quaternion.Euler(-90,0,0));
+            var ball = Instantiate(BallControllerPrefab, Vector3.zero, Quaternion.Euler(-90, 0, 0));
             ball.Properties = ballData;
             ball.transform.position = ballData.Position;
             ball.SetColor(false);
