@@ -183,9 +183,9 @@ GameObject:
   - component: {fileID: 9131167197144059824}
   - component: {fileID: 5587913352315778738}
   - component: {fileID: 4437571238285964938}
+  - component: {fileID: 5468543926565492426}
   - component: {fileID: 299791318029230220}
   - component: {fileID: 2251636416076672047}
-  - component: {fileID: 5468543926565492426}
   m_Layer: 11
   m_Name: BigBall
   m_TagString: Untagged
@@ -260,6 +260,29 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &5468543926565492426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3969096062110668379}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bc8b5407bddccc4d92e9833ee102622, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Properties:
+    BallBlocker: 0
+    MultiColor: 0
+    MultiAmount: 5
+    BallAmount: 10
+    ObjectColor: 0
+    IsHidden: 0
+    Position: {x: 0, y: 0, z: 0}
+  _amountText: {fileID: 8241705332872148924}
+  _multiAmountText: {fileID: 6829121199729236362}
+  _innerBallObject: {fileID: 0}
 --- !u!54 &299791318029230220
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -308,27 +331,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &5468543926565492426
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3969096062110668379}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0bc8b5407bddccc4d92e9833ee102622, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  BallBlocker: 0
-  MultiColor: 0
-  MultiAmount: 5
-  BallAmount: 10
-  ObjectColor: 1
-  _amountText: {fileID: 8241705332872148924}
-  _multiAmountText: {fileID: 6829121199729236362}
-  _innerBallObject: {fileID: 0}
-  IsHidden: 0
 --- !u!1 &8153844179303595670
 GameObject:
   m_ObjectHideFlags: 0

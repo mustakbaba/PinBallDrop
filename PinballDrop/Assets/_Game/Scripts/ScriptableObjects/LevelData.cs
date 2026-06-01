@@ -7,8 +7,8 @@ using UnityEngine.Serialization;
 public class LevelData : ScriptableObject
 {
     public List<CellInfo> cells = new List<CellInfo>();
-    public List<LineInfo> lineObjects = new List<LineInfo>();
-    
+    public List<BumperDatas> BumperData = new List<BumperDatas>();
+    public List<BallProperties> BallData = new List<BallProperties>();
     public LevelDifficulties LevelDifficulty;
 
     public enum LevelDifficulties
@@ -29,9 +29,7 @@ public class CellInfo
     public Vector2Int GridPos;
 }
 
-[System.Serializable]
-public class LineInfo
+public class BumperDatas
 {
-    public List<TargetBoxData> TargetBoxes;
-    
+    public List<BumperData> TargetObjects = new List<BumperData>();
 }
