@@ -36,7 +36,7 @@ public class SmallBallController : MonoBehaviour
         bool hasSupport = Physics.Raycast(transform.position, Vector3.down, 0.8f,
             LayerMask.GetMask("Ground", "SmallBall"));
 
-        if (isStopped && hasSupport)
+        if (isStopped)
         {
             _grounded = true;
             StartCoroutine(GoToVacuum());

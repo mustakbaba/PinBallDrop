@@ -117,7 +117,7 @@ public class BallController : MonoBehaviour
         _multiAmountText.GetComponent<MeshRenderer>().SetPropertyBlock(_propertyBlock);
 
         var a = Mathf.InverseLerp(5, 20, BallAmount);
-        var scale = Mathf.Lerp(0.5f, 2f, a);
+        var scale = Mathf.Lerp(0.5f, 1.5f, a);
         if (!isPlaying && !IsFromTunnel)
             transform.localScale = Vector3.one * scale;
 
@@ -185,7 +185,7 @@ public class BallController : MonoBehaviour
   private void CheckClickable()
 {
     float sideOffset = transform.localScale.x * 0.25f;
-    float horizontalRayLength = transform.localScale.x * 1f;
+    float horizontalRayLength = transform.localScale.x * 1.25f;
 
     Vector3 centerOrigin = transform.position;
     Vector3 leftOrigin = transform.position + Vector3.left * sideOffset;
@@ -194,9 +194,9 @@ public class BallController : MonoBehaviour
 
     int mask = LayerMask.GetMask("Collectable", "Obstacle");
 
-    bool centerBlocked = Physics.Raycast(centerOrigin, Vector3.down, 3f, mask);
-    bool leftBlocked = Physics.Raycast(leftOrigin, Vector3.down, 3f, mask);
-    bool rightBlocked = Physics.Raycast(rightOrigin, Vector3.down, 3f, mask);
+    bool centerBlocked = Physics.Raycast(centerOrigin, Vector3.down, 1.5f, mask);
+    bool leftBlocked = Physics.Raycast(leftOrigin, Vector3.down, 1.5f, mask);
+    bool rightBlocked = Physics.Raycast(rightOrigin, Vector3.down, 1.5f, mask);
     bool leftHBlocked = Physics.Raycast(horizontalOrigin, Vector3.left, horizontalRayLength, mask);
     bool rightHBlocked = Physics.Raycast(horizontalOrigin, Vector3.right, horizontalRayLength, mask);
 
@@ -213,6 +213,7 @@ public class BallController : MonoBehaviour
     if (_isClickable)
     {
         _amountText.DOFade(1f, .1f);
+        _multiAmountText.DOFade(1f, .1f);
         _meshRenderer.material.SetFloat("_OutlineWidth", 1);
         if (IsHidden)
         {
@@ -225,6 +226,7 @@ public class BallController : MonoBehaviour
     {
         _meshRenderer.material.SetFloat("_OutlineWidth", 0);
         _amountText.DOFade(.35f, .1f);
+        _multiAmountText.DOFade(.35f, .1f);
     }
 }
 

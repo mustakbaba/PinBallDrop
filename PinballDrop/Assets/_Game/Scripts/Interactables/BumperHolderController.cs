@@ -139,9 +139,26 @@ public class BumperHolderController : MonoBehaviour
         }
 
         next.IsActiveBumper = true;
-        next.transform.DOScale(1f, 0.3f).SetEase(Ease.OutBack);
         next.IsHidden = false;
         next.SetColor();
+        next.transform.DOMove(current.transform.position, 0.3f).SetEase(Ease.OutBack);
+        next.transform.DOScale(1f, 0.3f).SetEase(Ease.OutBack);
+
+// Geri kalanları kaydır — next hariç
+        for (int i = currentIndex + 2; i < SpawnedObjects.Count; i++)
+        {
+            var bumper = SpawnedObjects[i].GetComponent<BumperController>();
+            if (bumper == null) continue;
+
+            int newIndex = i - currentIndex - 1; // 1'den başlar
+
+            Vector3 targetPos = SpawnedObjects[i - 1].position;
+            bumper.transform.DOMove(targetPos, 0.3f).SetEase(Ease.OutBack);
+
+            if (newIndex == 1 || newIndex == 2)
+                bumper.transform.DOScale(0.5f, 0.3f).SetEase(Ease.OutBack);
+            // newIndex >= 3 olanlar scale 0 kalır, hareket etmez
+        }
 
         int listIndex = BumperAreaManager.Instance.ActiveBumpers.IndexOf(current);
         if (listIndex >= 0)

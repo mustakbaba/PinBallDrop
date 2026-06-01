@@ -8,8 +8,6 @@ using UnityEngine;
 
 public class SlotController : MonoBehaviour
 {
-  
-
     public ColorTypes SlotColor { get; private set; }
     public bool IsAvailable => _balls.Count == 0;
     public bool IsFull => _balls.Count >= Columns * Depths * Rows;
@@ -32,7 +30,6 @@ public class SlotController : MonoBehaviour
     {
         _capacityText.text = $"{_balls.Count}/{Capacity}";
     }
-    
 
 
     private void OnMouseDown()
@@ -42,10 +39,10 @@ public class SlotController : MonoBehaviour
     }
 
     // SlotController.cs
-    public const int Capacity = 16; // 3x2x3
-    public const int Columns = 4;   // X
-    public const int Depths = 2;    // Z
-    public const int Rows = 2;      // Y
+    public const int Capacity = 20; // 3x2x3
+    public const int Columns = 5; // X
+    public const int Depths = 2; // Z
+    public const int Rows = 2; // Y
     public float Spacing = 0.5f;
 
     public bool TryAddBall(SmallBallController ball)
@@ -57,7 +54,6 @@ public class SlotController : MonoBehaviour
         if (IsAvailable)
             SlotColor = ball.ObjectColor;
 
-       
 
         int index = _balls.Count;
         int col = index % Columns;
@@ -65,9 +61,9 @@ public class SlotController : MonoBehaviour
         int row = index / (Columns * Depths);
 
 // Son 4 top için Y daha yüksek
-        float extraY = index >= Capacity - 4 ? 0.07f : 0f;
+        float extraY = index >= Capacity - 5 ? 0.07f : 0f;
 
-        Vector3 startOffset = new Vector3(-0.335f, 0.5f + extraY, -0.17f);
+        Vector3 startOffset = new Vector3(-0.4f, 0.57f + extraY, -0.17f);
 
         Vector3 localTarget = startOffset + new Vector3(
             col * Spacing * 1.5f,
@@ -108,27 +104,29 @@ public class SlotController : MonoBehaviour
         capacityManager.SetAmount(sendCount);
 
         var ballsToProcess = _balls.GetRange(0, sendCount);
-        _balls.RemoveRange(0, sendCount);
+       
 
         for (int i = 0; i < ballsToProcess.Count; i++)
         {
             var ball = ballsToProcess[i];
             if (ball == null) continue;
 
-            float delay = i * 0.05f;
+            float delay = i * 0.15f;
             ball.transform.DOKill();
             ball.transform.SetParent(null);
 
-            // Delay ile sırayla gönder
             DOVirtual.DelayedCall(delay, () =>
             {
                 if (ball == null) return;
                 ball.GoToPipe();
+                _balls.Remove(ball); // tek tek çıkar
+                UpdateText();
             });
         }
 
+
         // Son top gönderildikten sonra unlock
-        float totalDelay = (ballsToProcess.Count - 1) * 0.05f + 0.1f;
+        float totalDelay = (ballsToProcess.Count - 1) * 0.15f + 0.1f;
         DOVirtual.DelayedCall(totalDelay, () =>
         {
             _isClearing = false;
