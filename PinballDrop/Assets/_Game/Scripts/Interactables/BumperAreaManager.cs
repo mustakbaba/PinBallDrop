@@ -48,9 +48,9 @@ public class BumperAreaManager : MonoSingleton<BumperAreaManager>
         {
             var bumperHolder = allBumperHolders[i].transform;
             bumperHolder.gameObject.SetActive(true);
-            bumperHolder.transform.SetZ_Pos(0,Space.Self);
+          //  bumperHolder.transform.SetZ_Pos(0,Space.Self);
 
-            bumperHolder.transform.position = new Vector3(BumperHolders[i].XPos, BumperHolders[i].YPos, bumperHolder.transform.position.z);
+            //bumperHolder.transform.position = new Vector3(BumperHolders[i].XPos, BumperHolders[i].YPos, bumperHolder.transform.position.z);
         }
     }
     public void CheckWin()
