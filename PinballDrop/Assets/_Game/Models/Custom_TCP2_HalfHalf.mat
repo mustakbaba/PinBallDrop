@@ -51,7 +51,7 @@ Material:
     - _RampSmoothing: 0.359
     - _RampThreshold: 0.588
     - _ShadowColorLightAtten: 1
-    - _Smoothness: 0.55
+    - _Smoothness: 0
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 0.11532295, g: 1, b: 0, a: 1}
@@ -61,6 +61,7 @@ Material:
     - _HColor: {r: 1, g: 1, b: 1, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _SColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SpecularColor: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &7191851205360634849
 MonoBehaviour:

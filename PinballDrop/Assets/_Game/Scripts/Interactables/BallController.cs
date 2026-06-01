@@ -72,6 +72,7 @@ public class BallController : MonoBehaviour
             _propertyBlock = new MaterialPropertyBlock();
 
         renderer.GetPropertyBlock(_propertyBlock);
+        var clr = LevelManager.Instance.ObjectColors[(int)ObjectColor];
 
         if (BallBlocker == BallBlockers.MultiBall)
         {
@@ -79,8 +80,8 @@ public class BallController : MonoBehaviour
             _multiAmountText.gameObject.SetActive(true);
             _amountText.transform.localScale = Vector3.one * 0.75f;
             _multiAmountText.transform.localScale = Vector3.one * 0.75f;
-            _amountText.transform.localPosition = Vector3.zero + Vector3.up * .55f + Vector3.left * .25f;
-            _multiAmountText.transform.localPosition = Vector3.zero + Vector3.up * .55f + Vector3.right * .25f;
+            _amountText.transform.localPosition = Vector3.zero + Vector3.up * .55f + Vector3.right * .25f;
+            _multiAmountText.transform.localPosition = Vector3.zero + Vector3.up * .55f + Vector3.left * .25f;
 
             renderer.material = LevelManager.Instance.HalfHalfMaterial;
             _propertyBlock.SetColor("_BaseColor", LevelManager.Instance.ObjectColors[(int)ObjectColor]);
@@ -94,18 +95,26 @@ public class BallController : MonoBehaviour
             _amountText.transform.localPosition = Vector3.zero + Vector3.up * .55f + Vector3.forward * .1f;
             renderer.material = LevelManager.Instance.SingleMaterial;
             
-            var clr = LevelManager.Instance.ObjectColors[(int)ObjectColor];
             
             _propertyBlock.SetColor("_BaseColor", clr);
             renderer.SetPropertyBlock(_propertyBlock);
-            
-            clr *= 0.4f;
-            clr.a = 1f;
-            
-            _amountText.GetComponent<MeshRenderer>().GetPropertyBlock(_propertyBlock);
-            _propertyBlock.SetColor("_OutlineColor", clr);
-            _amountText.GetComponent<MeshRenderer>().SetPropertyBlock(_propertyBlock);
         }
+        
+        clr *= 0.4f;
+        clr.a = 1f;
+        
+        var multiColor = LevelManager.Instance.ObjectColors[(int)MultiColor];
+
+        multiColor *= 0.4f;
+        multiColor.a = 1f;
+            
+        _amountText.GetComponent<MeshRenderer>().GetPropertyBlock(_propertyBlock);
+        _propertyBlock.SetColor("_OutlineColor", clr);
+        _amountText.GetComponent<MeshRenderer>().SetPropertyBlock(_propertyBlock);
+       
+        _multiAmountText.GetComponent<MeshRenderer>().GetPropertyBlock(_propertyBlock);
+        _propertyBlock.SetColor("_OutlineColor", multiColor);
+        _multiAmountText.GetComponent<MeshRenderer>().SetPropertyBlock(_propertyBlock);
 
         var a = Mathf.InverseLerp(5, 20, BallAmount);
         var scale = Mathf.Lerp(0.5f, 2f, a);
@@ -215,7 +224,7 @@ public class BallController : MonoBehaviour
     else
     {
         _meshRenderer.material.SetFloat("_OutlineWidth", 0);
-        _amountText.DOFade(.25f, .1f);
+        _amountText.DOFade(.35f, .1f);
     }
 }
 
