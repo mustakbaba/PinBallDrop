@@ -241,7 +241,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _capacityText: {fileID: 4928426986152938358}
-  Spacing: 0.2
+  Spacing: 0.15
 --- !u!1001 &9117657728133637115
 PrefabInstance:
   m_ObjectHideFlags: 0
