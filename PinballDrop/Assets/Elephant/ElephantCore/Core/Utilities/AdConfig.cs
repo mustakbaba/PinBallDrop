@@ -21,7 +21,9 @@ namespace ElephantSDK
         public bool bidfloor_int_enabled = false;
         public bool bidfloor_rw_enabled = false;
         public bool bidfloor_test_flow_enabled = false;
-        
+        public PostbidAdunitsConfig postbid_interstitial;
+        public PostbidAdunitsConfig postbid_rewarded;
+
         public List<string> GetList(string key, List<string> def = null)
         {
             if(parameters.Count <= 0)  return def;
@@ -52,6 +54,26 @@ namespace ElephantSDK
         {
             public string key;
             public string value;
+        }
+
+        [Serializable]
+        public class PostbidAdunitsConfig
+        {
+            public bool enabled;
+            public bool disable_unit_after_consecutive_fail_cycles;
+            public PostbidAdunitConfig adunit_a;
+            public PostbidAdunitConfig adunit_b;
+            public PostbidAdunitConfig adunit_c;
+        }
+
+        [Serializable]
+        public class PostbidAdunitConfig
+        {
+            public bool enabled;
+            public double multiplier;
+            public int max_retry;
+            public int max_consecutive_fail_cycles;
+            public int order;
         }
     }
 }

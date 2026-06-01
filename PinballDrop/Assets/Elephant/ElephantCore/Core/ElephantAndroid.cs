@@ -279,6 +279,40 @@ namespace ElephantSDK
 
         currentActivity.Call("runOnUiThread", runnable);
     }
+
+	public static void openURLInWebView(string url)
+	{ 
+        if (elephantController != null)
+		{
+			elephantController.Call("openURLInWebView", url);
+		}
+	}  
+    
+    public static void openURLInChromeCustomTab(string url)
+    { 
+        if (elephantController != null)
+        {
+            elephantController.Call("openURLInChromeCustomTab", url);
+        }
+    }
+
+	/*public static bool IsPlayAgeSignalsAvailable()
+    {
+        bool isAvailable = false;
+        if (elephantController != null)
+        {
+            isAvailable = elephantController.Call<bool>("isPlayAgeSignalsAvailable");
+        }
+        return isAvailable;
+    }
+
+    public static void RequestPlayAgeSignals()
+    {
+        if (elephantController != null)
+        {
+            elephantController.Call("requestPlayAgeSignals");
+        }
+    }*/
 #endif
     }
 }

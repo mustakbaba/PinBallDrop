@@ -9,6 +9,8 @@ namespace ElephantSDK
 
         void TrackAdjustEvent(string token);
 
+        void TrackPurchaseRevenue(string token, double revenue, string currency);
+
         void SetTrackThirdPartySharing(bool isEea, bool adPersonalizationStatus, bool adUserDataStatus);
         
         void SetTrackThirdPartySharing(bool isEea);
@@ -31,4 +33,5 @@ namespace ElephantSDK
         void GetAdid(Action<string> callback);
         void AddSessionCallbackParameter(string key, string value);
     }
+
 }

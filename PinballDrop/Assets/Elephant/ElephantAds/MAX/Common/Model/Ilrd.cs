@@ -9,6 +9,13 @@ namespace ElephantSDK
     {
         public double? revenue;
 
+        [JsonProperty("eCPM")]
+        public double? ecpm;
+
+        public string adUnitName;
+        public int? consecutiveFailCycles;
+        public int? maxConsecutiveFailCycles;
+
         public static string ConvertToJson(object anyObject)
         {
             try

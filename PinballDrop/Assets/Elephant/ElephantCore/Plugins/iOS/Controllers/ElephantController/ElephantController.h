@@ -9,6 +9,7 @@
 #import "Utils.h"
 #import "InteractableHandler.h"
 #import "ReturningUserPopUpView.h"
+#import "ElephantBuildConfig.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -61,15 +62,19 @@ const long long getFirstInstallTime();
 void getNotificationPermission();
 void requestLocalizedPrices(const char *concatenatedProductIds);
 void setAppLovinGdprConsent(bool consent);
+#if !EXCLUDE_EXTRA_NETWORKS
 void setUnityAdsGdprConsent(bool consent);
 void setChartboostGdprConsent(bool consent);
 void setIronSourceGdprConsent(bool consent);
 void setPangleGdprConsent(bool consent);
+#endif
 void showReturningUserPopUpView(const char * action,
     const char * title, const char * content, const char * privacyPolicyText, 
     const char * privacyPolicyUrl,const char * backToGameActionButtonText);
 void showCollectiblePopUpView(const char * message, const char * buttonText);
 void openURL(const char * urlString);
+void openURLInWebView(const char * urlString);
+
     
 #ifdef __cplusplus
 } // extern "C"

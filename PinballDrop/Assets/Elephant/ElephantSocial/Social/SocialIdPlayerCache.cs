@@ -12,12 +12,12 @@ namespace ElephantSocial
         private readonly Dictionary<string, Player> _cachedPlayers = new Dictionary<string, Player>();
 
         public void GetPlayer(string socialId, Action<Player> onResponse, Action<string> onFailed,
-            Action<string> onError)
+            Action<string> onError, bool forceRefresh = false)
         {
             // Checking socialId is cached before
-            if (IsPlayerCached(socialId, out Player cachedPlayer))
+            if (!forceRefresh && IsPlayerCached(socialId, out Player cachedPlayer))
             {
-                // Cached player found 
+                // Cached player found
                 onResponse?.Invoke(cachedPlayer);
                 return;
             }

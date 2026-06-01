@@ -16,6 +16,15 @@ namespace ElephantSDK
         private static string LEVEL_FAILED = "level_failed";
         private static string LEVEL_COMPLETED = "level_completed";
 
+        private static string REWARDED_IMPRESSION_LOST = "rewarded_impression_lost";
+
+        private static string IAP_SHOP_OPENED = "iap_shop_opened";
+        private static string IAP_ITEM_TAPPED = "iap_item_tapped";
+        private static string IAP_PURCHASE_STARTED = "iap_purchase_started";
+        private static string IAP_PURCHASE_COMPLETED = "iap_purchase_completed";
+        private static string IAP_PURCHASE_FAILED = "iap_purchase_failed";
+        private static string IAP_PURCHASE_RESTORED = "iap_purchase_restored";
+
         private static MetaDataUtils _metaDataUtils;
 
         public static event Action OnLevelCompleted;
@@ -25,8 +34,12 @@ namespace ElephantSDK
 
         public static event Action OnOfferClosed;
         public static event Action OnCollectibleClaimed;
-        
+
         public static event Action<string> OnDeepLink;
+
+        public static event Action OnApplicationFocusTrue;
+
+        public static event Action<string> OnWebViewClosed;
 
         public static void Init(bool isOldUser = false, bool gdprSupported = false)
         {
@@ -44,11 +57,11 @@ namespace ElephantSDK
         {
             ElephantCore.Instance.HelpShiftElephantAdapter?.ShowConversation();
         }
-        
-        public static void LoadStorage(IElephantStorage model)
+
+        public static void LoadStorage(IElephantStorage model, bool autoClaim = true)
         {
             ElephantLog.Log("STORAGE", "Loading storage data");
-            ElephantStorageManager.GetInstance().LoadStorage(model);
+            ElephantStorageManager.GetInstance().LoadStorage(model, autoClaim);
         }
 
         public static void SaveStorage()
@@ -56,17 +69,47 @@ namespace ElephantSDK
             ElephantLog.Log("STORAGE", "Saving storage data");
             ElephantStorageManager.GetInstance().SaveStorage();
         }
-        
+
+        public static int GetPendingCollectiblesCount()
+        {
+            return ElephantStorageManager.GetInstance().GetPendingCollectiblesCount();
+        }
+
+        public static bool HasPendingCollectibles()
+        {
+            return ElephantStorageManager.GetInstance().HasPendingCollectibles();
+        }
+
+        public static List<CollectibleInfo> GetPendingCollectibles()
+        {
+            return ElephantStorageManager.GetInstance().GetPendingCollectibles();
+        }
+
+        public static void ClaimNextCollectible()
+        {
+            ElephantStorageManager.GetInstance().ClaimNextCollectible();
+        }
+
         public static void TriggerCollectibleClaimed()
         {
             OnCollectibleClaimed?.Invoke();
         }
-        
+
         public static void TriggerDeepLink(string url)
         {
             OnDeepLink?.Invoke(url);
         }
-        
+
+        public static void TriggerApplicationFocusTrue()
+        {
+            OnApplicationFocusTrue?.Invoke();
+        }
+
+        public static void TriggerWebViewClosed(string reason)
+        {
+            OnWebViewClosed?.Invoke(reason);
+        }
+
         public static IEnumerator ResetSoundWithDelay()
         {
             if (!ElephantCore.Instance.isSoundFixEnabled)
@@ -75,7 +118,7 @@ namespace ElephantSDK
             yield return new WaitForSeconds(3);
             AudioSettings.Reset(AudioSettings.GetConfiguration());
         }
-        
+
         public static void OpenURL(String url)
         {
 #if UNITY_IOS
@@ -94,20 +137,20 @@ namespace ElephantSDK
         public static void SetOfferListener(IOfferListener offerListener)
         {
             _offerListener = offerListener;
-            if(isLiveOpsReady)
+            if (isLiveOpsReady)
                 _offerListener?.OnLiveOpsReady();
         }
-        
+
         public static void TriggerOfferPurchaseRequested(PurchaseOption purchaseOption)
         {
             _offerListener?.OnLiveOpsOfferPurchaseRequested(purchaseOption);
         }
-        
+
         public static void TriggerOfferDismissed(List<PurchaseOption> purchaseOptions)
         {
             _offerListener?.OnLiveOpsOfferDismissed(purchaseOptions);
         }
-        
+
         public static void TriggerOfferShown(List<PurchaseOption> purchaseOptions)
         {
             _offerListener?.OnLiveOpsOfferShown(purchaseOptions);
@@ -120,7 +163,7 @@ namespace ElephantSDK
 #else
             isLiveOpsReady = isOfferAssetsReady && isOfferProductsReady;
 #endif
-            if(isLiveOpsReady)
+            if (isLiveOpsReady)
                 _offerListener?.OnLiveOpsReady();
         }
 
@@ -133,7 +176,7 @@ namespace ElephantSDK
         {
             subject = Utils.ReplaceEscapeCharsForUrl(subject);
             body = body + "\n\n" +
-                   "Elephant ID: " + ElephantCore.Instance.userId + 
+                   "Elephant ID: " + ElephantCore.Instance.userId +
                    "\nIDFV: " + ElephantCore.Instance.idfv +
                    "\nGame ID: " + ElephantCore.Instance.gameID;
             body = Utils.ReplaceEscapeCharsForUrl(body);
@@ -144,7 +187,8 @@ namespace ElephantSDK
         {
             if (ElephantCore.Instance == null)
             {
-                Debug.LogWarning("Elephant SDK isn't working correctly, make sure you put Elephant prefab into your first scene..");
+                Debug.LogWarning(
+                    "Elephant SDK isn't working correctly, make sure you put Elephant prefab into your first scene..");
                 return;
             }
 
@@ -162,7 +206,8 @@ namespace ElephantSDK
             ElephantLog.LogCustomKey("last_iap_product", request.product_id);
             if (ElephantCore.Instance == null)
             {
-                ElephantLog.LogError("<ELEPHANT>", "Elephant SDK isn't working correctly, make sure you put Elephant prefab into your first scene..");
+                ElephantLog.LogError("<ELEPHANT>",
+                    "Elephant SDK isn't working correctly, make sure you put Elephant prefab into your first scene..");
                 return;
             }
 
@@ -177,6 +222,18 @@ namespace ElephantSDK
 
         public static void ShowAlertDialog(string title, string message)
         {
+            if (UseNewPopupSystem(PopupType.Alert))
+            {
+                var popup = ElephantPopupManager.Instance.ShowPopup<AlertPopup>("ElephantUI/AlertPopup/AlertPopup");
+                if (popup != null)
+                {
+                    popup.Initialize(title, message);
+                    return;
+                }
+
+                ElephantLog.LogError("ELEPHANT", "Failed to show AlertPopup; falling back to native");
+            }
+
 #if UNITY_IOS
             ElephantIOS.showAlertDialog(title, message);
 #elif UNITY_ANDROID
@@ -190,7 +247,8 @@ namespace ElephantSDK
         {
             if (ElephantCore.Instance == null)
             {
-                ElephantLog.LogError("<ELEPHANT>", "Elephant SDK isn't working correctly, make sure you put Elephant prefab into your first scene..");
+                ElephantLog.LogError("<ELEPHANT>",
+                    "Elephant SDK isn't working correctly, make sure you put Elephant prefab into your first scene..");
                 return;
             }
 
@@ -204,7 +262,7 @@ namespace ElephantSDK
                 ElephantLog.LogError("<OFFER>", "Live-Ops Tool Disabled");
                 return;
             }
-            
+
             if (ElephantCore.Instance.LiveOpsElephantAdapter == null)
             {
                 ElephantLog.LogError("<ELEPHANT>", "Elephant LiveOps is not implemented");
@@ -228,6 +286,8 @@ namespace ElephantSDK
             _metaDataUtils.SetToPrefs(MetaDataKeys.KeyCurrentLevelId, originalLevelId);
 
             CustomEvent(LEVEL_STARTED, level, originalLevelId: originalLevelId, param: parameters);
+
+            ElephantCore.Instance.ElephantAdsAdapter?.TrackEvent("level_start", new Dictionary<string, string> { { "value", level.ToString() } });
         }
 
         public static void LevelCompleted(int level, string originalLevelId, Params parameters = null)
@@ -249,6 +309,8 @@ namespace ElephantSDK
 
             CustomEvent(LEVEL_COMPLETED, level, originalLevelId, levelTime, parameters);
 
+            ElephantCore.Instance.ElephantAdsAdapter?.TrackEvent("level_complete", new Dictionary<string, string> { { "value", level.ToString() } });
+
             if (OnLevelCompleted == null) return;
             var evnt = OnLevelCompleted;
             evnt?.Invoke();
@@ -265,7 +327,7 @@ namespace ElephantSDK
             ElephantLog.LogCustomKey("last_completed_level", level.ToString());
             ElephantLog.LogCustomKey("last_completed_level_id", originalLevelId);
             ElephantLog.LogCustomKey("total_level_completes", _metaDataUtils.GetLevelCompleteCount().ToString());
-            
+
             var currentLevel = MonitoringUtils.GetInstance().GetCurrentLevel();
             var currentTime = Utils.Timestamp();
             var levelTime = currentTime - currentLevel.level_time;
@@ -282,7 +344,94 @@ namespace ElephantSDK
             _metaDataUtils.SetToPrefs(MetaDataKeys.KeyLastLevelId, originalLevelId);
 
             CustomEvent(LEVEL_FAILED, level, originalLevelId: originalLevelId, levelTime: levelTime, param: parameters);
+
+            ElephantCore.Instance.ElephantAdsAdapter?.TrackEvent("level_failed", new Dictionary<string, string> { { "value", level.ToString() } });
         }
+
+        #region IAP Events
+
+        public static void IapShopOpened(string source, Params parameters = null)
+        {
+            var iapParams = Params.New()
+                .Set("source", source ?? "");
+
+            CustomEvent(IAP_SHOP_OPENED, -1, param: MergeParams(iapParams, parameters));
+        }
+
+        public static void IapItemTapped(string productId, double price, string currency, string source,
+            Params parameters = null)
+        {
+            var iapParams = Params.New()
+                .Set("product_id", productId ?? "")
+                .Set("currency", currency ?? "")
+                .Set("source", source ?? "")
+                .Set("price", price);
+
+            CustomEvent(IAP_ITEM_TAPPED, -1, param: MergeParams(iapParams, parameters));
+        }
+
+        public static void IapPurchaseStarted(string productId, double price, string currency, string source,
+            Params parameters = null)
+        {
+            var iapParams = Params.New()
+                .Set("product_id", productId ?? "")
+                .Set("currency", currency ?? "")
+                .Set("source", source ?? "")
+                .Set("price", price);
+
+            CustomEvent(IAP_PURCHASE_STARTED, -1, param: MergeParams(iapParams, parameters));
+        }
+
+        public static void IapPurchaseCompleted(string productId, double price, string currency, string source,
+            Params parameters = null)
+        {
+            var iapParams = Params.New()
+                .Set("product_id", productId ?? "")
+                .Set("currency", currency ?? "")
+                .Set("source", source ?? "")
+                .Set("price", price);
+
+            CustomEvent(IAP_PURCHASE_COMPLETED, -1, param: MergeParams(iapParams, parameters));
+        }
+
+        public static void IapPurchaseFailed(string productId, double price, string currency, string source,
+            string reason, Params parameters = null)
+        {
+            var iapParams = Params.New()
+                .Set("product_id", productId ?? "")
+                .Set("currency", currency ?? "")
+                .Set("source", source ?? "")
+                .Set("reason", reason ?? "")
+                .Set("price", price);
+
+            CustomEvent(IAP_PURCHASE_FAILED, -1, param: MergeParams(iapParams, parameters));
+        }
+
+        public static void IapPurchaseRestored(string productId, string source, Params parameters = null)
+        {
+            var iapParams = Params.New()
+                .Set("product_id", productId ?? "")
+                .Set("source", source ?? "");
+
+            CustomEvent(IAP_PURCHASE_RESTORED, -1, param: MergeParams(iapParams, parameters));
+        }
+
+        #endregion
+
+        #region Rewarded Ad Events
+
+        public static void RewardedImpressionLost(string type, string source, string item,
+            Params parameters = null)
+        {
+            var adParams = Params.New()
+                .Set("ad_placement_category", type ?? "")
+                .Set("ad_placement_source", source ?? "")
+                .Set("ad_placement_item", item ?? "");
+
+            CustomEvent(REWARDED_IMPRESSION_LOST, -1, param: MergeParams(adParams, parameters));
+        }
+
+        #endregion
 
         public static void Event(string type, int level, Params parameters = null, string originalLevelId = "")
         {
@@ -301,7 +450,8 @@ namespace ElephantSDK
             AdEvent("AdEvent_" + type, -1, param: param);
         }
 
-        public static void RewardedEvent(string eventType, ElephantLevel level, string type, string source, string item, string adUuid, int result = -1, string mediationInfo = "")
+        public static void RewardedEvent(string eventType, ElephantLevel level, string type, string source, string item,
+            string adUuid, int result = -1, string mediationInfo = "")
         {
             var parameters = Params.New()
                 .Set("ad_placement_category", type)
@@ -313,7 +463,8 @@ namespace ElephantSDK
             CustomEvent(eventType, level.level, originalLevelId: level.original_level, param: parameters);
         }
 
-        public static void InterstitialEvent(string eventType, ElephantLevel level, string source, string adUuid, int result = -1, string mediationInfo = "")
+        public static void InterstitialEvent(string eventType, ElephantLevel level, string source, string adUuid,
+            int result = -1, string mediationInfo = "")
         {
             var parameters = Params.New()
                 .Set("ad_placement_source", source)
@@ -322,7 +473,7 @@ namespace ElephantSDK
 
             CustomEvent(eventType, level.level, originalLevelId: level.original_level, param: parameters);
         }
-        
+
         private static void RequestRateUs(int level)
         {
 #if UNITY_IOS && !UNITY_EDITOR
@@ -330,7 +481,7 @@ namespace ElephantSDK
             var popupShown = Device.RequestStoreReview();
             Event(popupShown ? "RateUs_Shown" : "RateUs_NotShown", level);
 #else
-            ElephantLog.Log("RateUs","RateUs only works on IOS");
+            ElephantLog.Log("RateUs", "RateUs only works on IOS");
 #endif
         }
 
@@ -338,7 +489,8 @@ namespace ElephantSDK
         {
             if (ElephantCore.Instance == null)
             {
-                Debug.LogWarning("Elephant SDK isn't working correctly, make sure you put Elephant prefab into your first scene..");
+                Debug.LogWarning(
+                    "Elephant SDK isn't working correctly, make sure you put Elephant prefab into your first scene..");
                 return;
             }
 
@@ -355,7 +507,8 @@ namespace ElephantSDK
                 finalAmount - amount, finalAmount);
         }
 
-        public static void OfferShownEvent(string userSegment, string iapItemName, string offerName, string triggerPoint)
+        public static void OfferShownEvent(string userSegment, string iapItemName, string offerName,
+            string triggerPoint)
         {
             _metaDataUtils = MetaDataUtils.GetInstance();
             var liveOpsElephantAdapter = ElephantCore.Instance.LiveOpsElephantAdapter;
@@ -364,38 +517,45 @@ namespace ElephantSDK
                 ElephantLog.LogError("LIVEOPS", "LiveOpsElephantAdapter is NULL");
                 return;
             }
-            
+
             var currentOfferResponse = liveOpsElephantAdapter.GetCurrentOfferResponse();
             _metaDataUtils.AddOffer(currentOfferResponse);
             _metaDataUtils.AddFirstOffer(currentOfferResponse, triggerPoint);
             var parameters = SetOfferParameters(userSegment, iapItemName, offerName, triggerPoint);
-            CustomEvent("elephant_offer_shown", MonitoringUtils.GetInstance().GetCurrentLevel().level, originalLevelId: MonitoringUtils.GetInstance().GetCurrentLevel().original_level, param: parameters);
+            CustomEvent("elephant_offer_shown", MonitoringUtils.GetInstance().GetCurrentLevel().level,
+                originalLevelId: MonitoringUtils.GetInstance().GetCurrentLevel().original_level, param: parameters);
         }
 
-        public static void OfferAcceptedEvent(string userSegment, string iapItemName, string offerName, string triggerPoint)
+        public static void OfferAcceptedEvent(string userSegment, string iapItemName, string offerName,
+            string triggerPoint)
         {
             var parameters = SetOfferParameters(userSegment, iapItemName, offerName, triggerPoint);
             _metaDataUtils.AddPurchasedOffer(offerName);
-            CustomEvent("elephant_offer_purchased", MonitoringUtils.GetInstance().GetCurrentLevel().level, originalLevelId: MonitoringUtils.GetInstance().GetCurrentLevel().original_level, param: parameters);
+            CustomEvent("elephant_offer_purchased", MonitoringUtils.GetInstance().GetCurrentLevel().level,
+                originalLevelId: MonitoringUtils.GetInstance().GetCurrentLevel().original_level, param: parameters);
         }
 
-        public static void OfferCanceledEvent(string closeReason, string userSegment, string iapItemName, string offerName, string triggerPoint)
+        public static void OfferCanceledEvent(string closeReason, string userSegment, string iapItemName,
+            string offerName, string triggerPoint)
         {
             if (OnOfferClosed != null)
                 OnOfferClosed();
             var parameters = SetOfferParameters(userSegment, iapItemName, offerName, triggerPoint, closeReason);
-            CustomEvent("elephant_offer_canceled", MonitoringUtils.GetInstance().GetCurrentLevel().level, originalLevelId: MonitoringUtils.GetInstance().GetCurrentLevel().original_level, param: parameters);
+            CustomEvent("elephant_offer_canceled", MonitoringUtils.GetInstance().GetCurrentLevel().level,
+                originalLevelId: MonitoringUtils.GetInstance().GetCurrentLevel().original_level, param: parameters);
         }
 
-        public static void OfferClosedEvent(string userSegment, string iapItemName, string offerName, string triggerPoint)
+        public static void OfferClosedEvent(string userSegment, string iapItemName, string offerName,
+            string triggerPoint)
         {
             var parameters = SetOfferParameters(userSegment, iapItemName, offerName, triggerPoint);
-            CustomEvent("elephant_offer_closed", MonitoringUtils.GetInstance().GetCurrentLevel().level, originalLevelId: MonitoringUtils.GetInstance().GetCurrentLevel().original_level, param: parameters);
+            CustomEvent("elephant_offer_closed", MonitoringUtils.GetInstance().GetCurrentLevel().level,
+                originalLevelId: MonitoringUtils.GetInstance().GetCurrentLevel().original_level, param: parameters);
         }
 
-        private static Params SetOfferParameters(string userSegment, string iapItemName, string offerName, string triggerPoint, string closeReason = null)
+        private static Params SetOfferParameters(string userSegment, string iapItemName, string offerName,
+            string triggerPoint, string closeReason = null)
         {
-
             // we need to use keys as data point
             // i.e. key string 1 -> segmentinfo
             // closeReason has a special case. ask Mertkan and Nikan
@@ -408,13 +568,15 @@ namespace ElephantSDK
             return offerParams;
         }
 
-        private static void CustomEvent(string type, int level, string originalLevelId = "", long levelTime = 0, Params param = null)
+        private static void CustomEvent(string type, int level, string originalLevelId = "", long levelTime = 0,
+            Params param = null)
         {
             ElephantLog.Log("EVENT", $"Event: {type}, Level: {level}, Parameters: {param}");
 
             if (ElephantCore.Instance == null)
             {
-                Debug.LogWarning("Elephant SDK isn't working correctly, make sure you put Elephant prefab into your first scene..");
+                Debug.LogWarning(
+                    "Elephant SDK isn't working correctly, make sure you put Elephant prefab into your first scene..");
                 return;
             }
 
@@ -423,9 +585,9 @@ namespace ElephantSDK
             ev.level = level;
             ev.ltv = LtvManager.GetInstance().LifeTimeRevenue;
             ev.level_id = !string.IsNullOrEmpty(originalLevelId)
-                ? originalLevelId 
+                ? originalLevelId
                 : MonitoringUtils.GetInstance().GetCurrentLevel().original_level;
-            
+
             ev.level_time = levelTime;
 
             if (param != null)
@@ -436,12 +598,14 @@ namespace ElephantSDK
             var req = new ElephantRequest(ElephantConstants.EVENT_EP, ev);
             ElephantCore.Instance.AddToQueue(req);
         }
-        
-        private static void AdEvent(string type, int level, string originalLevelId = "", long levelTime = 0, Params param = null)
+
+        private static void AdEvent(string type, int level, string originalLevelId = "", long levelTime = 0,
+            Params param = null)
         {
             if (ElephantCore.Instance == null)
             {
-                Debug.LogWarning("Elephant SDK isn't working correctly, make sure you put Elephant prefab into your first scene..");
+                Debug.LogWarning(
+                    "Elephant SDK isn't working correctly, make sure you put Elephant prefab into your first scene..");
                 return;
             }
 
@@ -450,9 +614,9 @@ namespace ElephantSDK
             ev.level = level;
             ev.ltv = LtvManager.GetInstance().LifeTimeRevenue;
             ev.level_id = !string.IsNullOrEmpty(originalLevelId)
-                ? originalLevelId 
+                ? originalLevelId
                 : MonitoringUtils.GetInstance().GetCurrentLevel().original_level;
-            
+
             ev.level_time = levelTime;
 
             if (param != null)
@@ -463,15 +627,27 @@ namespace ElephantSDK
             var req = new ElephantRequest(ElephantConstants.AD_EVENT_EP, ev);
             ElephantCore.Instance.AddToQueue(req);
         }
+        
+		public static bool UseNewPopupSystem(PopupType popupType)
+		{
+			return PopupUIConfig.UseNewPopupSystem(popupType);
+		}
 
         public static void ShowSettingsView()
         {
+            if (UseNewPopupSystem(PopupType.Settings))
+            {
+                ElephantLog.Log("ELEPHANT", "ShowSettings - Using New Popup System");
+                ShowSettingsViewUnity();
+                return;
+            }
+
 #if UNITY_EDITOR
-// No-op
+            // No-op
 #elif UNITY_IOS
-                    ElephantIOS.showSettingsView("LOADING", "", ElephantCore.Instance.UsercentricsElephantAdapter.GetIsUcInitialized(), ElephantCore.Instance.userId);
+            ElephantIOS.showSettingsView("LOADING", "", ElephantCore.Instance.UsercentricsElephantAdapter.GetIsUcInitialized(), ElephantCore.Instance.userId);
 #elif UNITY_ANDROID
-                    ElephantAndroid.ShowSettingsViewOnUiThread("LOADING", "", ElephantCore.Instance.UsercentricsElephantAdapter.GetIsUcInitialized(), ElephantCore.Instance.userId);
+            ElephantAndroid.ShowSettingsViewOnUiThread("LOADING", "", ElephantCore.Instance.UsercentricsElephantAdapter.GetIsUcInitialized(), ElephantCore.Instance.userId);
 #endif
 
             ElephantCore.Instance.GetSettingsContent(response =>
@@ -481,7 +657,7 @@ namespace ElephantSDK
                     string responseString = JsonConvert.SerializeObject(response.data);
 
 #if UNITY_EDITOR
-// No-op
+                    // No-op
 #elif UNITY_IOS
                     ElephantIOS.showSettingsView("CONTENT", responseString, ElephantCore.Instance.UsercentricsElephantAdapter.GetIsUcInitialized(), ElephantCore.Instance.userId);
 #elif UNITY_ANDROID
@@ -491,7 +667,7 @@ namespace ElephantSDK
                 else
                 {
 #if UNITY_EDITOR
-// No-op
+                    // No-op
 #elif UNITY_IOS
                     ElephantIOS.showSettingsView("ERROR", "", ElephantCore.Instance.UsercentricsElephantAdapter.GetIsUcInitialized(), ElephantCore.Instance.userId);
 #elif UNITY_ANDROID
@@ -503,7 +679,7 @@ namespace ElephantSDK
             }, s =>
             {
 #if UNITY_EDITOR
-// No-op
+                    // No-op
 #elif UNITY_IOS
                     ElephantIOS.showSettingsView("ERROR", "", ElephantCore.Instance.UsercentricsElephantAdapter.GetIsUcInitialized(), ElephantCore.Instance.userId);
 #elif UNITY_ANDROID
@@ -513,6 +689,98 @@ namespace ElephantSDK
                 Debug.Log("Settings Error: " + s);
             });
         }
+        
+        public static void ShowInGameSettingsPopup(
+			Action<bool> onVibrationChanged = null,
+			Action<bool> onSoundChanged = null,
+            Action onChatRequested = null,
+            Action onRestorePurchasesRequested = null)
+        {
+            var inGameSettingsPopup = ElephantPopupManager.Instance.ShowPopup<InGameSettingsPopup>("ElephantUI/InGameSettings/InGameSettingsPopup");
+            if (inGameSettingsPopup == null)
+            {
+                ElephantLog.LogError("ELEPHANT", "Failed to show in-game settings popup");
+                return;
+            }
+
+            bool hasChatFeature = RemoteConfig.GetInstance().GetBool("elephant_chat_enabled", false);
+            bool isHelpshiftEnabled = ElephantCore.Instance?.GetOpenResponse()?.internal_config?.helpshift_enabled ?? false;
+            inGameSettingsPopup.Initialize(hasChatFeature, isHelpshiftEnabled, onChatRequested, onRestorePurchasesRequested, onSoundChanged, onVibrationChanged);
+        }
+
+        private static void ShowSettingsViewUnity()
+        {            
+            var loadingPopup = ElephantPopupManager.Instance
+                .ShowPopup<LoadingPopup>("ElephantUI/Loading/LoadingPopup");
+            if (loadingPopup != null)
+            {
+                loadingPopup.Initialize();
+            }
+
+            ElephantCore.Instance.GetSettingsContent(
+                response =>
+                {
+                    ElephantPopupManager.Instance.CloseCurrentPopup();
+                    
+                    if (response.responseCode == 200 && response.data != null)
+                    {
+                        ShowSettingsContentUnity(response.data);
+                    }
+                    else
+                    {
+                        ErrorPopup errorPopup = ElephantPopupManager.Instance.ShowPopup<ErrorPopup>("ElephantUI/Error/ErrorPopup");
+                        if (errorPopup != null)
+                        {
+                            errorPopup.Initialize(
+								"Something went wrong.\nPlease try again.",
+                                "OK",
+                                () => { ElephantPopupManager.Instance.CloseCurrentPopup(); }
+                            );
+                        }
+                    }
+                },
+                error =>
+                {
+                    ErrorPopup errorPopup = ElephantPopupManager.Instance.ShowPopup<ErrorPopup>("ElephantUI/Error/ErrorPopup");
+                    if (errorPopup != null)
+                    {
+                        errorPopup.Initialize(
+							"Something went wrong.\nPlease try again.",
+                            "OK",
+                            () => { ElephantPopupManager.Instance.CloseCurrentPopup(); }
+                        );
+                    }
+                }
+            );
+        }
+
+        private static void ShowSettingsContentUnity(SettingsResponse settingsData)
+        {
+            var popup = ElephantPopupManager.Instance
+                .ShowPopup<SettingsPopup>("ElephantUI/Settings/SettingsPopup");
+            
+            if (popup != null)
+            {
+                bool showCmpButton = ElephantCore.Instance.UsercentricsElephantAdapter
+                    ?.GetIsUcInitialized() ?? false;
+                
+                popup.Initialize(
+                    settingsData,
+                    ElephantCore.Instance.userId,
+                    showCmpButton,
+                    OnCmpButtonClicked
+                );
+            }
+            else
+            {
+                Debug.LogError("[Elephant] Failed to show settings popup");
+            }
+        }
+        
+        private static void OnCmpButtonClicked()
+        {
+            ElephantCore.Instance.UsercentricsElephantAdapter?.ShowSecondLayer();
+        }
 
 
         public static void ShowNetworkOfflineDialog()
@@ -520,21 +788,82 @@ namespace ElephantSDK
             if (!Utils.IsConnected())
             {
                 ElephantLog.LogError("NETWORK", "No internet connection detected");
-                ElephantLog.LogCustomKey("last_offline_session", ElephantCore.Instance.GetCurrentSession().GetSessionID().ToString());
+                ElephantLog.LogCustomKey("last_offline_session",
+                    ElephantCore.Instance.GetCurrentSession().GetSessionID().ToString());
                 if (ElephantCore.Instance != null)
                 {
-                    Utils.SaveToFile(ElephantConstants.OFFLINE_FLAG, ElephantCore.Instance.GetCurrentSession().GetSessionID().ToString());
+                    Utils.SaveToFile(ElephantConstants.OFFLINE_FLAG,
+                        ElephantCore.Instance.GetCurrentSession().GetSessionID().ToString());
                 }
-#if UNITY_EDITOR
-                ElephantLog.Log("Connection", "No internet connection.\nPlease check your internet settings.");
-#elif UNITY_IOS
-                ElephantIOS.showNetworkOfflinePopUpView("No internet connection.\nPlease check your internet settings.", "Try Again");
-#elif UNITY_ANDROID
-                ElephantAndroid.ShowNetworkOfflineDialog("No internet connection.\nPlease check your internet settings.", "Try Again");
-#endif
 
-                Utils.PauseGame();
+                if (UseNewPopupSystem(PopupType.NetworkOffline))
+                {
+                	ElephantLog.Log("ELEPHANT", "ShowNetworkOffline - Using New Popup System");
+                    NetworkOfflinePopup popup = ElephantPopupManager.Instance.ShowPopup<NetworkOfflinePopup>("ElephantUI/NetworkOffline/NetworkOfflinePopup");
+                    if (popup != null)
+                    {
+                        popup.Initialize(
+                            "Looks like there's no internet connection.\nPlease check your connection and try again.",
+                            "Try Again",
+                            () => { 
+                                ElephantCore.Instance.UserConsentAction("RETRY_CONNECTION");
+                            }
+                        );
+                    }
+                }
+                else
+                {
+#if UNITY_EDITOR
+                    ElephantLog.Log("Connection", "No internet connection.\nPlease check your internet settings.");
+#elif UNITY_IOS
+            ElephantIOS.showNetworkOfflinePopUpView("No internet connection.\nPlease check your internet settings.", "Try Again");
+#elif UNITY_ANDROID
+            ElephantAndroid.ShowNetworkOfflineDialog("No internet connection.\nPlease check your internet settings.", "Try Again");
+#endif
+                }
             }
+        }
+
+        public static void SetInGameSoundEnabled(bool enabled)
+        {
+            PlayerPrefs.SetInt(MetaDataKeys.KeyInGameSoundEnabled, enabled ? 1 : 0);
+            PlayerPrefs.Save();
+        }
+
+        public static bool IsInGameSoundEnabled()
+        {
+            return PlayerPrefs.GetInt(MetaDataKeys.KeyInGameSoundEnabled, 1) != 0;
+        }
+
+        private static Params MergeParams(Params baseParams, Params userParams)
+        {
+            if (userParams == null) return baseParams;
+
+            foreach (DictionaryEntry entry in userParams.stringVals)
+            {
+                var key = (string)entry.Key;
+                if (!baseParams.stringVals.Contains(key))
+                    baseParams.Set(key, (string)entry.Value);
+            }
+
+            foreach (DictionaryEntry entry in userParams.intVals)
+            {
+                var key = (string)entry.Key;
+                if (!baseParams.intVals.Contains(key))
+                    baseParams.Set(key, (int)entry.Value);
+            }
+
+            foreach (DictionaryEntry entry in userParams.doubleVals)
+            {
+                var key = (string)entry.Key;
+                if (!baseParams.doubleVals.Contains(key))
+                    baseParams.Set(key, (double)entry.Value);
+            }
+
+            if (!string.IsNullOrEmpty(userParams.customData) && string.IsNullOrEmpty(baseParams.customData))
+                baseParams.CustomString(userParams.customData);
+
+            return baseParams;
         }
 
         private static void MapParams(Params param, EventData ev)
@@ -542,85 +871,132 @@ namespace ElephantSDK
             ev.custom_data = param.customData;
 
             int c = 0;
-            foreach (var k in param.stringVals.Keys)
+            foreach (DictionaryEntry entry in param.stringVals)
             {
-                var v = param.stringVals[k];
-                if (c == 0)
+                var k = (string)entry.Key;
+                var v = (string)entry.Value;
+                switch (c)
                 {
-                    ev.key_string1 = k;
-                    ev.value_string1 = v;
-                }
-                else if (c == 1)
-                {
-                    ev.key_string2 = k;
-                    ev.value_string2 = v;
-                }
-                else if (c == 2)
-                {
-                    ev.key_string3 = k;
-                    ev.value_string3 = v;
-                }
-                else if (c == 3)
-                {
-                    ev.key_string4 = k;
-                    ev.value_string4 = v;
-                }
-
-                c++;
-            }
-
-
-            c = 0;
-            foreach (var k in param.intVals.Keys)
-            {
-                var v = param.intVals[k];
-                if (c == 0)
-                {
-                    ev.key_int1 = k;
-                    ev.value_int1 = v;
-                }
-                else if (c == 1)
-                {
-                    ev.key_int2 = k;
-                    ev.value_int2 = v;
-                }
-                else if (c == 2)
-                {
-                    ev.key_int3 = k;
-                    ev.value_int3 = v;
-                }
-                else if (c == 3)
-                {
-                    ev.key_int4 = k;
-                    ev.value_int4 = v;
+                    case 0:
+                        ev.key_string1 = k;
+                        ev.value_string1 = v;
+                        break;
+                    case 1:
+                        ev.key_string2 = k;
+                        ev.value_string2 = v;
+                        break;
+                    case 2:
+                        ev.key_string3 = k;
+                        ev.value_string3 = v;
+                        break;
+                    case 3:
+                        ev.key_string4 = k;
+                        ev.value_string4 = v;
+                        break;
+                    case 4:
+                        ev.key_string5 = k;
+                        ev.value_string5 = v;
+                        break;
+                    case 5:
+                        ev.key_string6 = k;
+                        ev.value_string6 = v;
+                        break;
+                    case 6:
+                        ev.key_string7 = k;
+                        ev.value_string7 = v;
+                        break;
+                    case 7:
+                        ev.key_string8 = k;
+                        ev.value_string8 = v;
+                        break;
                 }
 
                 c++;
             }
 
             c = 0;
-            foreach (var k in param.doubleVals.Keys)
+            foreach (DictionaryEntry entry in param.intVals)
             {
-                var v = param.doubleVals[k];
-                if (c == 0)
+                var k = (string)entry.Key;
+                var v = (int)entry.Value;
+                switch (c)
                 {
-                    ev.key_double1 = k;
-                    ev.value_double1 = v;
+                    case 0:
+                        ev.key_int1 = k;
+                        ev.value_int1 = v;
+                        break;
+                    case 1:
+                        ev.key_int2 = k;
+                        ev.value_int2 = v;
+                        break;
+                    case 2:
+                        ev.key_int3 = k;
+                        ev.value_int3 = v;
+                        break;
+                    case 3:
+                        ev.key_int4 = k;
+                        ev.value_int4 = v;
+                        break;
+                    case 4:
+                        ev.key_int5 = k;
+                        ev.value_int5 = v;
+                        break;
+                    case 5:
+                        ev.key_int6 = k;
+                        ev.value_int6 = v;
+                        break;
+                    case 6:
+                        ev.key_int7 = k;
+                        ev.value_int7 = v;
+                        break;
+                    case 7:
+                        ev.key_int8 = k;
+                        ev.value_int8 = v;
+                        break;
                 }
-                else if (c == 1)
+
+                c++;
+            }
+
+            c = 0;
+            foreach (DictionaryEntry entry in param.doubleVals)
+            {
+                var k = (string)entry.Key;
+                var v = (double)entry.Value;
+                switch (c)
                 {
-                    ev.key_double2 = k;
-                    ev.value_double2 = v;
-                }
-                else if (c == 2)
-                {
-                    ev.key_double3 = k;
-                    ev.value_double3 = v;
-                }
-                else if (c == 3)
-                {
-                    ev.key_double4 = k;
-                    ev.value_double4 = v;
+                    case 0:
+                        ev.key_double1 = k;
+                        ev.value_double1 = v;
+                        break;
+                    case 1:
+                        ev.key_double2 = k;
+                        ev.value_double2 = v;
+                        break;
+                    case 2:
+                        ev.key_double3 = k;
+                        ev.value_double3 = v;
+                        break;
+                    case 3:
+                        ev.key_double4 = k;
+                        ev.value_double4 = v;
+                        break;
+                    case 4:
+                        ev.key_double5 = k;
+                        ev.value_double5 = v;
+                        break;
+                    case 5:
+                        ev.key_double6 = k;
+                        ev.value_double6 = v;
+                        break;
+                    case 6:
+                        ev.key_double7 = k;
+                        ev.value_double7 = v;
+                        break;
+                    case 7:
+                        ev.key_double8 = k;
+                        ev.value_double8 = v;
+                        break;
                 }
 
                 c++;

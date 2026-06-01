@@ -89,6 +89,7 @@ namespace ElephantSDK
         public long server_time;
         public AgeGate age_gate;
         public SegmentConfig segment_config;
+        public bool age_range_blocked;
 
         public OpenResponse()
         {

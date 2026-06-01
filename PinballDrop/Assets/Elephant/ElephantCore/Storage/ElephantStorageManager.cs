@@ -19,6 +19,11 @@ namespace ElephantSDK
 
         private static ElephantStorageManager _instance;
         
+        private bool _autoClaimEnabled = true;
+
+        private bool _isStorageUploadInFlight;
+        private Storage _pendingUploadSnapshot;
+        
         public static ElephantStorageManager GetInstance()
         {
             return _instance ?? (_instance = new ElephantStorageManager());
@@ -41,7 +46,6 @@ namespace ElephantSDK
                     {
                         var parameters = Params.New().CustomString(JsonConvert.SerializeObject(response));
                         Elephant.Event("storage_restored", -1, parameters);
-                        
                         _loadedStorage = Storage.FromDownloadResponse(response);
                         SaveLocalStorage();
                         ElephantCore.Instance.isStorageRequestDone = true;
@@ -79,7 +83,7 @@ namespace ElephantSDK
             ElephantCore.Instance.StartCoroutine(collectiblesRequest);
         }
 
-        public void LoadStorage<T>(T model) where T : IElephantStorage
+        public void LoadStorage<T>(T model, bool autoClaim = true) where T : IElephantStorage
         {
             if (ElephantCore.Instance.isStorageLoaded)
             {
@@ -102,6 +106,7 @@ namespace ElephantSDK
 
             ElephantCore.Instance.isStorageLoaded = true;
 
+            _autoClaimEnabled = autoClaim;
             ShowNextCollectiblePopUp();
 
             ElephantCore.Instance.StartCoroutine(PeriodicSaveCoroutine(saveIntervalSeconds));
@@ -132,8 +137,44 @@ namespace ElephantSDK
                 return;
             }
 
-            var request = _storageOps.StorageUpload(_loadedStorage);
-            ElephantCore.Instance.StartCoroutine(request);
+            var snapshot = new Storage
+            {
+                version = _loadedStorage.version,
+                storageData = _loadedStorage.storageData
+            };
+
+            ScheduleStorageUpload(snapshot);
+        }
+
+        private void ScheduleStorageUpload(Storage snapshot)
+        {
+            if (_isStorageUploadInFlight)
+            {
+                if (_pendingUploadSnapshot == null || snapshot.version > _pendingUploadSnapshot.version)
+                {
+                    _pendingUploadSnapshot = snapshot;
+                }
+
+                return;
+            }
+
+            ElephantCore.Instance.StartCoroutine(StorageUploadCoroutine(snapshot));
+        }
+
+        private IEnumerator StorageUploadCoroutine(Storage snapshot)
+        {
+            _isStorageUploadInFlight = true;
+
+            yield return _storageOps.StorageUpload(snapshot);
+
+            _isStorageUploadInFlight = false;
+
+            var pending = _pendingUploadSnapshot;
+            _pendingUploadSnapshot = null;
+            if (pending != null && pending.version > snapshot.version)
+            {
+                ScheduleStorageUpload(pending);
+            }
         }
 
         private void PopulateReference()
@@ -193,8 +234,15 @@ namespace ElephantSDK
         {
             if (collectiblesQueue.Count > 0)
             {
-                var collectible = collectiblesQueue.Peek();
-                ShowCollectiblePopUpView(collectible.message, collectible.button_name);
+                if (_autoClaimEnabled)
+                {
+                    var collectible = collectiblesQueue.Peek();
+                    ShowCollectiblePopUpView(collectible.message, collectible.button_name);
+                }
+                else
+                {
+                    ElephantLog.Log("ELEPHANT-StorageManager", "AutoClaim disabled. Collectibles queued for manual claim.");
+                }
             }
             else
             {
@@ -215,8 +263,68 @@ namespace ElephantSDK
             }
         }
 
+        public int GetPendingCollectiblesCount()
+        {
+            return collectiblesQueue.Count;
+        }
+
+        public bool HasPendingCollectibles()
+        {
+            return collectiblesQueue.Count > 0;
+        }
+
+        public List<CollectibleInfo> GetPendingCollectibles()
+        {
+            var collectibleInfos = new List<CollectibleInfo>();
+
+            foreach (var collectible in collectiblesQueue)
+            {
+                var info = new CollectibleInfo
+                {
+                    Id = collectible.id,
+                    Message = collectible.message,
+                    ButtonName = collectible.button_name,
+                    Payload = new Dictionary<string, object>()
+                };
+
+                foreach (var kv in collectible.payload)
+                {
+                    info.Payload[kv.key] = kv.value;
+                }
+
+                collectibleInfos.Add(info);
+            }
+
+            return collectibleInfos;
+        }
+
+        public void ClaimNextCollectible()
+        {
+            if (collectiblesQueue.Count > 0)
+            {
+                var collectible = collectiblesQueue.Dequeue();
+                Claim(collectible);
+            }
+            else
+            {
+                ElephantLog.Log("ELEPHANT-StorageManager", "No collectibles available to claim.");
+            }
+        }
+
         private void ShowCollectiblePopUpView(string message, string buttonText)
         {
+            if (Elephant.UseNewPopupSystem(PopupType.Collectibles))
+            {
+                var popup = ElephantPopupManager.Instance.ShowPopup<CollectiblesPopup>("ElephantUI/Collectibles/CollectiblesPopup");
+                if (popup != null)
+                {
+                    popup.Initialize(message, buttonText);
+                    return;
+                }
+
+                ElephantLog.LogError("ELEPHANT-StorageManager", "Failed to show CollectiblesPopup; falling back to native.");
+            }
+
 #if UNITY_EDITOR
             ReceiveCollectibleResponse();
 

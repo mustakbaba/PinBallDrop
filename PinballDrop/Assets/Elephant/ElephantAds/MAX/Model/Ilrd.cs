@@ -15,13 +15,12 @@ namespace ElephantSDK
         public string errorMessage;
         public string adLoadFailInfo;
 
-        public static Ilrd CreateIlrd(MaxSdk.AdInfo adInfo, string adFormat, int adCycleId = -1)
+        public static Ilrd CreateIlrd(MaxSdk.AdInfo adInfo, string adFormat, int adCycleId = -1, bool isUsedEcpm = false)
         {
             try
             {
                 var ilrd = new Ilrd
                 {
-                    revenue = adInfo.Revenue,
                     networkName = adInfo.NetworkName,
                     adUnitId = adInfo.AdUnitIdentifier,
                     placement = adInfo.Placement,
@@ -30,6 +29,14 @@ namespace ElephantSDK
                     adFormat = adFormat,
                     cycleId = adCycleId
                 };
+                if (isUsedEcpm)
+                {
+                    ilrd.ecpm = adInfo.Revenue * 1000;
+                }
+                else
+                {
+                    ilrd.revenue = adInfo.Revenue;
+                }
 
                 return ilrd;
             }

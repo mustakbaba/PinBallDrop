@@ -4,8 +4,7 @@ namespace ElephantSDK
     {
         string ZyngaGameId { get; set; }
         string RollicUserId { get; set; }
-        void Initialize();
-        void Stop();
+        void Init();
         void LogAdjustInitializedEvent();
         void LogShowTosEvent();
         void LogAcceptTosEvent();
@@ -22,6 +21,7 @@ namespace ElephantSDK
     
     public enum ZPAdFormat
     {
+        Unknown,
         Banner,
         Interstitial,
         Rewarded

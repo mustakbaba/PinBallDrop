@@ -236,14 +236,48 @@ namespace Unity.Usercentrics
         /// Deny All button action. Use this method to signal when users presses this button.
         /// Only First Layer is supported.
         /// </summary>
-        public void DenyAll()
+        /// <param name="unsavedPurposeLIDecisions">
+        /// Optional JSON string with purpose legitimate interest decisions.
+        /// Format: {"purposeId": true/false, ...}
+        /// Example: {"1":true,"2":false}
+        /// </param>
+        public void DenyAll(string unsavedPurposeLIDecisions = null)
         {
             ensureSupportedPlatform();
             logDebug("DenyAll Invoked");
             ensureInitialized();
 
-            UsercentricsPlatform?.DenyAll();
+            UsercentricsPlatform?.DenyAll(unsavedPurposeLIDecisions);
         }
+        
+        /// <summary>
+        /// Available only when using GDPR Framework.
+        /// Accept All button action. Use this method to signal when users presses this button.
+        /// Only First Layer is supported.
+        /// </summary>
+        public void AcceptAllForGDPR()
+        {
+            ensureSupportedPlatform();
+            logDebug("AcceptAll For GDPR Invoked");
+            ensureInitialized();
+
+            UsercentricsPlatform?.AcceptAllForGDPR();
+        }
+
+        /// <summary>
+        /// Available only when using GDPR Framework.
+        /// Deny All button action. Use this method to signal when users presses this button.
+        /// Only First Layer is supported.
+        /// </summary>
+        public void DenyAllForGDPR()
+        {
+            ensureSupportedPlatform();
+            logDebug("DenyAll For GDPR Invoked");
+            ensureInitialized();
+
+            UsercentricsPlatform?.DenyAllForGDPR();
+        }
+
 
         /// <summary>
         /// Restore Consents given by a user using its Controller ID.
@@ -449,6 +483,29 @@ namespace Unity.Usercentrics
             this.clearSessionErrorCallback = errorCallback;
 
             UsercentricsPlatform?.ClearUserSession();
+        }
+        
+        /// <summary>
+        /// Available only when using GDPR Framework.
+        /// Save Decisions button action. Use this method to signal when users presses this button.
+        /// Only First Layer is supported.
+        /// </summary>
+        public List<UsercentricsServiceConsent> saveDecisionsForGDPR(List<UsercentricsUserDecision> decisions)
+        {
+            ensureSupportedPlatform();
+            logDebug("saveDecisionsGDPR For GDPR Invoked");
+            ensureInitialized();
+            
+            var wrapper = new UsercentricsUserDecisionListWrapper { decisions = decisions };
+            var decisionsJson = JsonUtility.ToJson(wrapper, true);
+            logDebug(decisionsJson);
+            
+            var rawServiceConsent = UsercentricsPlatform?.SaveDecisionsForGDPR(decisionsJson);
+            logDebug(rawServiceConsent);
+            
+            var data = JsonUtility.FromJson<UsercentricsServiceConsentWrapper>(rawServiceConsent);
+            return data.consents;
+            
         }
 
         #region UTILS

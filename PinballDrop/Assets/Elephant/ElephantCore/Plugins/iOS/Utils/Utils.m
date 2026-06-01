@@ -29,11 +29,12 @@
 }
 
 + (void)presentURL:(NSURL*)url {
-    WebViewController* webViewController = [[WebViewController alloc] init];
-    
-    [webViewController configureWithURL:url];
-    
-    [[Constants rootViewController] presentViewController:webViewController animated:YES completion:nil];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        WebViewController* webViewController = [[WebViewController alloc] init];
+        [webViewController configureWithURL:url];
+        [webViewController setModalPresentationStyle:UIModalPresentationFullScreen];
+        [[Constants rootViewController] presentViewController:webViewController animated:YES completion:nil];
+    });
 }
 
 @end

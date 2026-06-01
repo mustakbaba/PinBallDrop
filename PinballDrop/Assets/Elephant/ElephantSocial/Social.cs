@@ -47,9 +47,10 @@ namespace ElephantSocial
             return _socialInternal.GetPlayer();
         }
 
-        public void GetPlayer(string socialId, Action<Player> response, Action<string> onFailed, Action<string> onError)
+        public void GetPlayer(string socialId, Action<Player> response, Action<string> onFailed, Action<string> onError,
+            bool forceRefresh = false)
         {
-            _socialInternal.GetPlayer(socialId, response, onFailed, onError);
+            _socialInternal.GetPlayer(socialId, response, onFailed, onError, forceRefresh);
         }
     }
 }

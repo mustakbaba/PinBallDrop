@@ -1,3 +1,4 @@
+#define EXCLUDE_EXTRA_NETWORKS
 using System;
 using System.Collections.Generic;
 using Unity.Usercentrics;
@@ -168,6 +169,7 @@ namespace ElephantSDK
                         // AppLovin
                         ElephantAndroid.setAppLovinGdprConsent(consent.status);
                         break;
+#if !EXCLUDE_EXTRA_NETWORKS
                     case "IEbRp3saT":
                         // Chartboost
                         ElephantAndroid.setChartboostGdprConsent(consent.status);
@@ -184,6 +186,7 @@ namespace ElephantSDK
                         // Pangle
                         ElephantAndroid.setPangleGdprConsent(consent.status);
                         break;
+#endif
                     default:
                         break;
 #elif !UNITY_EDITOR && UNITY_IOS
@@ -191,6 +194,7 @@ namespace ElephantSDK
                         // AppLovin
                         ElephantIOS.setAppLovinGdprConsent(consent.status);
                         break;
+#if !EXCLUDE_EXTRA_NETWORKS
                     case "IEbRp3saT":
                         // Chartboost
                         ElephantIOS.setChartboostGdprConsent(consent.status);
@@ -207,6 +211,7 @@ namespace ElephantSDK
                         // Pangle
                         ElephantIOS.setPangleGdprConsent(consent.status);
                         break;
+#endif
                     default:
                         break;
 #endif
@@ -326,6 +331,7 @@ namespace ElephantSDK
                         // AppLovin
                         ElephantAndroid.setAppLovinGdprConsent(consent.status);
                         break;
+#if !EXCLUDE_EXTRA_NETWORKS
                     case "IEbRp3saT":
                         // Chartboost
                         ElephantAndroid.setChartboostGdprConsent(consent.status);
@@ -342,6 +348,7 @@ namespace ElephantSDK
                         // Pangle
                         ElephantAndroid.setPangleGdprConsent(consent.status);
                         break;
+#endif
                     default:
                         break;
 #elif !UNITY_EDITOR && UNITY_IOS
@@ -349,6 +356,7 @@ namespace ElephantSDK
                         // AppLovin
                         ElephantIOS.setAppLovinGdprConsent(consent.status);
                         break;
+#if !EXCLUDE_EXTRA_NETWORKS
                     case "IEbRp3saT":
                         // Chartboost
                         ElephantIOS.setChartboostGdprConsent(consent.status);
@@ -365,6 +373,7 @@ namespace ElephantSDK
                         // Pangle
                         ElephantIOS.setPangleGdprConsent(consent.status);
                         break;
+#endif
                     default:
                         break;
 #endif

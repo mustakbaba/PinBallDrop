@@ -33,6 +33,8 @@ namespace ElephantSDK
                 // Set Swift Libraries embedding to NO
                 project.SetBuildProperty(xcodeTarget, "ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES", "NO");
 
+                AddDeclaredAgeRange(project, project.GetUnityMainTargetGuid(), pathToBuiltProject);
+
                 EditInfoPlist(pathToBuiltProject);
 
                 File.WriteAllText(projectPath, project.WriteToString());
@@ -54,6 +56,24 @@ namespace ElephantSDK
                 manager.AddBackgroundModes(BackgroundModesOptions.RemoteNotifications);
             }
             manager.WriteToFile();
+        }
+
+		private static void AddDeclaredAgeRange(PBXProject project, string mainTarget, string buildPath)
+        {
+            string entitlementsPath = Path.Combine(buildPath, "Unity-iPhone.entitlements");
+            var plist = new PlistDocument();
+
+            if (File.Exists(entitlementsPath))
+			{
+				plist.ReadFromFile(entitlementsPath);
+			}
+
+            plist.root.SetBoolean("com.apple.developer.declared-age-range", true);
+            plist.WriteToFile(entitlementsPath);
+
+            project.SetBuildProperty(mainTarget, "CODE_SIGN_ENTITLEMENTS", "Unity-iPhone.entitlements");
+
+            Debug.Log("Declared Age Range entitlement added");
         }
         
         private static void EditInfoPlist(string pathToBuiltProject)

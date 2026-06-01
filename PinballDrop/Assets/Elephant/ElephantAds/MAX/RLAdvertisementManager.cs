@@ -15,9 +15,6 @@ using RollicGames.Utils;
 using UnityEngine.iOS;
 #endif
 
-#if ELEPHANT_AUDIOMOBS
-using Audiomob;
-#endif
 
 namespace RollicGames.Advertisements
 {
@@ -75,6 +72,18 @@ namespace RollicGames.Advertisements
         private bool _isBidFloorRwEnabled;
         private bool _isBidFloorTestFlowEnabled;
 
+        private PostBidConfig _interstitialPostBidConfig;
+        private PostBidConfig _rewardedPostBidConfig;
+
+        private PostBidAdUnitManager _interstitialPostBidManager;
+        private PostBidAdUnitManager _rewardedPostBidManager;
+
+        private bool IsInterstitialPostBidActive => _interstitialPostBidConfig?.PostBidEnabled == true &&
+                                                    _interstitialPostBidManager != null;
+
+        private bool IsRewardedPostBidActive =>
+            _rewardedPostBidConfig?.PostBidEnabled == true && _rewardedPostBidManager != null;
+
         private bool _isInterstitialReady = false;
         private bool _isBannerAutoShowEnabled = true;
 
@@ -111,28 +120,34 @@ namespace RollicGames.Advertisements
         private IZyngaPublishingElephantAdapter _zyngaPublishingAdapter;
         private IFirebaseElephantAdapter _firebaseAdapter;
 
-        
+
         //Protoype fields
         private bool _isAdFreeDay;
-        
-        // Inter Auto fields
-        private bool _autoShowEnabled;
+
+        // Interstitial rule fields
         private int _interstitialDisplayInterval;
         private float _lastTimeAdDisplayed;
         private int _addedValue;
         private float _timeSinceLastTimeAdDisplayed;
         private int _firstLevelToDisplay;
-        private int _firstInterDisplayTimeAfterStart;
         private int _levelFrequency;
         private int _lastLevelAdDisplayed;
-        private string _interShowLogic;
         private int _firstInterstitialDelay;
         private Timer _intTimer;
         private int _intRemainingTime;
         private bool _isIntLocked;
-        private const string InterstitialEventPrefix = "InterstitialEvent";
+        private string _interShowLogic;
+        private int _firstInterDisplayTimeAfterStart;
+        private bool _isInterstitialEnabled;
         public const string ShowLogicLevelBased = "level_based";
         public const string ShowLogicIncremental = "incremental";
+
+        // Banner rule fields
+        private bool _isBannerEnabled;
+        private int _firstBannerDelay;
+        private Timer _bannerDelayTimer;
+        private int _bannerDelayRemainingTime;
+        private bool _isBannerDelayLocked;
 
         // Rate Us fields
         private bool _isRateUsEnabled;
@@ -150,182 +165,14 @@ namespace RollicGames.Advertisements
         private float _timeSinceLastRateUsDisplayed;
         private const string RateUsEventPrefix = "RateUsEvent";
 
-        // Banner timer management
-        private int _firstBannerDelay;
-        private Timer _bannerTimer;
-        private int _bannerRemainingTime;
+        // Ad init config
+        private AdInitConfig _adInitConfig;
 
+        private bool _pendingInterstitialShowAfterFail = false;
+        private string _pendingShowInterstitialAdUnitId = null;
+        private bool _pendingRewardedShowAfterFail = false;
+        private string _pendingShowRewardedAdUnitId = null;
 
-#if ELEPHANT_AUDIOMOBS
-        #region AudioMob
-
-        public event Action<AdPlaybackStatus> AudioMobAdPlaybackStatusChanged;
-        public event Action<string, AdFailureReason> AudioMobAdFailed;
-        public static bool AudioMobPluginInitialized { get; set; }
-
-        private bool _audioMobAdsActive = false;
-        private bool _waitingInterstitialRequest = false;
-        private RollicInterstitialAd.InterstitialAdSource _waitingInterstitialRequestSource;
-
-        public bool audioMobActive = RemoteConfig.GetInstance().GetBool("audiomob_active", false);
-        public bool audioMobAdsForceRequestAdsButtonActive =
- RemoteConfig.GetInstance().GetBool("audiomob_ads_force_request_ads_button_active", false);
-        
-        public bool audioMobUseTimerCooldown = RemoteConfig.GetInstance().GetBool("audiomob_use_timer_cooldown", false);
-        
-        public int audioMobStartLevel = RemoteConfig.GetInstance().GetInt("audiomob_start_level", 3);
-        public int audioMobLevelCooldown = RemoteConfig.GetInstance().GetInt("audiomob_level_cooldown", 3);
-        public int audioMobMaximumSkippableAdCount =
- RemoteConfig.GetInstance().GetInt("audiomob_maximum_skippable_ad_count", 0);
-
-        public float audioMobSkippableAdTimerCooldown =
- RemoteConfig.GetInstance().GetFloat("audiomob_skippable_ad_timer_cooldown", 300f);
-        
-        public float audioMobAdPlayingVolume = RemoteConfig.GetInstance().GetFloat("audiomob_game_volume", -50f);
-        public float audioMobAdsVolume = RemoteConfig.GetInstance().GetFloat("audiomob_ad_volume", -25f);
-        
-        public float audioMobAppearCooldownFromGameSceneStartRemoteConfig =
- RemoteConfig.GetInstance().GetFloat("audiomob_appear_cd_from_gamescene_start", 10f);
-        public float audioMobAppearCooldownFromEveryLevelStartRemoteConfig =
- RemoteConfig.GetInstance().GetFloat("audiomob_appear_cd_from_every_level_start", 5f);
-        
-#if UNITY_EDITOR
-        private bool _audioMobDebuggerActive = RemoteConfig.GetInstance().GetBool("audiomob_debugger_active", true);
-#else
-        private bool _audioMobDebuggerActive = RemoteConfig.GetInstance().GetBool("audiomob_debugger_active", false);
-#endif
-        private bool _audioMobShowTestAdsActive =
- RemoteConfig.GetInstance().GetBool("audiomob_show_test_ads_active", false);
-        private bool _audioMobBlockInterstitialWhenAdsActive =
- RemoteConfig.GetInstance().GetBool("audiomob_block_interstitial_when_ads_active", true);
-        private bool _audioMobHoldInterstitialRequestUntilAudioAdsCompleted =
- RemoteConfig.GetInstance().GetBool("audiomob_hold_interstitial_request_until_audio_ads_completed", true);
-
-
-
-        private void CheckAudioMobsSystems()
-        {
-            if (audioMobActive && _audioMobHoldInterstitialRequestUntilAudioAdsCompleted)
-            {
-                if (_waitingInterstitialRequest && !_audioMobAdsActive)
-                {
-                    _waitingInterstitialRequest = false;
-                    AudioMobLog("Holding Interstitial Request is over. Interstitial Requested");
-                    showInterstitial(_waitingInterstitialRequestSource);
-                }
-            }
-        }
-
-        public void RequestAudioMobSkippableAds()
-        {
-            if (_isNoAdsPurchased)
-            {
-                return;
-            }
-            
-            if (AudioMobPluginInitialized && AudiomobPlugin.Instance != null && AudiomobPlugin.Instance.IsAdAvailable(AudiomobPlugin.AdUnits.SkippableRectangle))
-            {
-                AudiomobPlugin.Instance.PlayAd(AudiomobPlugin.AdUnits.SkippableRectangle);
-            }
-        }
-
-        private void OnAudioMobAdPlaybackStatusChanged(AdSequence adSequence, AdPlaybackStatus adPlaybackStatus)
-        {
-            switch (adPlaybackStatus)
-            {
-                case AdPlaybackStatus.Started:
-                    _audioMobAdsActive = true;
-                    break;
-                default:
-                    _audioMobAdsActive = false;
-                    break;
-            }
-            
-            AudioMobAdPlaybackStatusChanged?.Invoke(adPlaybackStatus);
-            AudioMobLog($"OnAudioMobAdPlaybackStatusChanged => {adPlaybackStatus}");
-        }
-
-        private void OnAudioMobAdFailedEvent(string adUnitId, AdFailureReason adFailureReason)
-        {
-            AudioMobAdFailed?.Invoke(adUnitId, adFailureReason);
-            AudioMobLog($"OnAudioMobAdFailedEvent => adUnitId:{adUnitId} - Reason: {adFailureReason}");
-            _audioMobAdsActive = false;
-        }
-
-        public void AudioMobLog(string log)
-        {
-            if (_audioMobDebuggerActive)
-            {
-                Elephant.Event(log, -1);
-#if UNITY_EDITOR
-                Debug.LogWarning(log);
-#endif
-            }
-        }
-
-        private void OnAudiomobPaidEvent(IAudioAd adInfo)
-        {
-            if (_adjustAdapter == null)
-            {
-                AudioMobLog("AudiomobPaidEvent AdjustAdapter IS NULL");
-                return;
-            }
-
-            var revenue = adInfo.Ecpm / 1000;
-            if (revenue <= 0f)
-            {
-                ElephantLog.Log("AUDIOMOB", "Paid event revenue is zero");
-                AudioMobLog("AudiomobPaidEvent Paid event revenue is zero");
-
-                return;
-            }
-
-            AudioMobLog($"AudiomobPaidEvent Paid event revenue is {revenue}");
-
-            var extraParams = new Dictionary<string, string>
-            {
-                { "ad_format", "Banner" }
-            };
-
-            _adjustAdapter.TrackAdRevenue(
-                "applovin_max_sdk",
-                revenue,
-                "USD",
-                "audiomob",
-                adInfo.Id,
-                "Banner",
-                "Banner",
-                adInfo.AdUnitId,
-                extraParams
-            );
-
-            _revenueForwardingUtils.UpdateRevenue(revenue);
-            _ltvManager?.UpdateRevenue(revenue);
-
-            var impressionParameters = new Dictionary<string, object>
-            {
-                {"ad_platform", "applovin_max"},
-                {"ad_source", "audiomob"},
-                {"ad_unit_name", adInfo.Id},
-                {"ad_format", "Banner"},
-                {"value", revenue},
-                {"currency", "USD"},
-            };
-
-            _firebaseAdapter?.LogEvent("ad_impression", impressionParameters);
-            _firebaseAdapter?.LogEvent("custom_ad_impression", impressionParameters);
-
-            var fbAdParams = new Dictionary<string, object>
-            {
-                [AppEventParameterName.Currency] = "USD"
-            };
-            _facebookAdapter?.LogAppEvent("AdImpression", revenue, fbAdParams);
-        }
-
-
-        #endregion
-
-#endif
 
         private void SetAdapters()
         {
@@ -384,29 +231,34 @@ namespace RollicGames.Advertisements
 
         private void Update()
         {
-#if ELEPHANT_AUDIOMOBS
-            CheckAudioMobsSystems();
-#endif
-
             while (_actions.TryDequeue(out var action))
             {
                 action.Invoke();
             }
         }
-        
+
         public void StartAdManager()
         {
             var adInstance = Instance;
         }
 
+        public void Init(AdInitConfig config = null)
+        {
+            _adInitConfig = config ?? new AdInitConfig();
+
+            var initParams = Params.New();
+            initParams.Set("load_interstitial", _adInitConfig.loadInterstitial ? 1 : 0);
+            initParams.Set("load_rewarded", _adInitConfig.loadRewarded ? 1 : 0);
+            initParams.Set("load_banner", _adInitConfig.loadBanner ? 1 : 0);
+            Elephant.Event("ads_init", -1, initParams);
+
+            InitInternal("", false);
+        }
+
+        // Backward-compat wrapper
         public void init(bool isDebugEnabled = false)
         {
-            if (_autoShowEnabled)
-            {
-                ElephantLog.LogError("RLAdvertisementManager", "Auto show is enabled, don't manual init.");
-                return;
-            }
-            InitInternal("", isDebugEnabled);
+            Init();
         }
 
         internal void InitInternal(string appKey = "", bool isDebugEnabled = false)
@@ -520,6 +372,8 @@ namespace RollicGames.Advertisements
 
 #endif
 
+            InitializePostBidFlow(adConfig);
+
             var timerStringList = adConfig.GetList("retry_periods", defaultTimerList);
 
             timers = timerStringList
@@ -532,13 +386,188 @@ namespace RollicGames.Advertisements
             _ltvManager = LtvManager.GetInstance();
         }
 
-        private void OnLevelCompleted()
+        private void InitializePostBidFlow(AdConfig adConfig)
         {
-            if (_autoShowEnabled && !_isAdFreeDay && string.Equals(_interShowLogic, ShowLogicLevelBased))
+            if (adConfig == null)
             {
-                ShowInterstitialLevelBased();
+                return;
             }
 
+            GetPostBidInterstitialSdkAdUnitIds(out var intA, out var intB, out var intC);
+            if (PostbidResolvedChain.TryFromAdChain(adConfig.postbid_interstitial, intA, intB, intC,
+                    "postbid_interstitial", out var intConfigData))
+            {
+                CreatePostBidManager(intConfigData, false, out _interstitialPostBidConfig,
+                    out _interstitialPostBidManager);
+                if (_interstitialPostBidManager != null)
+                {
+                    _interstitialPostBidManager.OnApplyFloorPrice = (adUnitId, key, value) =>
+                    {
+                        MaxSdk.SetInterstitialExtraParameter(adUnitId, key, value);
+                        ElephantLog.Log("POSTBID", $"Applied interstitial eCPM floor: unit {adUnitId} : {value}$");
+                    };
+                }
+            }
+
+            GetPostBidRewardedSdkAdUnitIds(out var rewA, out var rewB, out var rewC);
+            if (PostbidResolvedChain.TryFromAdChain(adConfig.postbid_rewarded, rewA, rewB, rewC, "postbid_rewarded",
+                    out var rewConfigData))
+            {
+                CreatePostBidManager(rewConfigData, true, out _rewardedPostBidConfig, out _rewardedPostBidManager);
+                if (_rewardedPostBidManager != null)
+                {
+                    _rewardedPostBidManager.OnApplyFloorPrice = (adUnitId, key, value) =>
+                    {
+                        MaxSdk.SetRewardedAdExtraParameter(adUnitId, key, value);
+                        ElephantLog.Log("POSTBID", $"Applied rewarded eCPM floor: unit {adUnitId} : {value}$");
+                    };
+                }
+            }
+        }
+
+        private static void GetPostBidInterstitialSdkAdUnitIds(out string a, out string b, out string c)
+        {
+#if UNITY_IOS && !UNITY_EDITOR
+			a = RollicApplovinIDs.PostbidInterstitialIosAdunitA;
+			b = RollicApplovinIDs.PostbidInterstitialIosAdunitB;
+			c = RollicApplovinIDs.PostbidInterstitialIosAdunitC;
+#elif UNITY_ANDROID || UNITY_EDITOR
+            a = RollicApplovinIDs.PostbidInterstitialAndroidAdunitA;
+            b = RollicApplovinIDs.PostbidInterstitialAndroidAdunitB;
+            c = RollicApplovinIDs.PostbidInterstitialAndroidAdunitC;
+#else
+			a = b = c = "";
+#endif
+        }
+
+        private static void GetPostBidRewardedSdkAdUnitIds(out string a, out string b, out string c)
+        {
+#if UNITY_IOS && !UNITY_EDITOR
+			a = RollicApplovinIDs.PostbidRewardedIosAdunitA;
+			b = RollicApplovinIDs.PostbidRewardedIosAdunitB;
+			c = RollicApplovinIDs.PostbidRewardedIosAdunitC;
+#elif UNITY_ANDROID || UNITY_EDITOR
+            a = RollicApplovinIDs.PostbidRewardedAndroidAdunitA;
+            b = RollicApplovinIDs.PostbidRewardedAndroidAdunitB;
+            c = RollicApplovinIDs.PostbidRewardedAndroidAdunitC;
+#else
+			a = b = c = "";
+#endif
+        }
+
+        private void ApplyPostbidIlrdAdUnitName(Ilrd ilrd, PostBidAdUnitManager manager, string adUnitId)
+        {
+            if (ilrd == null || manager == null || string.IsNullOrEmpty(adUnitId))
+            {
+                return;
+            }
+
+            var unit = manager.GetUnit(adUnitId);
+            if (unit == null || string.IsNullOrEmpty(unit.PostbidAdUnitName))
+            {
+                return;
+            }
+
+            ilrd.adUnitName = unit.PostbidAdUnitName;
+        }
+
+        private void ApplyPostbidIlrdLoadFailed(Ilrd ilrd, PostBidAdUnitManager manager, string adUnitId)
+        {
+            if (ilrd == null || manager == null || string.IsNullOrEmpty(adUnitId))
+            {
+                return;
+            }
+
+            var unit = manager.GetUnit(adUnitId);
+            if (unit == null || string.IsNullOrEmpty(unit.PostbidAdUnitName))
+            {
+                return;
+            }
+
+            ilrd.adUnitName = unit.PostbidAdUnitName;
+            ilrd.consecutiveFailCycles = GetPostbidNextConsecutiveFailCycles(manager, unit);
+            ilrd.maxConsecutiveFailCycles = unit.MaxConsecutiveFailCycles;
+        }
+
+        private static int GetPostbidNextConsecutiveFailCycles(PostBidAdUnitManager manager, PostBidAdUnitState unit)
+        {
+            if (manager?.Config == null || unit == null)
+            {
+                return 0;
+            }
+
+            // Reporting-only: always include this failure in the count (+1), without changing runtime retry/disable logic.
+            return unit.ConsecutiveFailCycles + 1;
+        }
+
+        private static string GetPostBidAdUnitId(PostbidResolvedUnit config)
+        {
+            return config?.AdUnitId ?? "";
+        }
+
+        private void CreatePostBidManager(PostbidResolvedChain result, bool isRewarded, out PostBidConfig config,
+            out PostBidAdUnitManager manager)
+        {
+            manager = null;
+            config = null;
+            if (result == null || !result.Enabled)
+            {
+                config = new PostBidConfig(false, new List<PostBidAdUnitState>());
+                return;
+            }
+
+            bool disableAfterConsecutiveFails = result.DisableUnitAfterConsecutiveFailCycles;
+            var units = result.Units
+                .Where(u => u.Enabled && !string.IsNullOrEmpty(GetPostBidAdUnitId(u)))
+                .OrderBy(u => u.Order)
+                .Select((u, i) =>
+                {
+                    var id = GetPostBidAdUnitId(u);
+                    if (string.IsNullOrEmpty(id))
+                    {
+                        return null;
+                    }
+
+                    var state = new PostBidAdUnitState
+                    {
+                        Index = i,
+                        Id = id,
+                        IsActive = true,
+                        LastECPM = 0,
+                        RetryAttempts = 0,
+                        MaxRetryCount = u.MaxRetry < 0
+                            ? PostBidAdUnitManager.UnlimitedRetries
+                            : (u.MaxRetry > 0 ? u.MaxRetry : 1),
+                        ConsecutiveFailCycles = 0,
+                        MaxConsecutiveFailCycles = disableAfterConsecutiveFails
+                            ? (i == 0
+                                ? PostBidAdUnitManager.UnlimitedConsecutiveFailCycles
+                                : u.MaxConsecutiveFailCycles)
+                            : 0,
+                        FloorMultiplier = u.Multiplier > 0 ? u.Multiplier : 1.0,
+                        PostbidAdUnitName = u.PostbidAdUnitName
+                    };
+                    return state;
+                })
+                .Where(s => s != null)
+                .Cast<PostBidAdUnitState>()
+                .ToList();
+            if (units.Count == 0)
+            {
+                config = new PostBidConfig(false, new List<PostBidAdUnitState>(), false);
+                return;
+            }
+
+            config = new PostBidConfig(true, units, disableAfterConsecutiveFails);
+            manager = new PostBidAdUnitManager(config, new Dictionary<string, bool>());
+            ElephantLog.Log("POSTBID",
+                $"Floor units: " + string.Join(", ",
+                    units.Select(u =>
+                        $"[{u.Index}]{u.Id}(mult={u.FloorMultiplier},maxRetry={u.MaxRetryCount},maxConsecFail={u.MaxConsecutiveFailCycles})")));
+        }
+
+        private void OnLevelCompleted()
+        {
             if (_isRateUsEnabled && string.Equals(_rateUsShowLogic, ShowLogicLevelBased))
             {
                 ShowRateUsLevelBased();
@@ -593,26 +622,31 @@ namespace RollicGames.Advertisements
                 isValid = false;
                 missingIds += "TestInterstitialHighAdUnitAndroid,";
             }
+
             if (string.IsNullOrEmpty(RollicApplovinIDs.TestInterstitialMidAdUnitAndroid))
             {
                 isValid = false;
                 missingIds += "TestInterstitialMidAdUnitAndroid,";
             }
+
             if (string.IsNullOrEmpty(RollicApplovinIDs.TestInterstitialNormalAdUnitAndroid))
             {
                 isValid = false;
                 missingIds += "TestInterstitialNormalAdUnitAndroid,";
             }
+
             if (string.IsNullOrEmpty(RollicApplovinIDs.TestRewardedHighAdUnitAndroid))
             {
                 isValid = false;
                 missingIds += "TestRewardedHighAdUnitAndroid,";
             }
+
             if (string.IsNullOrEmpty(RollicApplovinIDs.TestRewardedMidAdUnitAndroid))
             {
                 isValid = false;
                 missingIds += "TestRewardedMidAdUnitAndroid,";
             }
+
             if (string.IsNullOrEmpty(RollicApplovinIDs.TestRewardedNormalAdUnitAndroid))
             {
                 isValid = false;
@@ -645,7 +679,6 @@ namespace RollicGames.Advertisements
 
         void Start()
         {
-            _autoShowEnabled = RemoteConfig.GetInstance().GetBool("gamekit_ads_enabled", false);
             _isAdFreeDay = ElephantCore.Instance.CheckAdFreePeriod();
 #if UNITY_ANDROID || UNITY_EDITOR
             InitMediation("consent_disabled");
@@ -868,15 +901,8 @@ namespace RollicGames.Advertisements
 
         private long GetTimeSpentInMinutes()
         {
-            try
-            {
-                var totalTimeSpend = ElephantSDK.Utils.ReadFromFile(ElephantConstants.TimeSpend);
-                return string.IsNullOrEmpty(totalTimeSpend) ? 0 : Convert.ToInt64(totalTimeSpend) / 1000 / 60;
-            }
-            catch
-            {
-                return 0;
-            }
+            var totalTimeSpendMs = ElephantSDK.Utils.ReadLongFromFile(ElephantConstants.TimeSpend, 0);
+            return totalTimeSpendMs / 1000 / 60;
         }
 
         #region AdEvents
@@ -892,75 +918,27 @@ namespace RollicGames.Advertisements
             //     "custom_keyword:" + RemoteConfig.GetInstance().Get("custom_keyword_for_targeting", "")
             // };
 
-#if ELEPHANT_APP_OPEN_INTERSTITIAL
-            if (appOpenAdActive && !_isNoAdsPurchased)
+            if (_interstitialPostBidManager != null && _interstitialPostBidManager.Config?.Units != null)
             {
-                MaxSdkCallbacks.AppOpen.OnAdHiddenEvent += OnAppOpenDismissedEvent;
-                if (IsAppOpenAdsAvailable(true))
+                foreach (var u in _interstitialPostBidManager.Config.Units)
                 {
-                    if (appOpenUseInterstitialWhenRequestAppOpen)
+                    if (string.IsNullOrEmpty(u.Id))
                     {
-                        StartCoroutine(requestAppOpenInterstitialWithDelay());
+                        continue;
                     }
-                    else
-                    {
-                        if (MaxSdk.IsAppOpenAdReady(appOpenAdUnitId))
-                        {
-                            MaxSdk.ShowAppOpenAd(appOpenAdUnitId);
-                        }
-                        else
-                        {
-                            MaxSdk.LoadAppOpenAd(appOpenAdUnitId);
-                        }
 
-                        MaxSdkCallbacks.AppOpen.OnAdLoadedEvent += ShowFirstOpenAd;
+                    MaxSdk.SetInterstitialExtraParameter(u.Id, "disable_auto_retries", "true");
+                    try
+                    {
+                        _interstitialAdUnitIdStatus.Add(u.Id, false);
+                    }
+                    catch (Exception e)
+                    {
+                        ElephantLog.LogError("POSTBID", $"Error adding interstitial ad unit IDs: {e.Message}");
                     }
                 }
-
-                if (!appOpenUseInterstitialWhenRequestAppOpen)
-                {
-                    MaxSdkCallbacks.AppOpen.OnAdRevenuePaidEvent += (adUnitId, adInfo) =>
-                        OnImpressionTrackedEvent(adUnitId, adInfo, RLAdFormat.Interstitial);
-                }
             }
-
-#endif
-
-#if ELEPHANT_AUDIOMOBS
-            if (audioMobActive && !_isNoAdsPurchased)
-            {
-                if (AudiomobPlugin.Instance != null && !AudioMobPluginInitialized)
-                {
-                    AudiomobPlugin.Init(isSuccess =>
-                    {
-                        if (isSuccess)
-                        {
-                            AudioMobPluginInitialized = true;
-                            
-                            if (_audioMobShowTestAdsActive)
-                            {
-                                AudiomobPlugin.Instance.ForceTestAds = true;
-                            }
-
-                            AudiomobPlugin.Instance.SendConsentStrings =
- ElephantCore.Instance.consentStatus == "Authorized";
-                            AudiomobPlugin.Instance.OnAdPlaybackStatusChanged += OnAudioMobAdPlaybackStatusChanged;
-                            AudiomobPlugin.Instance.OnAdFailed += OnAudioMobAdFailedEvent;
-                        }
-                        else
-                        {
-                            AudioMobLog("Failed to Initialize AudioMobPlugin");
-                        }
-                    });
-
-                    AudiomobPlugin.Instance.OnAdPaid += OnAudiomobPaidEvent;
-                }
-            }
-
-#endif
-
-
-            if (_isBidFloorEnabled)
+            else if (_isBidFloorEnabled)
             {
                 if (IsIntBidFloorAdUnitIdsOk())
                 {
@@ -982,7 +960,30 @@ namespace RollicGames.Advertisements
                         ElephantLog.LogError("RLADS-EVENTS", "Error adding interstitial ad unit IDs: " + e.Message);
                     }
                 }
+            }
 
+            if (_rewardedPostBidManager != null && _rewardedPostBidManager.Config?.Units != null)
+            {
+                foreach (var u in _rewardedPostBidManager.Config.Units)
+                {
+                    if (string.IsNullOrEmpty(u.Id))
+                    {
+                        continue;
+                    }
+
+                    MaxSdk.SetRewardedAdExtraParameter(u.Id, "disable_auto_retries", "true");
+                    try
+                    {
+                        _rewardedAdUnitIdStatus.Add(u.Id, false);
+                    }
+                    catch (Exception e)
+                    {
+                        ElephantLog.LogError("POSTBID", $"Error adding rewarded ad unit IDs: {e.Message}");
+                    }
+                }
+            }
+            else if (_isBidFloorEnabled)
+            {
                 if (IsRwBidFloorAdUnitIdsOk())
                 {
                     MaxSdk.SetRewardedAdExtraParameter(_rewardedVideoHighAdUnit, "disable_auto_retries",
@@ -1019,37 +1020,57 @@ namespace RollicGames.Advertisements
 
         IEnumerator LoadAdsAfterInitialization()
         {
+            // Initialize rules before the delay so they're ready when OnRollicAdsSdkInitializedEvent fires
+            InitInterstitialRules();
+            InitBannerRules();
+
             yield return new WaitForSecondsRealtime(1.0f);
-            if (_isBidFloorEnabled)
-            {
-                ElephantLog.Log("Bidfloor test: ", "First Request - high");
-                RequestInterstitial(_isBidFloorIntEnabled
-                    ? _interstitialHighAdUnit
-                    : _interstitialAdUnit);
 
-                yield return new WaitForSecondsRealtime(1.0f);
-                RequestRewardedAd(_isBidFloorRwEnabled
-                    ? _rewardedVideoHighAdUnit
-                    : _rewardedVideoAdUnit);
-            }
-            else
+            if (_adInitConfig == null || _adInitConfig.loadInterstitial)
             {
-                RequestInterstitial(_interstitialAdUnit);
-                yield return new WaitForSecondsRealtime(1.0f);
-                RequestRewardedAd(_rewardedVideoAdUnit);
-            }
-
-            if (_autoShowEnabled && !_isAdFreeDay)
-            {
-                if (RemoteConfig.GetInstance().GetBool("gamekit_banner_enabled", false))
+                if (IsInterstitialPostBidActive)
                 {
-                    InitBannerTimer();
-                } 
-            
-                if (RemoteConfig.GetInstance().GetBool("gamekit_interstitial_enabled", true))
-                {
-                    InitAutoShowInterstitials();
+                    string interstitialToRequest = _interstitialPostBidManager.GetFirstUnit()?.Id;
+                    RequestInterstitial(interstitialToRequest);
                 }
+                else if (_isBidFloorEnabled)
+                {
+                    ElephantLog.Log("Bidfloor test: ", "First Request - high");
+                    RequestInterstitial(_isBidFloorIntEnabled
+                        ? _interstitialHighAdUnit
+                        : _interstitialAdUnit);
+                }
+                else
+                {
+                    RequestInterstitial(_interstitialAdUnit);
+                }
+            }
+
+            yield return new WaitForSecondsRealtime(1.0f);
+
+            if (_adInitConfig == null || _adInitConfig.loadRewarded)
+            {
+                if (IsRewardedPostBidActive)
+                {
+                    string rewardedToRequest = _rewardedPostBidManager.GetFirstUnit()?.Id;
+                    RequestRewardedAd(rewardedToRequest);
+                }
+                else if (_isBidFloorEnabled)
+                {
+                    RequestRewardedAd(_isBidFloorRwEnabled
+                        ? _rewardedVideoHighAdUnit
+                        : _rewardedVideoAdUnit);
+                }
+                else
+                {
+                    RequestRewardedAd(_rewardedVideoAdUnit);
+                }
+            }
+
+            // Banner: preload hidden if opted in, dev calls showBanner() when ready
+            if (_adInitConfig != null && _adInitConfig.loadBanner)
+            {
+                loadBanner(autoShow: false);
             }
 
             SetBannerBackground("#ffffff");
@@ -1091,38 +1112,94 @@ namespace RollicGames.Advertisements
 
         private void OnInterstitialLoadedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
         {
-#if ELEPHANT_APP_OPEN_INTERSTITIAL
-            if (adUnitId == appOpenInterstitialAdUnitId)
-            {
-                return;
-            }
-#endif
-
             ElephantLog.Log("RLADS-EVENTS", "OnInterstitialLoadedEvent: " + adInfo);
 
-            if (!string.Equals(adUnitId, _interstitialAdUnit))
+            if (IsInterstitialPostBidActive)
             {
-                ElephantLog.Log("Bidfloor test: ", "OnInterstitialLoadedEvent ad unit id : " + adUnitId);
                 _interstitialAdUnitIdStatus[adUnitId] = true;
-                if (string.Equals(adUnitId, _interstitialHighAdUnit))
+
+                var isPendingShow = _pendingInterstitialShowAfterFail && adUnitId == _pendingShowInterstitialAdUnitId;
+                if (isPendingShow)
                 {
-                    ElephantLog.Log("Bidfloor test: ", "OnInterstitialLoadedEvent high.. request mid");
-                    RequestInterstitial(_interstitialMidAdUnit);
+                    _pendingInterstitialShowAfterFail = false;
+                    _pendingShowInterstitialAdUnitId = null;
+                    ElephantLog.Log("POSTBID", $"Interstitial pending show: unit {adUnitId} loaded. Showing now");
+                    MaxSdk.ShowInterstitial(adUnitId);
                 }
-                else if (string.Equals(adUnitId, _interstitialMidAdUnit))
+
+                var unit = _interstitialPostBidManager.GetUnit(adUnitId);
+                if (unit != null)
                 {
-                    ElephantLog.Log("Bidfloor test: ", "OnInterstitialLoadedEvent mid.. request norm");
-                    RequestInterstitial(_interstitialNormalAdUnit);
+                    var ecpm = adInfo.Revenue * 1000;
+                    if (!_interstitialPostBidManager.IsEcpmValid(unit, ecpm))
+                    {
+                        var prevUnit = _interstitialPostBidManager.GetPreviousUnit(unit);
+                        if (prevUnit != null)
+                        {
+                            ElephantLog.Log("POSTBID",
+                                $"eCPM dropped. unit[{unit.Index}] {ecpm:F2} <= prev {prevUnit.LastECPM:F2}");
+                        }
+                    }
+
+                    _interstitialPostBidManager.UpdateLastEcpm(unit, ecpm);
+                    if (!isPendingShow)
+                    {
+                        var nextUnit = _interstitialPostBidManager.GetNextUnit(unit);
+                        if (nextUnit != null)
+                        {
+                            if (_interstitialPostBidManager.IsUnitDisabledDueToConsecutiveFails(nextUnit))
+                            {
+                                ElephantLog.Log("POSTBID",
+                                    $"Loaded unit[{unit.Index}] {unit.Id}. Next unit[{nextUnit.Index}] {nextUnit.Id} disabled (consecutive fails). Not requesting");
+                                _isInterstitialReady = true;
+                                _interstitialPostBidManager?.ResetCycle();
+                            }
+                            else
+                            {
+                                ElephantLog.Log("POSTBID",
+                                    $"Loaded unit[{unit.Index}] {unit.Id}. Requesting next unit[{nextUnit.Index}] {nextUnit.Id}");
+                                RequestInterstitial(nextUnit.Id);
+                            }
+                        }
+                        else
+                        {
+                            _isInterstitialReady = true;
+                            _interstitialPostBidManager?.ResetCycle();
+                        }
+                    }
+                    else
+                    {
+                        _isInterstitialReady = true;
+                    }
                 }
             }
             else
             {
-                _isInterstitialReady = true;
+                if (!string.Equals(adUnitId, _interstitialAdUnit))
+                {
+                    ElephantLog.Log("Bidfloor test: ", "OnInterstitialLoadedEvent ad unit id : " + adUnitId);
+                    _interstitialAdUnitIdStatus[adUnitId] = true;
+                    if (string.Equals(adUnitId, _interstitialHighAdUnit))
+                    {
+                        ElephantLog.Log("Bidfloor test: ", "OnInterstitialLoadedEvent high.. request mid");
+                        RequestInterstitial(_interstitialMidAdUnit);
+                    }
+                    else if (string.Equals(adUnitId, _interstitialMidAdUnit))
+                    {
+                        ElephantLog.Log("Bidfloor test: ", "OnInterstitialLoadedEvent mid.. request norm");
+                        RequestInterstitial(_interstitialNormalAdUnit);
+                    }
+                }
+                else
+                {
+                    _isInterstitialReady = true;
+                }
             }
 
             interstitialRequestTimerIndex = 0;
 
-            var ilrd = Ilrd.CreateIlrd(adInfo, RLAdFormat.Interstitial, interstitialCycleId);
+            var ilrd = Ilrd.CreateIlrd(adInfo, RLAdFormat.Interstitial, interstitialCycleId, true);
+            ApplyPostbidIlrdAdUnitName(ilrd, _interstitialPostBidManager, adUnitId);
             Elephant.AdEventV2("OnInterstitialLoadedEvent", Ilrd.ConvertToJson(ilrd));
 
             _zyngaPublishingAdapter?.LogAdLoadedEvent(
@@ -1146,13 +1223,6 @@ namespace RollicGames.Advertisements
 
         private void OnInterstitialFailedEvent(string adUnitId, MaxSdkBase.ErrorInfo errorInfo)
         {
-#if ELEPHANT_APP_OPEN_INTERSTITIAL
-            if (adUnitId == appOpenInterstitialAdUnitId)
-            {
-                return;
-            }
-#endif
-
             ElephantLog.Log("RLADS-EVENTS", "OnInterstitialFailedEvent: " + errorInfo);
 
             if (!string.Equals(adUnitId, _interstitialAdUnit))
@@ -1170,6 +1240,7 @@ namespace RollicGames.Advertisements
             _rollicInterstitialAd = RollicInterstitialAd.VideoFailedToLoad(_rollicInterstitialAd);
 
             var ilrd = Ilrd.CreateError(errorInfo, adUnitId, RLAdFormat.Interstitial, interstitialCycleId);
+            ApplyPostbidIlrdLoadFailed(ilrd, _interstitialPostBidManager, adUnitId);
             var errorJson = Ilrd.ConvertToJson(ilrd);
             Elephant.AdEventV2("OnInterstitialFailedEvent", errorJson);
 
@@ -1187,16 +1258,56 @@ namespace RollicGames.Advertisements
         private void OnInterstitialFailedToShowEvent(string adUnitId, MaxSdkBase.ErrorInfo errorInfo,
             MaxSdkBase.AdInfo adInfo)
         {
-#if ELEPHANT_APP_OPEN_INTERSTITIAL
-            if (adUnitId == appOpenInterstitialAdUnitId)
-            {
-                return;
-            }
-#endif
-
             ElephantLog.Log("RLADS-EVENTS", "OnInterstitialFailedToShowEvent: " + errorInfo);
 
-            if (!string.Equals(adUnitId, _interstitialAdUnit))
+            if (IsInterstitialPostBidActive)
+            {
+                _interstitialAdUnitIdStatus[adUnitId] = false;
+                _isInterstitialReady = false;
+
+                var unit = _interstitialPostBidManager.GetUnit(adUnitId);
+                var fallbackUnit = _interstitialPostBidManager.GetPreviousUnit(unit);
+
+                while (fallbackUnit != null)
+                {
+                    if (MaxSdk.IsInterstitialReady(fallbackUnit.Id))
+                    {
+                        ElephantLog.Log("POSTBID",
+                            $"Interstitial show fail for unit[{unit.Index}]. Fallback to unit[{fallbackUnit.Index}]");
+                        MaxSdk.ShowInterstitial(fallbackUnit.Id);
+                        return;
+                    }
+
+                    fallbackUnit = _interstitialPostBidManager.GetPreviousUnit(fallbackUnit);
+                }
+
+                var current = _interstitialPostBidManager?.GetChainFirstUnit();
+                PostBidAdUnitState unitToRequest = null;
+                while (current != null)
+                {
+                    if (!MaxSdk.IsInterstitialReady(current.Id))
+                    {
+                        unitToRequest = current;
+                        break;
+                    }
+
+                    current = _interstitialPostBidManager.GetNextUnit(current);
+                }
+
+                if (unitToRequest != null)
+                {
+                    _pendingInterstitialShowAfterFail = true;
+                    _pendingShowInterstitialAdUnitId = unitToRequest.Id;
+                    ElephantLog.Log("POSTBID",
+                        $"Interstitial show fail, no fallback. Requesting unit[{unitToRequest.Index}]");
+                    RequestInterstitial(unitToRequest.Id);
+                }
+                else if (unit != null)
+                {
+                    StartCoroutine(RequestInterstitialAgain(unit.Id));
+                }
+            }
+            else if (!string.Equals(adUnitId, _interstitialAdUnit))
             {
                 ElephantLog.Log("Bidfloor test: ", "OnInterstitialFailedToShowEvent ad unit id : " + adUnitId);
                 _interstitialAdUnitIdStatus[adUnitId] = false;
@@ -1234,13 +1345,6 @@ namespace RollicGames.Advertisements
 
         private void OnInterstitialShownEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
         {
-#if ELEPHANT_APP_OPEN_INTERSTITIAL
-            if (adUnitId == appOpenInterstitialAdUnitId)
-            {
-                return;
-            }
-#endif
-
             ElephantLog.Log("RLADS-EVENTS", "OnInterstitialShownEvent: " + adInfo);
 
             if (!string.Equals(adUnitId, _interstitialAdUnit))
@@ -1255,15 +1359,18 @@ namespace RollicGames.Advertisements
 
             _rollicInterstitialAd = RollicInterstitialAd.VideoShown(_rollicInterstitialAd);
 
-            var ilrd = Ilrd.CreateIlrd(adInfo, RLAdFormat.Interstitial, interstitialCycleId);
+            if (IsInterstitialPostBidActive)
+            {
+                _interstitialPostBidManager?.SetCycleStartUnit(adUnitId);
+            }
+
+            var ilrd = Ilrd.CreateIlrd(adInfo, RLAdFormat.Interstitial, interstitialCycleId, true);
+            ApplyPostbidIlrdAdUnitName(ilrd, _interstitialPostBidManager, adUnitId);
             Elephant.AdEventV2("OnInterstitialShownEvent", Ilrd.ConvertToJson(ilrd));
 
-            if (_autoShowEnabled)
-            {
-                _lastTimeAdDisplayed = Time.realtimeSinceStartup;
-                _lastLevelAdDisplayed = MonitoringUtils.GetInstance().GetCurrentLevel().level;
-                _addedValue = 0;
-            }
+            _lastTimeAdDisplayed = Time.realtimeSinceStartup;
+            _lastLevelAdDisplayed = MonitoringUtils.GetInstance().GetCurrentLevel().level;
+            _addedValue = 0;
 
             var evnt = OnRollicAdsInterstitialShownEvent;
             evnt?.Invoke();
@@ -1271,25 +1378,44 @@ namespace RollicGames.Advertisements
 
         private void OnInterstitialDismissedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
         {
-#if ELEPHANT_APP_OPEN_INTERSTITIAL
-            if (adUnitId == appOpenInterstitialAdUnitId)
-            {
-                return;
-            }
-#endif
-
             ElephantLog.Log("RLADS-EVENTS", "OnInterstitialDismissedEvent: " + adInfo);
 
-            if (!string.Equals(adUnitId, _interstitialAdUnit))
+            if (IsInterstitialPostBidActive)
             {
-                ElephantLog.Log("Bidfloor test: ", "OnInterstitialDismissedEvent ad unit id : " + adUnitId);
+                _interstitialPostBidManager?.SetCycleStartUnit(adUnitId);
                 _interstitialAdUnitIdStatus[adUnitId] = false;
-                RequestInterstitial(_interstitialHighAdUnit);
+                var current = _interstitialPostBidManager?.GetFirstUnit();
+                PostBidAdUnitState unitToRequest = null;
+                while (current != null)
+                {
+                    if (!MaxSdk.IsInterstitialReady(current.Id))
+                    {
+                        unitToRequest = current;
+                        break;
+                    }
+
+                    current = _interstitialPostBidManager.GetNextUnit(current);
+                }
+
+                if (unitToRequest != null)
+                {
+                    ElephantLog.Log("POSTBID", $"Interstitial dismissed. Requesting unit[{unitToRequest.Index}]");
+                    RequestInterstitial(unitToRequest.Id);
+                }
             }
             else
             {
-                _isInterstitialReady = false;
-                RequestInterstitial(_interstitialAdUnit);
+                if (!string.Equals(adUnitId, _interstitialAdUnit))
+                {
+                    ElephantLog.Log("Bidfloor test: ", "OnInterstitialDismissedEvent ad unit id : " + adUnitId);
+                    _interstitialAdUnitIdStatus[adUnitId] = false;
+                    RequestInterstitial(_interstitialHighAdUnit);
+                }
+                else
+                {
+                    _isInterstitialReady = false;
+                    RequestInterstitial(_interstitialAdUnit);
+                }
             }
 
             RollicInterstitialAd.VideoClosed(_rollicInterstitialAd);
@@ -1307,13 +1433,6 @@ namespace RollicGames.Advertisements
 
         private void OnInterstitialClickedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
         {
-#if ELEPHANT_APP_OPEN_INTERSTITIAL
-            if (adUnitId == appOpenInterstitialAdUnitId)
-            {
-                return;
-            }
-#endif
-
             var ilrd = Ilrd.CreateIlrd(adInfo, RLAdFormat.Interstitial, interstitialCycleId);
             Elephant.AdEventV2("OnInterstitialClickedEvent", Ilrd.ConvertToJson(ilrd));
 
@@ -1333,25 +1452,83 @@ namespace RollicGames.Advertisements
         private void OnRewardedVideoLoadedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
         {
             ElephantLog.Log("RLADS-EVENTS", "OnRewardedVideoLoadedEvent: " + adInfo);
-            if (!string.Equals(adUnitId, _rewardedVideoAdUnit))
+
+            if (IsRewardedPostBidActive)
             {
-                ElephantLog.Log("Bidfloor test: ", "OnRewardedVideoLoadedEvent ad unit id : " + adUnitId);
                 _rewardedAdUnitIdStatus[adUnitId] = true;
-                if (string.Equals(adUnitId, _rewardedVideoHighAdUnit))
+
+                var isPendingShow = _pendingRewardedShowAfterFail && adUnitId == _pendingShowRewardedAdUnitId;
+                if (isPendingShow)
                 {
-                    ElephantLog.Log("Bidfloor test: ", "OnRewardedVideoLoadedEvent high.. request mid");
-                    RequestRewardedAd(_rewardedVideoMidAdUnit);
+                    _pendingRewardedShowAfterFail = false;
+                    _pendingShowRewardedAdUnitId = null;
+                    ElephantLog.Log("POSTBID", $"Rewarded pending show: unit {adUnitId} loaded. Showing now");
+                    MaxSdk.ShowRewardedAd(adUnitId);
                 }
-                else if (string.Equals(adUnitId, _rewardedVideoMidAdUnit))
+
+                var unit = _rewardedPostBidManager.GetUnit(adUnitId);
+                if (unit != null)
                 {
-                    ElephantLog.Log("Bidfloor test: ", "OnRewardedVideoLoadedEvent mid.. request norm");
-                    RequestRewardedAd(_rewardedVideoNormalAdUnit);
+                    var ecpm = adInfo.Revenue * 1000;
+                    if (!_rewardedPostBidManager.IsEcpmValid(unit, ecpm))
+                    {
+                        var prevUnit = _rewardedPostBidManager.GetPreviousUnit(unit);
+                        if (prevUnit != null)
+                        {
+                            ElephantLog.Log("POSTBID",
+                                $"Rewarded eCPM dropped. unit[{unit.Index}] {ecpm:F2} <= prev {prevUnit.LastECPM:F2}");
+                        }
+                    }
+
+                    _rewardedPostBidManager.UpdateLastEcpm(unit, ecpm);
+                    if (!isPendingShow)
+                    {
+                        var nextUnit = _rewardedPostBidManager.GetNextUnit(unit);
+                        if (nextUnit != null)
+                        {
+                            if (_rewardedPostBidManager.IsUnitDisabledDueToConsecutiveFails(nextUnit))
+                            {
+                                ElephantLog.Log("POSTBID",
+                                    $"Rewarded loaded unit[{unit.Index}] {unit.Id}. Next unit[{nextUnit.Index}] {nextUnit.Id} disabled (consecutive fails). Not requesting");
+                                _rewardedPostBidManager?.ResetCycle();
+                            }
+                            else
+                            {
+                                ElephantLog.Log("POSTBID",
+                                    $"Requesting next rewarded unit: [{nextUnit.Index}] {nextUnit.Id}");
+                                RequestRewardedAd(nextUnit.Id);
+                            }
+                        }
+                        else
+                        {
+                            _rewardedPostBidManager?.ResetCycle();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (!string.Equals(adUnitId, _rewardedVideoAdUnit))
+                {
+                    ElephantLog.Log("Bidfloor test: ", "OnRewardedVideoLoadedEvent ad unit id : " + adUnitId);
+                    _rewardedAdUnitIdStatus[adUnitId] = true;
+                    if (string.Equals(adUnitId, _rewardedVideoHighAdUnit))
+                    {
+                        ElephantLog.Log("Bidfloor test: ", "OnRewardedVideoLoadedEvent high.. request mid");
+                        RequestRewardedAd(_rewardedVideoMidAdUnit);
+                    }
+                    else if (string.Equals(adUnitId, _rewardedVideoMidAdUnit))
+                    {
+                        ElephantLog.Log("Bidfloor test: ", "OnRewardedVideoLoadedEvent mid.. request norm");
+                        RequestRewardedAd(_rewardedVideoNormalAdUnit);
+                    }
                 }
             }
 
             rewardedRequestTimerIndex = 0;
 
-            var ilrd = Ilrd.CreateIlrd(adInfo, RLAdFormat.RewardedAd, rewardedAdCycleId);
+            var ilrd = Ilrd.CreateIlrd(adInfo, RLAdFormat.RewardedAd, rewardedAdCycleId, true);
+            ApplyPostbidIlrdAdUnitName(ilrd, _rewardedPostBidManager, adUnitId);
             Elephant.AdEventV2("OnRewardedVideoLoadedEvent", Ilrd.ConvertToJson(ilrd));
 
             _zyngaPublishingAdapter?.LogAdLoadedEvent(
@@ -1374,18 +1551,33 @@ namespace RollicGames.Advertisements
         private void OnRewardedVideoFailedEvent(string adUnitId, MaxSdkBase.ErrorInfo errorInfo)
         {
             ElephantLog.Log("RLADS-EVENTS", "OnRewardedVideoFailedEvent: " + errorInfo);
-            if (!string.Equals(adUnitId, _rewardedVideoAdUnit))
+
+            if (IsRewardedPostBidActive)
             {
-                ElephantLog.Log("Bidfloor test: ", "OnRewardedVideoFailedEvent ad unit id : " + adUnitId);
+                var unit = _rewardedPostBidManager.GetUnit(adUnitId);
                 _rewardedAdUnitIdStatus[adUnitId] = false;
-                StartCoroutine(RequestRewardedAgain(adUnitId));
+
+                if (unit != null)
+                {
+                    StartCoroutine(RequestRewardedAgain(unit.Id));
+                }
             }
             else
             {
-                StartCoroutine(RequestRewardedAgain());
+                if (!string.Equals(adUnitId, _rewardedVideoAdUnit))
+                {
+                    ElephantLog.Log("Bidfloor test: ", "OnRewardedVideoFailedEvent ad unit id : " + adUnitId);
+                    _rewardedAdUnitIdStatus[adUnitId] = false;
+                    StartCoroutine(RequestRewardedAgain(adUnitId));
+                }
+                else
+                {
+                    StartCoroutine(RequestRewardedAgain());
+                }
             }
 
             var ilrd = Ilrd.CreateError(errorInfo, adUnitId, RLAdFormat.RewardedAd, rewardedAdCycleId);
+            ApplyPostbidIlrdLoadFailed(ilrd, _rewardedPostBidManager, adUnitId);
             var errorJson = Ilrd.ConvertToJson(ilrd);
             Elephant.AdEventV2("OnRewardedVideoFailedEvent", Ilrd.ConvertToJson(errorJson));
 
@@ -1405,17 +1597,32 @@ namespace RollicGames.Advertisements
         private void OnRewardedVideoShownEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
         {
             ElephantLog.Log("RLADS-EVENTS", "OnRewardedVideoShownEvent: " + adInfo);
-            if (!string.Equals(adUnitId, _rewardedVideoAdUnit))
+
+            if (IsRewardedPostBidActive)
             {
-                ElephantLog.Log("Bidfloor test: ", "OnRewardedVideoShownEvent ad unit id : " + adUnitId);
+                var unit = _rewardedPostBidManager.GetUnit(adUnitId);
+                if (unit != null)
+                {
+                    _rewardedPostBidManager?.SetCycleStartUnit(unit.Id);
+                }
+
                 _rewardedAdUnitIdStatus[adUnitId] = false;
             }
             else
             {
-                _isRewardAvailable = false;
+                if (!string.Equals(adUnitId, _rewardedVideoAdUnit))
+                {
+                    ElephantLog.Log("Bidfloor test: ", "OnRewardedVideoShownEvent ad unit id : " + adUnitId);
+                    _rewardedAdUnitIdStatus[adUnitId] = false;
+                }
+                else
+                {
+                    _isRewardAvailable = false;
+                }
             }
 
-            var ilrd = Ilrd.CreateIlrd(adInfo, RLAdFormat.RewardedAd, rewardedAdCycleId);
+            var ilrd = Ilrd.CreateIlrd(adInfo, RLAdFormat.RewardedAd, rewardedAdCycleId, true);
+            ApplyPostbidIlrdAdUnitName(ilrd, _rewardedPostBidManager, adUnitId);
             Elephant.AdEventV2("OnRewardedVideoShownEvent", Ilrd.ConvertToJson(ilrd));
 
             _rollicRewardedAd = RollicRewardedAd.VideoShown(_rollicRewardedAd, ilrd);
@@ -1442,15 +1649,42 @@ namespace RollicGames.Advertisements
         {
             ElephantLog.Log("RLADS-EVENTS", "OnRewardedVideoClosedEvent: " + adInfo);
 
-            if (!string.Equals(adUnitId, _rewardedVideoAdUnit))
+            if (IsRewardedPostBidActive)
             {
-                ElephantLog.Log("Bidfloor test: ", "OnRewardedVideoClosedEvent ad unit id : " + adUnitId);
+                _rewardedPostBidManager?.SetCycleStartUnit(adUnitId);
                 _rewardedAdUnitIdStatus[adUnitId] = false;
-                RequestRewardedAd(_rewardedVideoHighAdUnit);
+                var current = _rewardedPostBidManager?.GetFirstUnit();
+                PostBidAdUnitState unitToRequest = null;
+                while (current != null)
+                {
+                    if (!MaxSdk.IsRewardedAdReady(current.Id))
+                    {
+                        unitToRequest = current;
+                        break;
+                    }
+
+                    current = _rewardedPostBidManager.GetNextUnit(current);
+                }
+
+                if (unitToRequest != null)
+                {
+                    ElephantLog.Log("POSTBID",
+                        $"Rewarded closed. Requesting unit[{unitToRequest.Index}] to refill (from cycle start)");
+                    RequestRewardedAd(unitToRequest.Id);
+                }
             }
             else
             {
-                RequestRewardedAd(adUnitId);
+                if (!string.Equals(adUnitId, _rewardedVideoAdUnit))
+                {
+                    ElephantLog.Log("Bidfloor test: ", "OnRewardedVideoClosedEvent ad unit id : " + adUnitId);
+                    _rewardedAdUnitIdStatus[adUnitId] = false;
+                    RequestRewardedAd(_rewardedVideoHighAdUnit);
+                }
+                else
+                {
+                    RequestRewardedAd(adUnitId);
+                }
             }
 
             CheckReward();
@@ -1468,7 +1702,54 @@ namespace RollicGames.Advertisements
             MaxSdkBase.AdInfo adInfo)
         {
             ElephantLog.Log("RLADS-EVENTS", "OnRewardedVideoFailedToPlayEvent: " + errorInfo);
-            if (!string.Equals(adUnitId, _rewardedVideoAdUnit))
+
+            if (IsRewardedPostBidActive)
+            {
+                _rewardedAdUnitIdStatus[adUnitId] = false;
+                var unit = _rewardedPostBidManager.GetUnit(adUnitId);
+                if (unit != null)
+                {
+                    var fallbackUnit = _rewardedPostBidManager.GetPreviousUnit(unit);
+                    while (fallbackUnit != null)
+                    {
+                        if (MaxSdk.IsRewardedAdReady(fallbackUnit.Id))
+                        {
+                            ElephantLog.Log("POSTBID",
+                                $"Rewarded show fail for unit[{unit.Index}]. Fallback to unit[{fallbackUnit.Index}]");
+                            MaxSdk.ShowRewardedAd(fallbackUnit.Id);
+                            return;
+                        }
+
+                        fallbackUnit = _rewardedPostBidManager.GetPreviousUnit(fallbackUnit);
+                    }
+
+                    var current = _rewardedPostBidManager?.GetChainFirstUnit();
+                    PostBidAdUnitState unitToRequest = null;
+                    while (current != null)
+                    {
+                        if (!MaxSdk.IsRewardedAdReady(current.Id))
+                        {
+                            unitToRequest = current;
+                            break;
+                        }
+
+                        current = _rewardedPostBidManager.GetNextUnit(current);
+                    }
+
+                    if (unitToRequest != null)
+                    {
+                        _pendingRewardedShowAfterFail = true;
+                        _pendingShowRewardedAdUnitId = unitToRequest.Id;
+                        ElephantLog.Log("POSTBID",
+                            $"Rewarded show fail, no fallback. Requesting unit[{unitToRequest.Index}]");
+                        RequestRewardedAd(unitToRequest.Id);
+                        return;
+                    }
+
+                    StartCoroutine(RequestRewardedAgain(unit.Id));
+                }
+            }
+            else if (!string.Equals(adUnitId, _rewardedVideoAdUnit))
             {
                 ElephantLog.Log("Bidfloor test: ", "OnRewardedVideoFailedToPlayEvent ad unit id : " + adUnitId);
                 _rewardedAdUnitIdStatus[adUnitId] = false;
@@ -1508,6 +1789,11 @@ namespace RollicGames.Advertisements
         {
             ElephantLog.Log("RLADS-EVENTS", "OnRewardedVideoReceivedRewardEvent: " + adInfo);
             _isRewardAvailable = true;
+
+            if (IsRewardedPostBidActive)
+            {
+                _rewardedPostBidManager?.SetCycleStartUnit(adUnitId);
+            }
 
             var ilrd = Ilrd.CreateIlrd(adInfo, RLAdFormat.RewardedAd, rewardedAdCycleId);
             Elephant.AdEventV2("OnRewardedVideoReceivedRewardEvent", Ilrd.ConvertToJson(ilrd));
@@ -1735,310 +2021,25 @@ namespace RollicGames.Advertisements
             };
             _facebookAdapter?.LogAppEvent("AdImpression", (float)adInfo.Revenue, fbAdParams);
 
-            switch (adFormat)
+            var (zpAdFormat, impressionId) = adFormat switch
             {
-                case RLAdFormat.Banner:
-                    _zyngaPublishingAdapter?.LogAdImpressionEvent(
-                        adInfo.AdUnitIdentifier,
-                        null,
-                        ZPAdFormat.Banner,
-                        adInfo.NetworkName,
-                        adInfo.NetworkPlacement,
-                        adInfo.Revenue,
-                        adInfo.RevenuePrecision);
-                    break;
-                case RLAdFormat.Interstitial:
-                    _zyngaPublishingAdapter?.LogAdImpressionEvent(
-                        adInfo.AdUnitIdentifier,
-                        _rollicInterstitialAd.adUuid,
-                        ZPAdFormat.Interstitial,
-                        adInfo.NetworkName,
-                        adInfo.NetworkPlacement,
-                        adInfo.Revenue,
-                        adInfo.RevenuePrecision);
-                    break;
-                case RLAdFormat.RewardedAd:
-                    _zyngaPublishingAdapter?.LogAdImpressionEvent(
-                        adInfo.AdUnitIdentifier,
-                        _rollicRewardedAd.adUuid,
-                        ZPAdFormat.Rewarded,
-                        adInfo.NetworkName,
-                        adInfo.NetworkPlacement,
-                        adInfo.Revenue,
-                        adInfo.RevenuePrecision);
-                    break;
-            }
+                RLAdFormat.Interstitial => (ZPAdFormat.Interstitial, _rollicInterstitialAd.adUuid),
+                RLAdFormat.RewardedAd => (ZPAdFormat.Rewarded, _rollicRewardedAd.adUuid),
+                RLAdFormat.Banner => (ZPAdFormat.Banner, null),
+                _ => (ZPAdFormat.Unknown, null)
+            };
+
+            _zyngaPublishingAdapter?.LogAdImpressionEvent(
+                adInfo.AdUnitIdentifier,
+                impressionId,
+                zpAdFormat,
+                adInfo.NetworkName,
+                adInfo.NetworkPlacement,
+                adInfo.Revenue,
+                adInfo.RevenuePrecision);
         }
 
         #endregion
-
-#if ELEPHANT_APP_OPEN_INTERSTITIAL
-        #region APP OPEN VARIABLES
-
-        public static event Action<bool> NoAdsStatusUpdatedEvent; 
-        
-        private static bool _isNoAdsPurchased
-        {
-            get
-            {
-                if (instance.appOpenAdDebuggerActive)
-                {
-                    instance.AppOpenLog("Add Open NoAds Purchased: " +
-                                        ((PlayerPrefs.GetInt("ElephantKeyNoAdsPurchased", 0) == 1)
-                                            ? "true"
-                                            : "false"));
-                }
-
-                return PlayerPrefs.GetInt("ElephantKeyNoAdsPurchased", 0) == 1;
-            }
-            set => PlayerPrefs.SetInt("ElephantKeyNoAdsPurchased", value ? 1 : 0);
-        }
-
-        private bool appOpenAdActive = RemoteConfig.GetInstance().GetBool("app_open_ads_enabled", false);
-
-        private bool appOpenUseInterstitialWhenRequestAppOpen = RemoteConfig.GetInstance()
-            .GetBool("app_open_use_interstitial_when_request_app_open", false);
-
-#if UNITY_IOS
-        private string appOpenAdUnitId = RemoteConfig.GetInstance().Get("app_open_ad_unit_id_ios");
-        private string appOpenInterstitialAdUnitId =
- RemoteConfig.GetInstance().Get("app_open_interstitial_ad_unit_id_ios", "9b0b59ab84b8bebe");
-
-#else // UNITY_ANDROID
-
-        private string appOpenAdUnitId = RemoteConfig.GetInstance().Get("app_open_ad_unit_id_android");
-
-        private string appOpenInterstitialAdUnitId = RemoteConfig.GetInstance()
-            .Get("app_open_interstitial_ad_unit_id_android", "9b0b59ab84b8bebe");
-
-#endif
-
-#if UNITY_EDITOR
-        private bool appOpenAdDebuggerActive =
-            RemoteConfig.GetInstance().GetBool("app_open_ads_debugger_enabled", true);
-#else
-        private bool appOpenAdDebuggerActive =
- RemoteConfig.GetInstance().GetBool("app_open_ads_debugger_enabled", false);
-#endif
-
-        private int appOpenFirstOpenDelayHour = RemoteConfig.GetInstance().GetInt("app_open_delay_hour", 24);
-
-        private float appOpenAdsMinAppPauseSeconds =
-            RemoteConfig.GetInstance().GetFloat("app_open_ads_app_pause_seconds", 30f);
-
-        private bool _appOpenInterstitialRequested;
-        private bool _appOpenShowInterstitialOnLoad;
-        private bool _appOpenIsReturnFromInterstitialAd;
-        private float _pauseStartTime;
-
-        private void ShowFirstOpenAd(string arg1, MaxSdkBase.AdInfo arg2)
-        {
-            MaxSdkCallbacks.AppOpen.OnAdLoadedEvent -= ShowFirstOpenAd;
-
-            if (MaxSdk.IsAppOpenAdReady(appOpenAdUnitId))
-            {
-                MaxSdk.ShowAppOpenAd(appOpenAdUnitId);
-            }
-            else
-            {
-                AppOpenLog("App Open Ad Not Ready");
-            }
-        }
-
-        private IEnumerator requestAppOpenInterstitialWithDelay()
-        {
-            yield return new WaitForSeconds(1f);
-            requestAppOpenIntersitial(true);
-        }
-
-        private void requestAppOpenIntersitial(bool showOnLoad)
-        {
-            if (string.IsNullOrEmpty(appOpenInterstitialAdUnitId))
-            {
-                AppOpenLog($"App Open Interstitial Requested failed! appOpenInterstitialAdUnitId is empty");
-                return;
-            }
-
-            if (!MaxSdk.IsInitialized())
-            {
-                AppOpenLog($"App Open Interstitial Requested failed! MaxSdk is not initialized.");
-                return;
-            }
-
-            if (_appOpenShowInterstitialOnLoad)
-            {
-                _appOpenShowInterstitialOnLoad = false;
-                showAppOpenInterstitial();
-                return;
-            }
-
-            MaxSdkCallbacks.Interstitial.OnAdLoadedEvent += appOpenInterstitialAdLoadedEvent;
-            AppOpenLog($"App Open Interstitial Requested");
-            _appOpenInterstitialRequested = true;
-            MaxSdk.LoadInterstitial(appOpenInterstitialAdUnitId);
-            _appOpenShowInterstitialOnLoad = showOnLoad;
-        }
-
-        private void appOpenInterstitialAdLoadedEvent(string adUnitId, MaxSdkBase.AdInfo arg2)
-        {
-            if (!_appOpenInterstitialRequested || adUnitId != appOpenInterstitialAdUnitId)
-                return;
-
-            AppOpenLog($"App Open Interstitial loaded {adUnitId}");
-            _appOpenInterstitialRequested = false;
-            if (_appOpenShowInterstitialOnLoad)
-            {
-                _appOpenShowInterstitialOnLoad = false;
-                showAppOpenInterstitial();
-            }
-        }
-
-        private bool isAppOpenInterstitialReady()
-        {
-            return MaxSdk.IsInterstitialReady(appOpenInterstitialAdUnitId);
-        }
-
-        private void showAppOpenInterstitial()
-        {
-            if (isAppOpenInterstitialReady())
-            {
-                _appOpenIsReturnFromInterstitialAd = true;
-                MaxSdkCallbacks.Interstitial.OnAdLoadedEvent -= appOpenInterstitialAdLoadedEvent;
-                AppOpenLog($"App Open Interstitial show {appOpenInterstitialAdUnitId}");
-                MaxSdk.ShowInterstitial(appOpenInterstitialAdUnitId);
-            }
-        }
-
-        public static void SetNoAdsPurchased(bool noAdsPurchased)
-        {
-            _isNoAdsPurchased = noAdsPurchased;
-            NoAdsStatusUpdatedEvent?.Invoke(noAdsPurchased);
-        }
-
-        private void AppOpenLog(string log)
-        {
-            if (appOpenAdDebuggerActive)
-            {
-                Elephant.Event(log, -1);
-#if UNITY_EDITOR
-                Debug.LogWarning(log);
-#endif
-            }
-        }
-
-        private void OnApplicationPause(bool pauseStatus)
-        {
-            if (instance == null && !instance._isMediationInitialized)
-            {
-                return;
-            }
-
-            if (!pauseStatus)
-            {
-                if (appOpenAdDebuggerActive)
-                {
-                    var startTime = _pauseStartTime;
-                    var requiredTime = _pauseStartTime + appOpenAdsMinAppPauseSeconds;
-                    var currentTime = Time.realtimeSinceStartup;
-                    var isTimerReady = _pauseStartTime + appOpenAdsMinAppPauseSeconds < Time.realtimeSinceStartup;
-                    AppOpenLog(
-                        $"App Open Ads is not paused. Request Started! startTime= {startTime} - requiredTime= {requiredTime} - currentTime= {currentTime} - isTimerReady={isTimerReady}");
-                }
-
-                if (appOpenUseInterstitialWhenRequestAppOpen)
-                {
-                    if (!_appOpenIsReturnFromInterstitialAd)
-                    {
-                        ShowAdIfReady();
-                    }
-                    else
-                    {
-                        _appOpenIsReturnFromInterstitialAd = false;
-                    }
-                }
-                else
-                {
-                    ShowAdIfReady();
-                }
-            }
-            else
-            {
-                _pauseStartTime = Time.realtimeSinceStartup;
-                if (appOpenAdDebuggerActive)
-                {
-                    AppOpenLog("App Open Ads is paused");
-                }
-            }
-        }
-
-        private void ShowAdIfReady()
-        {
-            if (!IsAppOpenAdsAvailable() || _isNoAdsPurchased)
-            {
-                return;
-            }
-
-            if (appOpenUseInterstitialWhenRequestAppOpen)
-            {
-                requestAppOpenIntersitial(true);
-            }
-            else
-            {
-                if (MaxSdk.IsAppOpenAdReady(appOpenAdUnitId))
-                {
-                    MaxSdk.ShowAppOpenAd(appOpenAdUnitId);
-                }
-                else
-                {
-                    MaxSdk.LoadAppOpenAd(appOpenAdUnitId);
-                }
-            }
-        }
-
-        private void OnAppOpenDismissedEvent(string adUnitId, MaxSdkBase.AdInfo adInfo)
-        {
-            if (!IsAppOpenAdsAvailable() || _isNoAdsPurchased)
-                return;
-
-            MaxSdk.LoadAppOpenAd(appOpenAdUnitId);
-        }
-
-        private bool IsAppOpenAdsAvailable(bool skipSecondsCheck = false)
-        {
-            if (!appOpenAdActive || string.IsNullOrWhiteSpace(appOpenAdUnitId))
-            {
-                if (appOpenAdDebuggerActive)
-                {
-                    AppOpenLog("App Open Ads is not available: appOpenAdActive-" + appOpenAdUnitId);
-                }
-
-                return false;
-            }
-
-            var currentTime = ElephantSDK.Utils.Timestamp();
-            var requiredTime = ElephantCore.Instance.installTime + appOpenFirstOpenDelayHour * 3600000;
-            if (currentTime < requiredTime)
-            {
-                AppOpenLog("App Open Ads is not available: appOpenFirstOpenDelayHour");
-                return false;
-            }
-
-            if (skipSecondsCheck)
-            {
-                return true;
-            }
-
-            if (!(_pauseStartTime + appOpenAdsMinAppPauseSeconds < Time.realtimeSinceStartup))
-            {
-                AppOpenLog("App Open Ads is not available: appOpenAdsMinAppPauseSeconds");
-            }
-
-            return _pauseStartTime + appOpenAdsMinAppPauseSeconds < Time.realtimeSinceStartup;
-        }
-
-        #endregion
-
-#endif
 
         #endregion
 
@@ -2061,7 +2062,15 @@ namespace RollicGames.Advertisements
         private void RequestRewardedAd(string adUnitId)
         {
             ElephantLog.Log("RLADS-EVENTS", "RequestRewardedAd: " + adUnitId);
-            if (string.Equals(adUnitId, _rewardedVideoHighAdUnit))
+
+            if (IsRewardedPostBidActive)
+            {
+                if (_rewardedPostBidManager.IsFirstUnit(adUnitId))
+                {
+                    rewardedAdCycleId++;
+                }
+            }
+            else if (string.Equals(adUnitId, _rewardedVideoHighAdUnit))
             {
                 rewardedAdCycleId += 1;
             }
@@ -2084,26 +2093,54 @@ namespace RollicGames.Advertisements
                 {
                     ElephantLog.Log("RLADS-APS", "Rewarded success: " + adResponse);
                     MaxSdk.SetRewardedAdLocalExtraParameter(adUnitId, "amazon_ad_response", adResponse.GetResponse());
-                    MaxSdk.LoadRewardedAd(adUnitId);
+                    if (IsRewardedPostBidActive)
+                    {
+                        _rewardedPostBidManager.LoadWithEcpmFloor(adUnitId, MaxSdk.LoadRewardedAd);
+                    }
+                    else
+                    {
+                        MaxSdk.LoadRewardedAd(adUnitId);
+                    }
                 };
                 rewardedVideoAdRequest.onFailedWithError += (adError) =>
                 {
                     ElephantLog.Log("RLADS-APS", "Rewarded failed: " + adError.GetMessage());
                     MaxSdk.SetRewardedAdLocalExtraParameter(adUnitId, "amazon_ad_error", adError.GetAdError());
-                    MaxSdk.LoadRewardedAd(adUnitId);
+                    if (IsRewardedPostBidActive)
+                    {
+                        _rewardedPostBidManager.LoadWithEcpmFloor(adUnitId, MaxSdk.LoadRewardedAd);
+                    }
+                    else
+                    {
+                        MaxSdk.LoadRewardedAd(adUnitId);
+                    }
                 };
 
                 rewardedVideoAdRequest.LoadAd();
             }
             else
             {
-                MaxSdk.LoadRewardedAd(adUnitId);
+                if (IsRewardedPostBidActive)
+                {
+                    _rewardedPostBidManager.LoadWithEcpmFloor(adUnitId, MaxSdk.LoadRewardedAd);
+                }
+                else
+                {
+                    MaxSdk.LoadRewardedAd(adUnitId);
+                }
             }
         }
 
         public bool isRewardedVideoAvailable()
         {
             if (!IsMediationReady()) return false;
+
+            if (IsRewardedPostBidActive)
+            {
+                var hasReady = _rewardedPostBidManager.GetHighestPriorityReadyUnit(MaxSdk.IsRewardedAdReady) != null;
+                var anyReady = _rewardedPostBidManager.GetAnyReadyUnit(MaxSdk.IsRewardedAdReady) != null;
+                return hasReady || anyReady;
+            }
 
             if (!_isBidFloorEnabled || !_isBidFloorRwEnabled) return MaxSdk.IsRewardedAdReady(_rewardedVideoAdUnit);
 
@@ -2126,6 +2163,25 @@ namespace RollicGames.Advertisements
             if (!IsMediationReady()) return;
 
             _rollicRewardedAd = RollicRewardedAd.ShowTapped(_rollicRewardedAd, category, source, item);
+
+
+            if (IsRewardedPostBidActive)
+            {
+                PostBidAdUnitState unitToShow =
+                    _rewardedPostBidManager.GetHighestPriorityReadyUnit(MaxSdk.IsRewardedAdReady);
+                if (unitToShow == null)
+                {
+                    unitToShow = _rewardedPostBidManager.GetAnyReadyUnit(MaxSdk.IsRewardedAdReady);
+                }
+
+                if (unitToShow != null)
+                {
+                    ElephantLog.Log("POSTBID", "showRewardedVideo, unit[" + unitToShow.Index + "]");
+                    MaxSdk.ShowRewardedAd(unitToShow.Id);
+                }
+
+                return;
+            }
 
             if (_isBidFloorEnabled && _isBidFloorRwEnabled)
             {
@@ -2158,12 +2214,44 @@ namespace RollicGames.Advertisements
 
         #region Banner
 
+        public AdShowResult ShouldShowBanner()
+        {
+            AdShowResult result;
+
+            if (!_isBannerEnabled) result = AdShowResult.BannerDisabled;
+            else if (_isAdFreeDay) result = AdShowResult.AdFreePeriod;
+            else if (_isBannerDelayLocked) result = AdShowResult.BannerDelayLock;
+            else result = AdShowResult.Allowed;
+
+            var ruleParams = Params.New();
+            ruleParams.Set("result", result.ToString());
+
+            switch (result)
+            {
+                case AdShowResult.BannerDisabled:
+                    ruleParams.Set("gamekit_banner_enabled", _isBannerEnabled ? 1 : 0);
+                    break;
+                case AdShowResult.AdFreePeriod:
+                    var daysSinceInstall =
+                        (int)((ElephantSDK.Utils.Timestamp() - ElephantCore.Instance.firstInstallTime) /
+                              (1000 * 60 * 60 * 24));
+                    ruleParams.Set("days_since_install", daysSinceInstall);
+                    ruleParams.Set("ad_free_days", RemoteConfig.GetInstance().GetInt("ad_free_days", 1));
+                    break;
+                case AdShowResult.BannerDelayLock:
+                    ruleParams.Set("banner_delay_remaining", _bannerDelayRemainingTime);
+                    break;
+            }
+
+            Elephant.Event("ads_banner_rule_check", -1, ruleParams);
+
+            return result;
+        }
+
         public void loadBanner(bool autoShow = true)
         {
             if (!IsMediationReady()) return;
-            
-            if(_isAdFreeDay && _autoShowEnabled) return;
-            
+
             StartCoroutine(loadBannerAsync());
 
             _isBannerAutoShowEnabled = autoShow;
@@ -2285,9 +2373,32 @@ namespace RollicGames.Advertisements
 
         private void RequestInterstitial(string adUnitId)
         {
-            if(_isAdFreeDay && _autoShowEnabled) return;
             ElephantLog.Log("RLADS-EVENTS", "RequestInterstitial: " + adUnitId);
-            if (string.Equals(adUnitId, _interstitialHighAdUnit))
+
+            if (IsInterstitialPostBidActive)
+            {
+                var unit = _interstitialPostBidManager.GetUnit(adUnitId);
+                if (unit != null)
+                {
+                    adUnitId = unit.Id;
+                }
+                else
+                {
+                    var firstUnit = _interstitialPostBidManager.GetFirstUnit();
+                    if (firstUnit == null)
+                    {
+                        return;
+                    }
+
+                    adUnitId = firstUnit.Id;
+                }
+
+                if (unit?.Index == 0)
+                {
+                    interstitialCycleId += 1;
+                }
+            }
+            else if (string.Equals(adUnitId, _interstitialHighAdUnit))
             {
                 interstitialCycleId += 1;
             }
@@ -2311,21 +2422,55 @@ namespace RollicGames.Advertisements
                 {
                     ElephantLog.Log("RLADS-APS", "Inter success: " + adResponse);
                     MaxSdk.SetInterstitialLocalExtraParameter(adUnitId, "amazon_ad_response", adResponse.GetResponse());
-                    MaxSdk.LoadInterstitial(adUnitId);
+                    if (IsInterstitialPostBidActive)
+                    {
+                        _interstitialPostBidManager.LoadWithEcpmFloor(adUnitId, MaxSdk.LoadInterstitial);
+                    }
+                    else
+                    {
+                        MaxSdk.LoadInterstitial(adUnitId);
+                    }
                 };
                 interstitialVideoAdRequest.onFailedWithError += (adError) =>
                 {
                     ElephantLog.Log("RLADS-APS", "Inter failed: " + adError.GetMessage());
                     MaxSdk.SetInterstitialLocalExtraParameter(adUnitId, "amazon_ad_error", adError.GetAdError());
-                    MaxSdk.LoadInterstitial(adUnitId);
+                    if (IsInterstitialPostBidActive)
+                    {
+                        _interstitialPostBidManager.LoadWithEcpmFloor(adUnitId, MaxSdk.LoadInterstitial);
+                    }
+                    else
+                    {
+                        MaxSdk.LoadInterstitial(adUnitId);
+                    }
                 };
 
                 interstitialVideoAdRequest.LoadAd();
             }
             else
             {
-                MaxSdk.LoadInterstitial(adUnitId);
+                if (IsInterstitialPostBidActive)
+                {
+                    _interstitialPostBidManager.LoadWithEcpmFloor(adUnitId, MaxSdk.LoadInterstitial);
+                }
+                else
+                {
+                    MaxSdk.LoadInterstitial(adUnitId);
+                }
             }
+        }
+
+        private void ReportInterstitialShowCall(string attemptedAdUnitId, bool isReady)
+        {
+            var data = new Ilrd
+            {
+                adUnitId = attemptedAdUnitId,
+                isReadyToShow = isReady,
+                cycleId = interstitialCycleId
+            };
+
+            var jsonString = JsonConvert.SerializeObject(data);
+            Elephant.AdEventV2("OnInterstitialUserShowCall", jsonString);
         }
 
         public bool isInterstitialReady()
@@ -2333,47 +2478,69 @@ namespace RollicGames.Advertisements
             var isReady = false;
             var attemptedAdUnitId = "";
 
-            if (_isBidFloorEnabled && _isBidFloorIntEnabled)
+            if (IsInterstitialPostBidActive)
             {
-                if (_interstitialAdUnitIdStatus.TryGetValue(_interstitialHighAdUnit, out var highReady) && highReady)
+                var bestUnit = _interstitialPostBidManager.GetHighestPriorityReadyUnit(MaxSdk.IsInterstitialReady);
+                var anyUnit = _interstitialPostBidManager.GetAnyReadyUnit(MaxSdk.IsInterstitialReady);
+                if (bestUnit != null)
                 {
-                    attemptedAdUnitId = _interstitialHighAdUnit;
-                    isReady = MaxSdk.IsInterstitialReady(_interstitialHighAdUnit);
+                    attemptedAdUnitId = bestUnit.Id;
+                    isReady = true;
                 }
-                else if (_interstitialAdUnitIdStatus.TryGetValue(_interstitialMidAdUnit, out var midReady) && midReady)
+                else if (anyUnit != null)
                 {
-                    attemptedAdUnitId = _interstitialMidAdUnit;
-                    isReady = MaxSdk.IsInterstitialReady(_interstitialMidAdUnit);
-                }
-                else if (_interstitialAdUnitIdStatus.TryGetValue(_interstitialNormalAdUnit, out var normalReady) &&
-                         normalReady)
-                {
-                    attemptedAdUnitId = _interstitialNormalAdUnit;
-                    isReady = MaxSdk.IsInterstitialReady(_interstitialNormalAdUnit);
+                    attemptedAdUnitId = anyUnit.Id;
+                    isReady = true;
                 }
 
-                var data = new Ilrd
-                {
-                    adUnitId = attemptedAdUnitId,
-                    isReadyToShow = isReady,
-                    cycleId = interstitialCycleId
-                };
-
-                var jsonString = JsonConvert.SerializeObject(data);
-                Elephant.AdEventV2("OnInterstitialUserShowCall", jsonString);
+                ReportInterstitialShowCall(attemptedAdUnitId, isReady);
             }
             else
             {
-                isReady = _isInterstitialReady;
-                var data = new Ilrd
+                if (_isBidFloorEnabled && _isBidFloorIntEnabled)
                 {
-                    adUnitId = _interstitialAdUnit,
-                    isReadyToShow = isReady,
-                    cycleId = interstitialCycleId
-                };
+                    if (_interstitialAdUnitIdStatus.TryGetValue(_interstitialHighAdUnit, out var highReady) &&
+                        highReady)
+                    {
+                        attemptedAdUnitId = _interstitialHighAdUnit;
+                        isReady = MaxSdk.IsInterstitialReady(_interstitialHighAdUnit);
+                    }
+                    else if (_interstitialAdUnitIdStatus.TryGetValue(_interstitialMidAdUnit, out var midReady) &&
+                             midReady)
+                    {
+                        attemptedAdUnitId = _interstitialMidAdUnit;
+                        isReady = MaxSdk.IsInterstitialReady(_interstitialMidAdUnit);
+                    }
+                    else if (_interstitialAdUnitIdStatus.TryGetValue(_interstitialNormalAdUnit, out var normalReady) &&
+                             normalReady)
+                    {
+                        attemptedAdUnitId = _interstitialNormalAdUnit;
+                        isReady = MaxSdk.IsInterstitialReady(_interstitialNormalAdUnit);
+                    }
 
-                var jsonString = JsonConvert.SerializeObject(data);
-                Elephant.AdEventV2("OnInterstitialUserShowCall", jsonString);
+                    var data = new Ilrd
+                    {
+                        adUnitId = attemptedAdUnitId,
+                        isReadyToShow = isReady,
+                        cycleId = interstitialCycleId
+                    };
+
+                    var jsonString = JsonConvert.SerializeObject(data);
+                    Elephant.AdEventV2("OnInterstitialUserShowCall", jsonString);
+                }
+                else
+                {
+                    isReady = _isInterstitialReady;
+                    var data = new Ilrd
+                    {
+                        adUnitId = _interstitialAdUnit,
+                        isReadyToShow = isReady,
+                        cycleId = interstitialCycleId
+                    };
+
+                    var jsonString = JsonConvert.SerializeObject(data);
+                    Elephant.AdEventV2("OnInterstitialUserShowCall", jsonString);
+                }
             }
 
             return isReady;
@@ -2381,45 +2548,50 @@ namespace RollicGames.Advertisements
 
         public void showInterstitial(RollicInterstitialAd.InterstitialAdSource source)
         {
-#if ELEPHANT_AUDIOMOBS
-            if (_audioMobBlockInterstitialWhenAdsActive && _audioMobAdsActive)
-            {
-                if (_audioMobHoldInterstitialRequestUntilAudioAdsCompleted)
-                {
-                    AudioMobLog($"AudioMob ads is active. Interstitial Request is transferred to hold state. Source: {source}");
-                    _waitingInterstitialRequestSource = source;
-                    _waitingInterstitialRequest = true;
-                }
-                
-                return;
-            }
-
-#endif
-
-
             _rollicInterstitialAd = RollicInterstitialAd.ShowCalled(_rollicInterstitialAd, source);
 
-            if (_isBidFloorEnabled && _isBidFloorIntEnabled)
+            PostBidAdUnitState unitToShow = null;
+
+            if (IsInterstitialPostBidActive)
             {
-                if (_interstitialAdUnitIdStatus.TryGetValue(_interstitialHighAdUnit, out var highReady) && highReady)
+                unitToShow = _interstitialPostBidManager.GetHighestPriorityReadyUnit(MaxSdk.IsInterstitialReady);
+                if (unitToShow == null)
                 {
-                    ElephantLog.Log("Bidfloor test: ", "showInterstitial, high");
-                    MaxSdk.ShowInterstitial(_interstitialHighAdUnit);
+                    unitToShow = _interstitialPostBidManager.GetAnyReadyUnit(MaxSdk.IsInterstitialReady);
                 }
-                else if (_interstitialAdUnitIdStatus.TryGetValue(_interstitialMidAdUnit, out var midReady) && midReady)
+
+                if (unitToShow != null)
                 {
-                    ElephantLog.Log("Bidfloor test: ", "showInterstitial, mid");
-                    MaxSdk.ShowInterstitial(_interstitialMidAdUnit);
-                }
-                else
-                {
-                    ElephantLog.Log("Bidfloor test: ", "showInterstitial, normal");
-                    MaxSdk.ShowInterstitial(_interstitialNormalAdUnit);
+                    ElephantLog.Log("POSTBID", "showInterstitial, unit[" + unitToShow.Index + "]");
+                    MaxSdk.ShowInterstitial(unitToShow.Id);
                 }
             }
             else
             {
-                MaxSdk.ShowInterstitial(_interstitialAdUnit);
+                if (_isBidFloorEnabled && _isBidFloorIntEnabled)
+                {
+                    if (_interstitialAdUnitIdStatus.TryGetValue(_interstitialHighAdUnit, out var highReady) &&
+                        highReady)
+                    {
+                        ElephantLog.Log("Bidfloor test: ", "showInterstitial, high");
+                        MaxSdk.ShowInterstitial(_interstitialHighAdUnit);
+                    }
+                    else if (_interstitialAdUnitIdStatus.TryGetValue(_interstitialMidAdUnit, out var midReady) &&
+                             midReady)
+                    {
+                        ElephantLog.Log("Bidfloor test: ", "showInterstitial, mid");
+                        MaxSdk.ShowInterstitial(_interstitialMidAdUnit);
+                    }
+                    else
+                    {
+                        ElephantLog.Log("Bidfloor test: ", "showInterstitial, normal");
+                        MaxSdk.ShowInterstitial(_interstitialNormalAdUnit);
+                    }
+                }
+                else
+                {
+                    MaxSdk.ShowInterstitial(_interstitialAdUnit);
+                }
             }
         }
 
@@ -2439,23 +2611,105 @@ namespace RollicGames.Advertisements
                 interstitialRequestTimerIndex = 0;
             }
 
-            if (adUnitId == null)
+            if (!IsInterstitialPostBidActive)
             {
-                RequestInterstitial(_interstitialAdUnit);
-            }
-            else
-            {
-                if (string.Equals(adUnitId, _interstitialHighAdUnit))
+                if (adUnitId == null)
                 {
-                    RequestInterstitial(_interstitialMidAdUnit);
-                }
-                else if (string.Equals(adUnitId, _interstitialMidAdUnit))
-                {
-                    RequestInterstitial(_interstitialNormalAdUnit);
+                    RequestInterstitial(_interstitialAdUnit);
                 }
                 else
                 {
-                    RequestInterstitial(_interstitialHighAdUnit);
+                    if (string.Equals(adUnitId, _interstitialHighAdUnit))
+                    {
+                        RequestInterstitial(_interstitialMidAdUnit);
+                    }
+                    else if (string.Equals(adUnitId, _interstitialMidAdUnit))
+                    {
+                        RequestInterstitial(_interstitialNormalAdUnit);
+                    }
+                    else
+                    {
+                        RequestInterstitial(_interstitialHighAdUnit);
+                    }
+                }
+            }
+            else
+            {
+                var unit = _interstitialPostBidManager.GetUnit(adUnitId);
+                if (unit == null)
+                {
+                    var firstUnit = _interstitialPostBidManager.GetFirstUnit();
+                    if (firstUnit != null)
+                    {
+                        RequestInterstitial(firstUnit.Id);
+                    }
+
+                    yield break;
+                }
+
+                if (_interstitialPostBidManager.HasRetryAttemptsLeft(unit))
+                {
+                    ElephantLog.Log("POSTBID", $"Retrying unit [{unit.Index}] {unit.Id} (retry={unit.RetryAttempts})");
+
+                    RequestInterstitial(unit.Id);
+                    yield break;
+                }
+
+                _interstitialPostBidManager.ResetEcpm(unit);
+                _interstitialAdUnitIdStatus[unit.Id] = false;
+                _interstitialPostBidManager.AddConsecutiveFailCycle(unit);
+
+                var prevUnit = _interstitialPostBidManager.GetPreviousUnit(unit);
+                if (prevUnit != null)
+                {
+                    if (!MaxSdk.IsInterstitialReady(prevUnit.Id))
+                    {
+                        ElephantLog.Log("POSTBID",
+                            $"Retry failed for unit[{unit.Index}]. Requesting previous unit[{prevUnit.Index}] (not ready)");
+                        if (_pendingInterstitialShowAfterFail)
+                        {
+                            _pendingShowInterstitialAdUnitId = prevUnit.Id;
+                        }
+
+                        RequestInterstitial(prevUnit.Id);
+                    }
+                    else if (_pendingInterstitialShowAfterFail)
+                    {
+                        ElephantLog.Log("POSTBID",
+                            $"Retry failed for unit[{unit.Index}]. Previous unit[{prevUnit.Index}] ready. Showing now.");
+                        _pendingInterstitialShowAfterFail = false;
+                        _pendingShowInterstitialAdUnitId = null;
+                        MaxSdk.ShowInterstitial(prevUnit.Id);
+                    }
+                    else
+                    {
+                        ElephantLog.Log("POSTBID",
+                            $"Retry failed for unit[{unit.Index}]. Previous unit already ready; no request");
+                    }
+                }
+                else
+                {
+                    var firstUnit = _interstitialPostBidManager.GetFirstUnit();
+                    if (firstUnit != null)
+                    {
+                        if (!MaxSdk.IsInterstitialReady(firstUnit.Id))
+                        {
+                            ElephantLog.Log("POSTBID", $"Retry failed for first unit. Restart chain from first unit");
+                            if (_pendingInterstitialShowAfterFail)
+                            {
+                                _pendingShowInterstitialAdUnitId = firstUnit.Id;
+                            }
+
+                            RequestInterstitial(firstUnit.Id);
+                        }
+                        else if (_pendingInterstitialShowAfterFail)
+                        {
+                            ElephantLog.Log("POSTBID", $"First unit ready. Showing now");
+                            _pendingInterstitialShowAfterFail = false;
+                            _pendingShowInterstitialAdUnitId = null;
+                            MaxSdk.ShowInterstitial(firstUnit.Id);
+                        }
+                    }
                 }
             }
         }
@@ -2474,24 +2728,110 @@ namespace RollicGames.Advertisements
                 rewardedRequestTimerIndex = 0;
             }
 
-            if (adUnitId == null)
+            if (!IsRewardedPostBidActive)
             {
-                RequestRewardedAd(_rewardedVideoAdUnit);
-            }
-            else
-            {
-                if (string.Equals(adUnitId, _rewardedVideoHighAdUnit))
+                if (adUnitId == null)
                 {
-                    RequestRewardedAd(_rewardedVideoMidAdUnit);
-                }
-                else if (string.Equals(adUnitId, _rewardedVideoMidAdUnit))
-                {
-                    RequestRewardedAd(_rewardedVideoNormalAdUnit);
+                    RequestRewardedAd(_rewardedVideoAdUnit);
                 }
                 else
                 {
-                    RequestRewardedAd(_rewardedVideoHighAdUnit);
+                    if (string.Equals(adUnitId, _rewardedVideoHighAdUnit))
+                    {
+                        RequestRewardedAd(_rewardedVideoMidAdUnit);
+                    }
+                    else if (string.Equals(adUnitId, _rewardedVideoMidAdUnit))
+                    {
+                        RequestRewardedAd(_rewardedVideoNormalAdUnit);
+                    }
+                    else
+                    {
+                        RequestRewardedAd(_rewardedVideoHighAdUnit);
+                    }
                 }
+            }
+            else
+            {
+                var unit = _rewardedPostBidManager.GetUnit(adUnitId);
+                if (unit == null)
+                {
+                    var firstUnit = _rewardedPostBidManager.GetFirstUnit();
+                    if (firstUnit != null && !MaxSdk.IsRewardedAdReady(firstUnit.Id))
+                    {
+                        RequestRewardedAd(firstUnit.Id);
+                    }
+
+                    yield break;
+                }
+
+                if (_rewardedPostBidManager.HasRetryAttemptsLeft(unit))
+                {
+                    ElephantLog.Log("POSTBID",
+                        $"Retrying rewarded unit [{unit.Index}] {unit.Id} (retry={unit.RetryAttempts})");
+
+                    RequestRewardedAd(unit.Id);
+                    yield break;
+                }
+
+                _rewardedPostBidManager.ResetEcpm(unit);
+                _rewardedAdUnitIdStatus[unit.Id] = false;
+                _rewardedPostBidManager.AddConsecutiveFailCycle(unit);
+
+                var prevUnit = _rewardedPostBidManager.GetPreviousUnit(unit);
+                if (prevUnit != null)
+                {
+                    if (!MaxSdk.IsRewardedAdReady(prevUnit.Id))
+                    {
+                        ElephantLog.Log("POSTBID",
+                            $"Retry failed for rewarded unit[{unit.Index}]. Requesting previous unit[{prevUnit.Index}] (not ready)");
+                        if (_pendingRewardedShowAfterFail)
+                        {
+                            _pendingShowRewardedAdUnitId = prevUnit.Id;
+                        }
+
+                        RequestRewardedAd(prevUnit.Id);
+                    }
+                    else if (_pendingRewardedShowAfterFail)
+                    {
+                        ElephantLog.Log("POSTBID",
+                            $"Retry failed for rewarded unit[{unit.Index}]. Previous unit[{prevUnit.Index}] ready. Showing now");
+                        _pendingRewardedShowAfterFail = false;
+                        _pendingShowRewardedAdUnitId = null;
+                        MaxSdk.ShowRewardedAd(prevUnit.Id);
+                    }
+                    else
+                    {
+                        ElephantLog.Log("POSTBID",
+                            $"Retry failed for rewarded unit[{unit.Index}]. Previous unit already ready; no request");
+                    }
+                }
+                else
+                {
+                    var firstUnit = _rewardedPostBidManager.GetFirstUnit();
+                    if (firstUnit != null)
+                    {
+                        if (!MaxSdk.IsRewardedAdReady(firstUnit.Id))
+                        {
+                            ElephantLog.Log("POSTBID",
+                                $"Retry failed for first rewarded unit. Restart chain from first unit");
+                            if (_pendingRewardedShowAfterFail)
+                            {
+                                _pendingShowRewardedAdUnitId = firstUnit.Id;
+                            }
+
+                            RequestRewardedAd(firstUnit.Id);
+                        }
+                        else if (_pendingRewardedShowAfterFail)
+                        {
+                            ElephantLog.Log("POSTBID", $"First unit ready. Showing now");
+                            _pendingRewardedShowAfterFail = false;
+                            _pendingShowRewardedAdUnitId = null;
+                            MaxSdk.ShowRewardedAd(firstUnit.Id);
+                        }
+                    }
+                }
+
+                _rewardedPostBidManager.ResetCycle();
             }
         }
 
@@ -2552,22 +2892,27 @@ namespace RollicGames.Advertisements
                    || !string.IsNullOrEmpty(_rewardedVideoNormalAdUnit);
         }
 
-        #region Auto-Show Interstitials
+        #region Interstitial Rules
 
-        private void InitAutoShowInterstitials()
+        private bool _rulesInitialized;
+
+        private void InitInterstitialRules()
         {
-            ElephantLog.Log("AUTO-SHOW", "Initializing Auto-Show Interstitials");
+            if (_rulesInitialized) return;
+            _rulesInitialized = true;
 
+            ElephantLog.Log("INTERSTITIAL-RULES", "Initializing Interstitial Rules");
             _addedValue = 0;
             _interstitialDisplayInterval =
-                RemoteConfig.GetInstance().GetInt("gamekit_ads_interstitial_display_interval", 30);
+                RemoteConfig.GetInstance().GetInt("gamekit_ads_interstitial_display_interval", 60);
+            _firstLevelToDisplay =
+                RemoteConfig.GetInstance().GetInt("gamekit_ads_interstitial_first_level_to_display", 15);
+            _levelFrequency = RemoteConfig.GetInstance().GetInt("gamekit_ads_interstitial_level_frequency", 2);
+            _firstInterstitialDelay = RemoteConfig.GetInstance().GetInt("gamekit_ads_first_interstitial_delay", 0);
+            _interShowLogic = RemoteConfig.GetInstance().Get("gamekit_ads_display_logic", "level_based");
             _firstInterDisplayTimeAfterStart = RemoteConfig.GetInstance()
                 .GetInt("gamekit_ads_interstitial_first_int_display_after_start", 90);
-            _firstLevelToDisplay =
-                RemoteConfig.GetInstance().GetInt("gamekit_ads_interstitial_first_level_to_display", 1);
-            _levelFrequency = RemoteConfig.GetInstance().GetInt("gamekit_ads_interstitial_level_frequency", 2);
-            _interShowLogic = RemoteConfig.GetInstance().Get("gamekit_ads_display_logic", "level_based");
-            _firstInterstitialDelay = RemoteConfig.GetInstance().GetInt("gamekit_ads_first_interstitial_delay", 1200);
+            _isInterstitialEnabled = RemoteConfig.GetInstance().GetBool("gamekit_interstitial_enabled", true);
 
             _intTimer = new Timer(1000);
             _intRemainingTime = (int)((_firstInterstitialDelay - ElephantCore.Instance.timeSpend / 1000));
@@ -2581,11 +2926,30 @@ namespace RollicGames.Advertisements
             {
                 _isIntLocked = false;
             }
+        }
 
-            if (string.Equals(_interShowLogic, ShowLogicIncremental))
+        private bool _bannerRulesInitialized;
+
+        private void InitBannerRules()
+        {
+            if (_bannerRulesInitialized) return;
+            _bannerRulesInitialized = true;
+
+            ElephantLog.Log("BANNER-RULES", "Initializing Banner Rules");
+            _isBannerEnabled = RemoteConfig.GetInstance().GetBool("gamekit_banner_enabled", false);
+            _firstBannerDelay = RemoteConfig.GetInstance().GetInt("gamekit_ads_first_banner_delay", 1200);
+
+            _bannerDelayTimer = new Timer(1000);
+            _bannerDelayRemainingTime = (int)((_firstBannerDelay - ElephantCore.Instance.timeSpend / 1000));
+            if (_bannerDelayRemainingTime > 0)
             {
-                InvokeRepeating("ShowInterstitialIncremental", _firstInterDisplayTimeAfterStart,
-                    _interstitialDisplayInterval);
+                _bannerDelayTimer.Elapsed += OnBannerDelayTimedEvent;
+                _bannerDelayTimer.Start();
+                _isBannerDelayLocked = true;
+            }
+            else
+            {
+                _isBannerDelayLocked = false;
             }
         }
 
@@ -2603,13 +2967,31 @@ namespace RollicGames.Advertisements
             }
         }
 
+        private void OnBannerDelayTimedEvent(object sender, ElapsedEventArgs e)
+        {
+            if (_bannerDelayRemainingTime > 0)
+            {
+                _bannerDelayRemainingTime--;
+                _isBannerDelayLocked = true;
+            }
+            else
+            {
+                _bannerDelayTimer.Stop();
+                _isBannerDelayLocked = false;
+            }
+        }
+
         public bool IsTimerReady(float realTimeSinceStartup)
         {
             if (_isIntLocked) return false;
             if (_interstitialDisplayInterval == 0) return true;
 
-            if (realTimeSinceStartup < _interstitialDisplayInterval && _lastTimeAdDisplayed == 0)
-                return true;
+            if (_lastTimeAdDisplayed == 0)
+            {
+                if (string.Equals(_interShowLogic, ShowLogicIncremental))
+                    return realTimeSinceStartup >= _firstInterDisplayTimeAfterStart;
+                return true; // level-based: first ad allowed at level completion, no timer restriction
+            }
 
             _timeSinceLastTimeAdDisplayed = realTimeSinceStartup - _lastTimeAdDisplayed;
             var timeToNextInterstitial = (int)(_interstitialDisplayInterval - _timeSinceLastTimeAdDisplayed);
@@ -2617,72 +2999,82 @@ namespace RollicGames.Advertisements
 
             if (timeToNextInterstitialAfterAddition > 0)
             {
-                ElephantLog.Log("AUTO-SHOW", "TimerLock: Still in interval: " + timeToNextInterstitialAfterAddition);
+                ElephantLog.Log("INTERSTITIAL-RULES",
+                    "TimerLock: Still in interval: " + timeToNextInterstitialAfterAddition);
                 return false;
             }
 
             return true;
         }
 
-        private bool IsLevelReady()
+        private AdShowResult CheckLevelRules()
         {
-            if (_isIntLocked) return false;
-            if (_firstLevelToDisplay == -1 && _levelFrequency == -1) return true;
+            if (_firstLevelToDisplay == -1 && _levelFrequency == -1) return AdShowResult.Allowed;
 
             var currentLevel = MonitoringUtils.GetInstance().GetCurrentLevel().level;
 
-            if (_firstLevelToDisplay == -1 && _levelFrequency >= 0)
-                return currentLevel - _lastLevelAdDisplayed >= _levelFrequency;
+            if (_firstLevelToDisplay >= 0 && currentLevel <= _firstLevelToDisplay)
+                return AdShowResult.LevelNotReached;
+            if (_levelFrequency >= 0 && currentLevel - _lastLevelAdDisplayed < _levelFrequency)
+                return AdShowResult.LevelFrequency;
 
-            if (_levelFrequency == -1 && _firstLevelToDisplay >= 0)
-                return currentLevel > _firstLevelToDisplay;
-
-            return currentLevel - _lastLevelAdDisplayed >= _levelFrequency && currentLevel > _firstLevelToDisplay;
+            return AdShowResult.Allowed;
         }
 
-        private void ShowInterstitialLevelBased()
+        public AdShowResult ShouldShowInterstitial()
         {
-            var isLevelReady = IsLevelReady();
-            var isTimerReady = IsTimerReady(Time.realtimeSinceStartup);
+            AdShowResult result;
 
-            if (!isTimerReady || !isLevelReady)
+            if (!_isInterstitialEnabled) result = AdShowResult.InterstitialDisabled;
+            else if (_isAdFreeDay) result = AdShowResult.AdFreePeriod;
+            else if (_isIntLocked) result = AdShowResult.FirstDelayLock;
+            else if (!IsTimerReady(Time.realtimeSinceStartup)) result = AdShowResult.TimerCooldown;
+            else if (string.Equals(_interShowLogic, ShowLogicLevelBased))
             {
-                ElephantLog.Log("AUTO-SHOW", "LOCKED on ShowInterstitial");
+                result = CheckLevelRules();
+            }
+            else result = AdShowResult.Allowed;
+            // Incremental: no level rules. _firstInterDisplayTimeAfterStart handled by IsTimerReady().
 
-                var notShowCalledParams = Params.New();
-                notShowCalledParams.Set("is_level_ready", isLevelReady.ToString());
-                notShowCalledParams.Set("is_timer_ready", isTimerReady.ToString());
-                notShowCalledParams.Set("time_since_last_time_ad_displayed", _timeSinceLastTimeAdDisplayed);
-                notShowCalledParams.Set("is_interstitial_ready", _isInterstitialReady ? 1 : 0);
-                notShowCalledParams.Set("added_time_value", _addedValue);
-                notShowCalledParams.Set("last_displayed_ad_time", _lastTimeAdDisplayed);
-                Elephant.Event(InterstitialEventPrefix + "_NotShowCalled",
-                    MonitoringUtils.GetInstance().GetCurrentLevel().level, notShowCalledParams);
-                return;
+            var currentLevel = MonitoringUtils.GetInstance().GetCurrentLevel().level;
+            var ruleParams = Params.New();
+            ruleParams.Set("result", result.ToString());
+            ruleParams.Set("display_logic", _interShowLogic ?? "unknown");
+            ruleParams.Set("level", currentLevel);
+            ruleParams.Set("time_since_start", (int)Time.realtimeSinceStartup);
+
+            switch (result)
+            {
+                case AdShowResult.InterstitialDisabled:
+                    ruleParams.Set("gamekit_interstitial_enabled", _isInterstitialEnabled ? 1 : 0);
+                    break;
+                case AdShowResult.AdFreePeriod:
+                    var daysSinceInstall =
+                        (int)((ElephantSDK.Utils.Timestamp() - ElephantCore.Instance.firstInstallTime) /
+                              (1000 * 60 * 60 * 24));
+                    ruleParams.Set("days_since_install", daysSinceInstall);
+                    ruleParams.Set("ad_free_days", RemoteConfig.GetInstance().GetInt("ad_free_days", 1));
+                    break;
+                case AdShowResult.FirstDelayLock:
+                    ruleParams.Set("first_delay_remaining", _intRemainingTime);
+                    break;
+                case AdShowResult.TimerCooldown:
+                    ruleParams.Set("time_since_last_ad",
+                        _lastTimeAdDisplayed > 0 ? (int)(Time.realtimeSinceStartup - _lastTimeAdDisplayed) : -1);
+                    ruleParams.Set("display_interval", _interstitialDisplayInterval);
+                    break;
+                case AdShowResult.LevelNotReached:
+                    ruleParams.Set("first_level_to_display", _firstLevelToDisplay);
+                    break;
+                case AdShowResult.LevelFrequency:
+                    ruleParams.Set("level_frequency", _levelFrequency);
+                    ruleParams.Set("levels_since_last_ad", currentLevel - _lastLevelAdDisplayed);
+                    break;
             }
 
-            showInterstitial(RollicInterstitialAd.InterstitialAdSource.LevelComplete);
+            Elephant.Event("ads_interstitial_rule_check", currentLevel, ruleParams);
 
-            var showCalledParams = Params.New();
-            showCalledParams.Set("time_since_last_time_ad_displayed", _timeSinceLastTimeAdDisplayed);
-            showCalledParams.Set("added_time_value", _addedValue);
-            showCalledParams.Set("last_displayed_ad_time", _lastTimeAdDisplayed);
-            showCalledParams.Set("is_interstitial_ready", _isInterstitialReady ? 1 : 0);
-            Elephant.Event(InterstitialEventPrefix + "_ShowCalled",
-                MonitoringUtils.GetInstance().GetCurrentLevel().level, showCalledParams);
-        }
-
-        private void ShowInterstitialIncremental()
-        {
-            var isTimerReady = IsTimerReady(Time.realtimeSinceStartup);
-
-            if (!isTimerReady)
-            {
-                ElephantLog.Log("AUTO-SHOW", "LOCKED on ShowInterstitial");
-                return;
-            }
-
-            showInterstitial(RollicInterstitialAd.InterstitialAdSource.Other);
+            return result;
         }
 
         #endregion
@@ -2840,40 +3232,6 @@ namespace RollicGames.Advertisements
             else
             {
                 ElephantLog.Log("RATE-US", "Rate Us popup couldn't be shown");
-            }
-        }
-
-        #endregion
-
-        #region Banner Timer Management
-
-        private void InitBannerTimer()
-        {
-            _firstBannerDelay = RemoteConfig.GetInstance().GetInt("gamekit_ads_first_banner_delay", 1200);
-
-            _bannerTimer = new Timer(1000);
-            _bannerRemainingTime = (int)((_firstBannerDelay - ElephantCore.Instance.timeSpend / 1000));
-            if (_bannerRemainingTime > 0)
-            {
-                _bannerTimer.Elapsed += OnBannerTimedEvent;
-                _bannerTimer.Start();
-            }
-            else
-            {
-                StartCoroutine(loadBannerAsync());
-            }
-        }
-
-        private void OnBannerTimedEvent(object sender, ElapsedEventArgs e)
-        {
-            if (_bannerRemainingTime > 0)
-            {
-                _bannerRemainingTime--;
-            }
-            else
-            {
-                ExecuteOnMainThread(() => { StartCoroutine(loadBannerAsync()); });
-                _bannerTimer.Stop();
             }
         }
 

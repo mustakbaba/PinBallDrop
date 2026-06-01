@@ -1,14 +1,18 @@
-using System.Collections.Generic;
+using System.Collections;
+using System.Collections.Specialized;
 using UnityEngine;
 
 namespace ElephantSDK
 {
     public class Params
     {
-        public Dictionary<string, string> stringVals = new Dictionary<string, string>();
-        public Dictionary<string, int> intVals = new Dictionary<string, int>();
-        public Dictionary<string, double> doubleVals = new Dictionary<string, double>();
+        public OrderedDictionary stringVals = new OrderedDictionary();
+        public OrderedDictionary intVals = new OrderedDictionary();
+        public OrderedDictionary doubleVals = new OrderedDictionary();
+        
         public string customData;
+
+        private const int MaxParameterCount = 8;
         
         private Params()
         {
@@ -19,12 +23,11 @@ namespace ElephantSDK
             return new Params();
         }
 
-
         public Params Set(string key, string value)
         {
-            if (stringVals.Count >= 4)
+            if (stringVals.Count >= MaxParameterCount && !stringVals.Contains(key))
             {
-                Debug.LogError("You cannot set more than 4 string values for event parameters.");
+                Debug.LogError($"You cannot set more than {MaxParameterCount} string values for event parameters.");
                 return this;
             }
             
@@ -34,9 +37,9 @@ namespace ElephantSDK
         
         public Params Set(string key, int value)
         {
-            if (intVals.Count >= 4)
+            if (intVals.Count >= MaxParameterCount && !intVals.Contains(key))
             {
-                Debug.LogError("You cannot set more than 4 string values for event parameters.");
+                Debug.LogError($"You cannot set more than {MaxParameterCount} int values for event parameters.");
                 return this;
             }
             
@@ -44,12 +47,11 @@ namespace ElephantSDK
             return this;
         }
         
-        
         public Params Set(string key, double value)
         {
-            if (doubleVals.Count >= 4)
+            if (doubleVals.Count >= MaxParameterCount && !doubleVals.Contains(key))
             {
-                Debug.LogError("You cannot set more than 4 string values for event parameters.");
+                Debug.LogError($"You cannot set more than {MaxParameterCount} double values for event parameters.");
                 return this;
             }
             
@@ -68,24 +70,24 @@ namespace ElephantSDK
             var result = new System.Text.StringBuilder();
             var hasValues = false;
 
-            foreach (var pair in stringVals)
+            foreach (DictionaryEntry entry in stringVals)
             {
                 if (hasValues) result.Append(", ");
-                result.Append($"{pair.Key}: {pair.Value}");
+                result.Append($"{entry.Key}: {entry.Value}");
                 hasValues = true;
             }
 
-            foreach (var pair in intVals)
+            foreach (DictionaryEntry entry in intVals)
             {
                 if (hasValues) result.Append(", ");
-                result.Append($"{pair.Key}: {pair.Value}");
+                result.Append($"{entry.Key}: {entry.Value}");
                 hasValues = true;
             }
 
-            foreach (var pair in doubleVals)
+            foreach (DictionaryEntry entry in doubleVals)
             {
                 if (hasValues) result.Append(", ");
-                result.Append($"{pair.Key}: {pair.Value}");
+                result.Append($"{entry.Key}: {entry.Value}");
                 hasValues = true;
             }
 
@@ -97,6 +99,5 @@ namespace ElephantSDK
 
             return result.Length > 0 ? result.ToString() : "no parameters";
         }
-        
     }
 }

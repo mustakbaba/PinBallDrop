@@ -7,6 +7,8 @@
         <androidPackage spec="com.google.firebase:firebase-messaging:22.0.0" />
         <androidPackage spec="androidx.work:work-runtime:2.7.1" />
         <androidPackage spec="androidx.preference:preference:1.2.0" />
+        <androidPackage spec="androidx.core:core:1.12.0" />
+        <androidPackage spec="androidx.browser:browser:1.8.0" />
     </androidPackages>
     <iosPods>
         <iosPod name="Adjust/AdjustGoogleOdm"/>

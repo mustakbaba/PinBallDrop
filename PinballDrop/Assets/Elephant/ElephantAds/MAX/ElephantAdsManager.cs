@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using RollicGames.Advertisements;
 
 namespace ElephantSDK
@@ -7,6 +8,11 @@ namespace ElephantSDK
         public void StartAdManager()
         {
             RLAdvertisementManager.Instance.InitInternal();
+        }
+
+        public void TrackEvent(string eventName, IDictionary<string, string> parameters = null)
+        {
+            MaxSdk.TrackEvent(eventName, parameters);
         }
     }
 }

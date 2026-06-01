@@ -1,3 +1,4 @@
+#define EXCLUDE_EXTRA_NETWORKS
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -80,6 +81,7 @@ namespace ElephantSDK
     [DllImport("__Internal")]
     public static extern void setAppLovinGdprConsent(bool consent);
     
+#if !EXCLUDE_EXTRA_NETWORKS
     [DllImport("__Internal")]
     public static extern void setUnityAdsGdprConsent(bool consent);
     
@@ -91,6 +93,7 @@ namespace ElephantSDK
     
     [DllImport("__Internal")]
     public static extern void setPangleGdprConsent(bool consent);
+#endif
 
     [DllImport("__Internal")]
     public static extern void showReturningUserPopUpView(string action, string title, string content, 
@@ -114,6 +117,18 @@ namespace ElephantSDK
 
     [DllImport("__Internal")]
     public static extern void showVppaDialog(string content, string buttonTitle);
+
+    [DllImport("__Internal")]
+    public static extern void openURLInWebView(string url);
+        
+    [DllImport("__Internal")]
+    public static extern void RequestDeclaredAgeRange();
+    
+    [DllImport("__Internal")]
+    public static extern bool IsDeclaredAgeRangeAvailable();
+    
+    [DllImport("__Internal")]
+    public static extern string GetDeclaredAgeRangeStatus();
 #endif
     }
 }

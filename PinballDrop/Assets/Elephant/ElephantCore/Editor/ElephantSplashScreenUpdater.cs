@@ -6,18 +6,26 @@ namespace ElephantSDK.Editor
 {
     public static class ElephantSplashScreenUpdater
     {
+        private const string LogoEditorSettingsAssetPath = "Assets/Resources/ElephantResources/LogoEditorSettings.json";
+
+        [System.Serializable]
+        private class ElephantBrandingSettings
+        {
+            public bool isRollicLogoEnabled = ElephantBrandingDefaults.RollicLogoEnabledByDefault;
+            public Color backgroundColor = ElephantBrandingDefaults.RollicBackgroundColor;
+        }
+
         public static void UpdateSplashScreen()
         {
             // Main Splash Screen settings
             PlayerSettings.SplashScreen.show = true;
             PlayerSettings.SplashScreen.showUnityLogo = false;
 
-            // Background color (#301867 - dark purple)
-            Color backgroundColor = new Color(
-                (float)0x30 / 255f,
-                (float)0x18 / 255f,
-                (float)0x67 / 255f,
-                1f);
+            var loadedFromJson = TryLoadBrandingSettings(out var settings);
+            var branding = loadedFromJson ? settings : new ElephantBrandingSettings();
+            var backgroundColor = branding.isRollicLogoEnabled ? ElephantBrandingDefaults.RollicBackgroundColor : branding.backgroundColor;
+
+            ElephantLog.Log("SPLASH", loadedFromJson ? $"Loaded branding settings from {LogoEditorSettingsAssetPath}. isRollicLogoEnabled={branding.isRollicLogoEnabled}, backgroundColor={branding.backgroundColor}" : $"Branding settings not found/invalid at {LogoEditorSettingsAssetPath}. Using defaults. isRollicLogoEnabled={branding.isRollicLogoEnabled}, backgroundColor={branding.backgroundColor}");
 
             var isUpdated = false;
             if (PlayerSettings.SplashScreen.backgroundColor != backgroundColor)
@@ -126,6 +134,40 @@ namespace ElephantSDK.Editor
                     // Restart the Editor
                     EditorApplication.OpenProject(Directory.GetCurrentDirectory());
                 }
+            }
+        }
+
+        private static bool TryLoadBrandingSettings(out ElephantBrandingSettings settings)
+        {
+            settings = null;
+            try
+            {
+                if (!File.Exists(LogoEditorSettingsAssetPath))
+                {
+                    ElephantLog.Log("SPLASH", $"Logo editor settings file not found: {LogoEditorSettingsAssetPath}");
+                    return false;
+                }
+
+                var json = File.ReadAllText(LogoEditorSettingsAssetPath);
+                if (string.IsNullOrWhiteSpace(json))
+                {
+                    ElephantLog.Log("SPLASH", $"Logo editor settings file is empty: {LogoEditorSettingsAssetPath}");
+                    return false;
+                }
+
+                settings = JsonUtility.FromJson<ElephantBrandingSettings>(json);
+                if (settings == null)
+                {
+                    ElephantLog.Log("SPLASH", $"Failed to parse logo editor settings JSON: {LogoEditorSettingsAssetPath}");
+                    return false;
+                }
+                return settings != null;
+            }
+            catch (System.Exception e)
+            {
+                ElephantLog.LogError("SPLASH", $"Failed to read/parse logo editor settings at {LogoEditorSettingsAssetPath}. Exception: {e.Message}");
+                settings = null;
+                return false;
             }
         }
     }

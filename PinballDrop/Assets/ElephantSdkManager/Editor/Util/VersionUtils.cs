@@ -344,7 +344,8 @@ namespace ElephantSdkManager.Util
                 { "Revenue_1", "rev_1" },
                 { "Revenue_2", "rev_2" },
                 { "Revenue_5", "rev_5" },
-                { "Revenue_10", "rev_10" }
+                { "Revenue_10", "rev_10" },
+                { "Ds_payment", "ds_payment" }
             };
 
             using (var sw = File.AppendText(adjustTokenClassPath))
@@ -437,7 +438,19 @@ namespace ElephantSdkManager.Util
                 { "TestInterstitialNormalAdUnitAndroid", gameKitManifest.data.testInterstitialNormalAdUnitAndroid },
                 { "TestRewardedHighAdUnitAndroid", gameKitManifest.data.testRewardedHighAdUnitAndroid },
                 { "TestRewardedMidAdUnitAndroid", gameKitManifest.data.testRewardedMidAdUnitAndroid },
-                { "TestRewardedNormalAdUnitAndroid", gameKitManifest.data.testRewardedNormalAdUnitAndroid }
+                { "TestRewardedNormalAdUnitAndroid", gameKitManifest.data.testRewardedNormalAdUnitAndroid },
+                { "PostbidInterstitialIosAdunitA", gameKitManifest.data.postbidInterstitialIosAdunitA ?? "" },
+                { "PostbidInterstitialIosAdunitB", gameKitManifest.data.postbidInterstitialIosAdunitB ?? "" },
+                { "PostbidInterstitialIosAdunitC", gameKitManifest.data.postbidInterstitialIosAdunitC ?? "" },
+                { "PostbidInterstitialAndroidAdunitA", gameKitManifest.data.postbidInterstitialAndroidAdunitA ?? "" },
+                { "PostbidInterstitialAndroidAdunitB", gameKitManifest.data.postbidInterstitialAndroidAdunitB ?? "" },
+                { "PostbidInterstitialAndroidAdunitC", gameKitManifest.data.postbidInterstitialAndroidAdunitC ?? "" },
+                { "PostbidRewardedIosAdunitA", gameKitManifest.data.postbidRewardedIosAdunitA ?? "" },
+                { "PostbidRewardedIosAdunitB", gameKitManifest.data.postbidRewardedIosAdunitB ?? "" },
+                { "PostbidRewardedIosAdunitC", gameKitManifest.data.postbidRewardedIosAdunitC ?? "" },
+                { "PostbidRewardedAndroidAdunitA", gameKitManifest.data.postbidRewardedAndroidAdunitA ?? "" },
+                { "PostbidRewardedAndroidAdunitB", gameKitManifest.data.postbidRewardedAndroidAdunitB ?? "" },
+                { "PostbidRewardedAndroidAdunitC", gameKitManifest.data.postbidRewardedAndroidAdunitC ?? "" }
             };
 
             using (var sw = File.AppendText(rollicAdsPath))

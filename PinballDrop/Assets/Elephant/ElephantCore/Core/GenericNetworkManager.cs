@@ -124,17 +124,17 @@ namespace ElephantSDK
                 request.result == UnityWebRequest.Result.DataProcessingError)
             {
                 LogRequest(request, bodyJsonString);
-                onError("Request Error");
+                onError?.Invoke("Request Error");
             }
             else
             {
                 try
                 {
-                    onResponse(new GenericResponse<T>(request));
+                    onResponse?.Invoke(new GenericResponse<T>(request));
                 }
                 catch (Exception e)
                 {
-                    onError(e.Message);
+                    onError?.Invoke(e.Message);
                 }
             }
         }
@@ -146,22 +146,22 @@ namespace ElephantSDK
             switch (request.result)
             {
                 case UnityWebRequest.Result.ConnectionError:
-                    onError(request.error);
+                    onError?.Invoke(request.error);
                     break;
                 case UnityWebRequest.Result.ProtocolError:
                     onFailedResponse?.Invoke(request);
                     break;
                 case UnityWebRequest.Result.DataProcessingError:
-                    onError(request.error);
+                    onError?.Invoke(request.error);
                     break;
                 default:
                     try
                     {
-                        onResponse(new GenericResponse<T>(request));
+                        onResponse?.Invoke(new GenericResponse<T>(request));
                     }
                     catch (Exception e)
                     {
-                        onError(e.Message);
+                        onError?.Invoke(e.Message);
                     }
 
                     break;

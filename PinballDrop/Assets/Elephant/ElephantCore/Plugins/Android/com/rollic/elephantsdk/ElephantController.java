@@ -15,6 +15,8 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.RemoteException;
 import android.text.Html;
 import android.text.SpannableString;
@@ -46,11 +48,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.applovin.sdk.AppLovinPrivacySettings;
-import com.bytedance.sdk.openadsdk.api.PAGConstant;
-import com.bytedance.sdk.openadsdk.api.init.PAGConfig;
-import com.chartboost.sdk.Chartboost;
-import com.chartboost.sdk.privacy.model.DataUseConsent;
-import com.chartboost.sdk.privacy.model.GDPR;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -72,8 +69,6 @@ import com.rollic.elephantsdk.Views.BlockedDialog;
 import com.rollic.elephantsdk.Views.GenericDialog;
 import com.rollic.elephantsdk.Views.PersonalizedAdsConsentView;
 import com.rollic.elephantsdk.Views.SettingsView;
-import com.unity3d.ads.metadata.MetaData;
-import com.unity3d.mediation.LevelPlay;
 import com.unity3d.player.R;
 import com.unity3d.player.UnityPlayer;
 import com.unity3d.player.UnityPlayerActivity;
@@ -115,9 +110,26 @@ public class ElephantController implements InteractionInterface, PurchasesUpdate
     private BillingClient billingClient;
     private static boolean isBillingSetup = false;
 
+    //private PlayAgeSignalsController playAgeSignalsController;
+    
+	private static final boolean UNITY_ADS_AVAILABLE = isClassPresent("com.rollic.elephantsdk.Consent.UnityAdsConsentHelper");
+	private static final boolean CHARTBOOST_AVAILABLE = isClassPresent("com.rollic.elephantsdk.Consent.ChartboostConsentHelper");
+	private static final boolean IRONSOURCE_AVAILABLE = isClassPresent("com.rollic.elephantsdk.Consent.IronSourceConsentHelper");
+	private static final boolean PANGLE_AVAILABLE = isClassPresent("com.rollic.elephantsdk.Consent.PangleConsentHelper");
+    
+    private static boolean isClassPresent(String className) {
+        try {
+            Class.forName(className);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
     private ElephantController(Context ctx) {
         this.ctx = ctx;
         this.queue = Volley.newRequestQueue(this.ctx);
+        //this.playAgeSignalsController = new PlayAgeSignalsController(ctx);
 
         referrerClient = InstallReferrerClient.newBuilder(ctx).build();
         referrerClient.startConnection(new InstallReferrerStateListener() {
@@ -766,44 +778,125 @@ public class ElephantController implements InteractionInterface, PurchasesUpdate
 
     // https://docs.unity.com/ads/en-us/manual/GDPRCompliance#Android_(Java)
     public void setUnityAdsGdprConsent(String consentString) {
-        try {
-            boolean consent = Boolean.parseBoolean(consentString);
-            MetaData gdprMetaData = new MetaData(ctx);
-            gdprMetaData.set("gdpr.consent", consent);
-            gdprMetaData.commit();
-        } catch (Exception e) {
-            Log.w(LOG_TAG, "Failed to update UnityAds GDPR consent: " + e.getMessage());
+        if (UNITY_ADS_AVAILABLE) {
+            try {
+                Class<?> helper = Class.forName("com.rollic.elephantsdk.Consent.UnityAdsConsentHelper");
+                helper.getMethod("setConsent", Context.class, String.class).invoke(null, ctx, consentString);
+            } catch (Exception e) {
+                Log.w(LOG_TAG, "Failed to update UnityAds GDPR consent: " + e.getMessage());
+            }
         }
     }
 
     // https://docs.chartboost.com/en/monetization/integrate/android/sdk-privacy-methods/
     public void setChartboostGdprConsent(String consentString) {
-        try {
-            boolean consent = Boolean.parseBoolean(consentString);
-            DataUseConsent dataUseConsent = new GDPR(consent ? GDPR.GDPR_CONSENT.BEHAVIORAL : GDPR.GDPR_CONSENT.NON_BEHAVIORAL);
-            Chartboost.addDataUseConsent(ctx, dataUseConsent);
-        } catch (Exception e) {
-            Log.w(LOG_TAG, "Failed to update Chartboost GDPR consent: " + e.getMessage());
+        if (CHARTBOOST_AVAILABLE) {
+            try {
+                Class<?> helper = Class.forName("com.rollic.elephantsdk.Consent.ChartboostConsentHelper");
+                helper.getMethod("setConsent", Context.class, String.class).invoke(null, ctx, consentString);
+            } catch (Exception e) {
+                Log.w(LOG_TAG, "Failed to update Chartboost GDPR consent: " + e.getMessage());
+            }
         }
     }
 
     // https://developers.is.com/ironsource-mobile/android/regulation-advanced-settings/#step-1
     public void setIronSourceGdprConsent(String consentString) {
-        try {
-            boolean consent = Boolean.parseBoolean(consentString);
-            LevelPlay.setConsent(consent);
-        } catch (Exception e) {
-            Log.w(LOG_TAG, "Failed to update IronSource GDPR consent: " + e.getMessage());
+        if (IRONSOURCE_AVAILABLE) {
+            try {
+                Class<?> helper = Class.forName("com.rollic.elephantsdk.Consent.IronSourceConsentHelper");
+                helper.getMethod("setConsent", String.class).invoke(null, consentString);
+            } catch (Exception e) {
+                Log.w(LOG_TAG, "Failed to update IronSource GDPR consent: " + e.getMessage());
+            }
         }
     }
-
+    
     // https://www.pangleglobal.com/integration/android-initialize-pangle-sdk
     public void setPangleGdprConsent(String consentString) {
-        try {
-            boolean consent = Boolean.parseBoolean(consentString);
-            PAGConfig.setGDPRConsent(consent ? PAGConstant.PAGGDPRConsentType.PAG_GDPR_CONSENT_TYPE_CONSENT : PAGConstant.PAGGDPRConsentType.PAG_GDPR_CONSENT_TYPE_NO_CONSENT);
-        } catch (Exception e) {
-            Log.w(LOG_TAG, "Failed to update Pangle GDPR consent: " + e.getMessage());
+        if (PANGLE_AVAILABLE) {
+            try {
+                Class<?> helper = Class.forName("com.rollic.elephantsdk.Consent.PangleConsentHelper");
+                helper.getMethod("setConsent", String.class).invoke(null, consentString);
+            } catch (Exception e) {
+                Log.w(LOG_TAG, "Failed to update Pangle GDPR consent: " + e.getMessage());
+            }
         }
     }
+    
+    /**
+     * Opens a given URL in a WebView by launching the WebViewController activity.
+     * @param urlString The URL to be opened in the WebView
+     */
+    public void openURLInWebView(String urlString) {
+        if (urlString == null || urlString.isEmpty()) {
+            Log.e(LOG_TAG, "[openURLInWebView] URL is null or empty");
+            return;
+        }
+
+        if (!(ctx instanceof Activity)) {
+            Log.e(LOG_TAG, "[openURLInWebView] Context is null or not an Activity");
+            return;
+        }
+
+        Activity activity = (Activity) ctx;
+
+        activity.runOnUiThread(() -> {
+            Log.d(LOG_TAG, "[openURLInWebView] Launching WebViewController with URL: " + urlString);
+            Intent intent = new Intent(activity, WebViewController.class);
+            intent.putExtra(WebViewController.EXTRA_URL, urlString);
+            activity.startActivity(intent);
+        });
+    }
+    
+    public void openURLInChromeCustomTab(String urlString) {
+        if (urlString == null || urlString.isEmpty()) {
+            Log.e(LOG_TAG, "[openURLInChromeCustomTab] URL is null or empty");
+            return;
+        }
+    
+        if (!(ctx instanceof Activity)) {
+            Log.e(LOG_TAG, "[openURLInChromeCustomTab] Context is not an Activity");
+            return;
+        }
+    
+        Activity activity = (Activity) ctx;
+    
+        activity.runOnUiThread(() -> {
+            try {
+                androidx.browser.customtabs.CustomTabsIntent.Builder builder = 
+                    new androidx.browser.customtabs.CustomTabsIntent.Builder();
+                
+                androidx.browser.customtabs.CustomTabsIntent customTabsIntent = builder.build();
+                customTabsIntent.launchUrl(activity, android.net.Uri.parse(urlString));
+                
+            } catch (Exception e) {
+                try {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(urlString));
+                    browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    browserIntent.setPackage("com.android.chrome");
+                    activity.startActivity(browserIntent);
+                } catch (android.content.ActivityNotFoundException ex) {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(urlString));
+                    browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    activity.startActivity(Intent.createChooser(browserIntent, "Open with"));
+                }
+            }
+        });
+    }
+    
+    /* public boolean isPlayAgeSignalsAvailable() {
+        if (playAgeSignalsController == null) {
+            return false;
+        }
+        return playAgeSignalsController.isAvailable();
+    }
+    
+    public void requestPlayAgeSignals() {
+        if (playAgeSignalsController == null) {
+            Log.e(LOG_TAG, "PlayAgeSignalsController is not initialized");
+            return;
+        }
+        playAgeSignalsController.requestAgeSignals();
+    } */
 }

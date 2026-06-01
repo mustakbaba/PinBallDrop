@@ -75,6 +75,18 @@ namespace ElephantSdkManager.Model
         public string testRewardedHighAdUnitAndroid;
         public string testRewardedMidAdUnitAndroid;
         public string testRewardedNormalAdUnitAndroid;
+        public string postbidInterstitialIosAdunitA;
+        public string postbidInterstitialIosAdunitB;
+        public string postbidInterstitialIosAdunitC;
+        public string postbidInterstitialAndroidAdunitA;
+        public string postbidInterstitialAndroidAdunitB;
+        public string postbidInterstitialAndroidAdunitC;
+        public string postbidRewardedIosAdunitA;
+        public string postbidRewardedIosAdunitB;
+        public string postbidRewardedIosAdunitC;
+        public string postbidRewardedAndroidAdunitA;
+        public string postbidRewardedAndroidAdunitB;
+        public string postbidRewardedAndroidAdunitC;
     }
     
     [Serializable]

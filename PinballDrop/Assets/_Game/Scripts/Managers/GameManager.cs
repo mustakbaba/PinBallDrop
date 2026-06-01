@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using ElephantSDK;
+using RollicGames.Advertisements;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -62,6 +63,11 @@ public class GameManager : MonoSingleton<GameManager>
 
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         persistData.Save();
+        
+        if (!Application.isEditor)
+        {
+            LoadInterstitialAd(RollicInterstitialAd.InterstitialAdSource.LevelFail);
+        }
     }
 
     public void NextLevel()
@@ -85,6 +91,11 @@ public class GameManager : MonoSingleton<GameManager>
         }
 
         persistData.Save();
+        
+        if (!Application.isEditor)
+        {
+            LoadInterstitialAd(RollicInterstitialAd.InterstitialAdSource.LevelComplete);
+        }
     }
 
     
@@ -110,6 +121,19 @@ public void PreviousLevel()
         if (pauseStatus)
         {
             //PersistData.Instance.Save();
+        }
+    }
+    
+    public void LoadInterstitialAd(RollicInterstitialAd.InterstitialAdSource source)
+    {
+        if (Application.isEditor) return;
+        
+        var rules = RLAdvertisementManager.Instance.ShouldShowInterstitial();
+
+        if (rules == AdShowResult.Allowed
+            && RLAdvertisementManager.Instance.isInterstitialReady())
+        {
+            RLAdvertisementManager.Instance.showInterstitial(source);
         }
     }
 

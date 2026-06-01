@@ -37,6 +37,8 @@ namespace ElephantSDK
             androidManifest.SetGwpAsanMode();
 
             androidManifest.RemoveToolsNode();
+
+            androidManifest.AddWebViewControllerActivity();
             
             // Add your XML manipulation routines
             androidManifest.Save();
@@ -44,14 +46,11 @@ namespace ElephantSDK
         
         private string GetManifestPath(string basePath)
         {
-            if (string.IsNullOrEmpty(_manifestFilePath))
-            {
-                var pathBuilder = new StringBuilder(basePath);
-                pathBuilder.Append(Path.DirectorySeparatorChar).Append("src");
-                pathBuilder.Append(Path.DirectorySeparatorChar).Append("main");
-                pathBuilder.Append(Path.DirectorySeparatorChar).Append("AndroidManifest.xml");
-                _manifestFilePath = pathBuilder.ToString();
-            }
+			var pathBuilder = new StringBuilder(basePath);
+            pathBuilder.Append(Path.DirectorySeparatorChar).Append("src");
+            pathBuilder.Append(Path.DirectorySeparatorChar).Append("main");
+            pathBuilder.Append(Path.DirectorySeparatorChar).Append("AndroidManifest.xml");
+            _manifestFilePath = pathBuilder.ToString();
             return _manifestFilePath;
         }
     }
@@ -185,6 +184,28 @@ namespace ElephantSDK
                 {
                     _applicationElement.SetAttribute("gwpAsanMode", AndroidXmlNamespace, "always");
                 }
+            }
+
+            internal void AddWebViewControllerActivity()
+            {
+                if (_applicationElement == null) 
+                {
+                    return;
+                }
+
+
+                XmlElement newActivity = CreateElement("activity");
+                newActivity.SetAttribute("name", AndroidXmlNamespace, "com.rollic.elephantsdk.WebViewController");
+                newActivity.SetAttribute("launchMode", AndroidXmlNamespace, "singleTop");
+                newActivity.SetAttribute("exported", AndroidXmlNamespace, "false");
+                newActivity.SetAttribute("excludeFromRecents", AndroidXmlNamespace, "true");
+                newActivity.SetAttribute("taskAffinity", AndroidXmlNamespace, "");
+                newActivity.SetAttribute("hardwareAccelerated", AndroidXmlNamespace, "true");
+                newActivity.SetAttribute("theme", AndroidXmlNamespace, "@style/Theme.AppCompat.DayNight.NoActionBar");
+
+                _applicationElement.AppendChild(newActivity);
+                
+                Debug.Log("Added WebViewController activity to manifest.");
             }
         }
 }

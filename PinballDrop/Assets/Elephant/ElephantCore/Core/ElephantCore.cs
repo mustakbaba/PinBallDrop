@@ -25,6 +25,9 @@ namespace ElephantSDK
     public delegate void OnOfferUIFetched();
     
     public delegate void InternetConnectionChanged(bool isConnected);
+    
+    public delegate void OnAgeRangeReceived(string ageRange);
+    public delegate void OnAgeRangeError(string error);
 
     public class ElephantCore : MonoBehaviour
     {
@@ -54,7 +57,7 @@ namespace ElephantSDK
         private bool openRequestSucceded;
         private SessionData currentSession;
         public long realSessionId;
-        internal long firstInstallTime;
+        public long firstInstallTime;
         public long timeSpend;
         public long installTime;
         public DateTime installTimeForCv;
@@ -76,7 +79,7 @@ namespace ElephantSDK
 
         private OpenResponse openResponse = new();
         private string cachedOpenResponse;
-        private ElephantComplianceManager _elephantComplianceManager;
+        public ElephantComplianceManager ElephantComplianceManager;
 
         private static int MAX_FAILED_COUNT = 250;
 
@@ -86,7 +89,9 @@ namespace ElephantSDK
         public static event OnNotificationOpened onNotificationOpened;
         public static event OnOfferUIFetched onOfferUIFetched;
         public static event InternetConnectionChanged OnInternetConnectionChanged;
-
+        public static event OnAgeRangeReceived OnAgeRangeReceived;
+        public static event OnAgeRangeError OnAgeRangeError;
+        
         private List<IElephantAdapter> Adapters;
         public IFacebookElephantAdapter FacebookElephantAdapter;
         public IAdjustElephantAdapter AdjustElephantAdapter;
@@ -114,6 +119,9 @@ namespace ElephantSDK
         public bool isStorageLoaded = false;
         
         private bool lastInternetState = true;
+        
+        private bool _ageRangeRequestDone;
+        private string _lastAgeRangeResult;
         
         void Awake()
         {
@@ -240,6 +248,122 @@ namespace ElephantSDK
         { 
             Elephant.TriggerDeepLink(deeplinkURL);
         }
+        
+        public void OnWebViewClosed(string reason)
+        {
+            Elephant.TriggerWebViewClosed(reason);
+        }
+        
+        
+ public void OnAgeRangeResult(string jsonResult)
+        {
+#if UNITY_IOS && !UNITY_EDITOR
+			OniOSAgeRangeResult(jsonResult);
+#elif UNITY_ANDROID && !UNITY_EDITOR
+			//OnAndroidAgeRangeResult(jsonResult);
+#else
+            // Other platforms not supported
+#endif
+        }
+        
+        public void OniOSAgeRangeResult(string jsonResult)
+		{
+    		if (string.IsNullOrEmpty(jsonResult))
+   			{
+        		ElephantLog.LogError("AGE_RANGE", "Empty age range result");
+        		OnAgeRangeError?.Invoke("Empty age range result");
+        		return;
+    		}
+
+    		try
+    		{
+                var dictResult = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResult);
+
+                if (dictResult != null && dictResult.ContainsKey("error"))
+                {
+                    var error = dictResult["error"]?.ToString() ?? "";
+                    ElephantLog.LogError("AGE_RANGE", $"Error: {error}");
+                    OnAgeRangeError?.Invoke(error);
+                    return;
+                }
+                
+        		var result = JsonConvert.DeserializeObject<AgeRangeIOSResult>(jsonResult);
+        		if (result == null || string.IsNullOrEmpty(result.response))
+        		{
+            		ElephantLog.LogError("AGE_RANGE", "Invalid age range data");
+            		OnAgeRangeError?.Invoke("Invalid age range data");
+            		return;
+        		}
+
+                var parameters = Params.New().Set("response", result.response).Set("lower_bound", result.range?.lowerBound ?? 0).Set("upper_bound", result.range?.upperBound ?? 0);
+                Elephant.Event("age_range_data", -1, parameters);
+
+                ElephantLog.Log("AGE_RANGE", $"Age range received: {parameters}");
+        		OnAgeRangeReceived?.Invoke(jsonResult);
+    		}
+    		catch (Exception e)
+    		{
+        		ElephantLog.LogError("AGE_RANGE", $"Failed to parse age range result: {e.Message}");
+        		OnAgeRangeError?.Invoke($"Failed to parse age range result: {e.Message}");
+    		}
+		}
+
+        public void OnAndroidAgeRangeResult(string jsonResult)
+        {
+            if (string.IsNullOrEmpty(jsonResult))
+            {
+                ElephantLog.LogError("AGE_RANGE", "Empty age range result");
+                OnAgeRangeError?.Invoke("Empty age range result");
+                return;
+            }
+
+            ElephantLog.Log("AGE_RANGE", $"Received result: {jsonResult}");
+
+            try
+            {
+                var dictResult = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonResult);
+
+                if (dictResult != null && dictResult.ContainsKey("error"))
+                {
+                    var error = dictResult["error"].ToString();
+                    ElephantLog.LogError("AGE_RANGE", $"Error: {error}");
+                    OnAgeRangeError?.Invoke(error);
+                    return;
+                }
+
+                var result = JsonConvert.DeserializeObject<AgeRangeAndroidResult>(jsonResult);
+
+                if (result != null && !string.IsNullOrEmpty(result.userStatus))
+                {
+                    var parameters = Params.New()
+                        .Set("user_status", result.userStatus)
+                        .Set("age_lower", result.ageLower ?? 0)
+                        .Set("age_upper", result.ageUpper ?? 0);
+                    Elephant.Event("age_range_data", -1, parameters);
+                    ElephantLog.Log("AGE_RANGE", $"Age range received: {parameters}");
+                    OnAgeRangeReceived?.Invoke(jsonResult);
+                }
+            }
+            catch (Exception e)
+            {
+                ElephantLog.LogError("AGE_RANGE", $"Failed to parse result: {e.Message}");
+                OnAgeRangeError?.Invoke($"Failed to parse result: {e.Message}");
+            }
+        }
+
+        private void OnAgeRangeReceivedForInit(string ageRange)
+        {
+            _lastAgeRangeResult = ageRange;
+            _ageRangeRequestDone = true;
+        }
+
+        private void OnAgeRangeErrorForInit(string error)
+        {
+            _lastAgeRangeResult = null;
+            _ageRangeRequestDone = true;
+            var param = Params.New().Set("error", error ?? "");
+            Elephant.Event("age_range_error", -1, param);
+        }
 
         #region Init
 
@@ -282,6 +406,25 @@ namespace ElephantSDK
                 ElephantLog.LogError("ELEPHANT", "Error on Adjust Init: " + e.Message);
             }
 #endif
+        }
+
+        private void InitZyngaPublishing()
+        {
+            if (ZyngaPublishingElephantAdapter != null)
+            {
+                ZyngaPublishingElephantAdapter.ZyngaGameId = openResponse.player_data.app_id;
+                ZyngaPublishingElephantAdapter.RollicUserId = !string.IsNullOrWhiteSpace(userId) ? userId : openResponse.user_id;
+                ZyngaPublishingElephantAdapter.Init();
+            }
+
+            // Log the event for the PubSDK status
+            var isPubSdkEnabledInRemoteConfig = RemoteConfig.GetInstance().GetBool("rollic_zynga_publishing_sdk_enabled", true);
+            var pubSdkStatusParams = Params.New()
+                .Set("zynga_game_id", ZyngaPublishingElephantAdapter?.ZyngaGameId)
+                .Set("rollic_user_id", ZyngaPublishingElephantAdapter?.RollicUserId)
+                .Set("has_pubsdk", ZyngaPublishingElephantAdapter != null ? 1 : 0)
+                .Set("init_status", isPubSdkEnabledInRemoteConfig ? 1 : 0);
+            Elephant.Event("pubsdk_status", -1, pubSdkStatusParams);
         }
 
         private void InitUtilities()
@@ -390,6 +533,7 @@ namespace ElephantSDK
                 userId = KeyChainUtils.GetValue(ElephantConstants.USER_DB_ID);
             }
 #endif
+            openResponse.user_id = userId;
 
             var firstOpenString = Utils.ReadFromFile(ElephantConstants.FIRST_OPEN_TIME);
             if (!string.IsNullOrEmpty(firstOpenString))
@@ -424,27 +568,81 @@ namespace ElephantSDK
                 Utils.SaveToFile(ElephantConstants.FIRST_OPEN_TIME, installTime.ToString());
             }
 
-            openResponse.user_id = userId;
-
             openRequestWaiting = true;
             openRequestSucceded = false;
+            
+#if UNITY_IOS && !UNITY_EDITOR
+			OnAgeRangeReceived += OnAgeRangeReceivedForInit;
+			OnAgeRangeError += OnAgeRangeErrorForInit;
+			_ageRangeRequestDone = false;
+			_lastAgeRangeResult = null;
+			if (AgeRangeManager.IsApiAvailable())
+			{
+				var shouldRequestAgeRange = false;
+				{
+					var cached = Utils.ReadFromFile(ElephantConstants.AGE_RANGE_CHECK_DISPLAY_CACHE);
+					if (!string.IsNullOrEmpty(cached) && bool.TryParse(cached, out var cachedDisplay))
+					{
+						shouldRequestAgeRange = cachedDisplay;
+					}
+				}
+				{
+					var checkReq = AgeRangeCheckDisplayRequest.Create(0);
+					var checkJson = JsonConvert.SerializeObject(checkReq);
+					var checkBodyJson = JsonConvert.SerializeObject(new ElephantData(checkJson, 0));
+					var networkManager = new GenericNetworkManager<AgeRangeCheckDisplayResponse>();
+					var checkDisplayRequest = networkManager.PostWithResponse(ElephantConstants.AGE_RANGE_CHECK_DISPLAY_EP, checkBodyJson, response =>
+					{
+						if (response.responseCode == 200 && response.data != null)
+						{
+							shouldRequestAgeRange = response.data.display;
+							Utils.SaveToFile(ElephantConstants.AGE_RANGE_CHECK_DISPLAY_CACHE, shouldRequestAgeRange.ToString());
+							ElephantLog.Log("AGE_RANGE", $"Age Range check_display response received. display={shouldRequestAgeRange} resCode={response.responseCode}");
+						}
+						else
+						{
+							var cached = Utils.ReadFromFile(ElephantConstants.AGE_RANGE_CHECK_DISPLAY_CACHE);
+							shouldRequestAgeRange = (!string.IsNullOrEmpty(cached) && bool.TryParse(cached, out var cachedDisplay)) ? cachedDisplay : false;
+							ElephantLog.Log("AGE_RANGE", $"Age Range check_display request returned no usable data (resCode={response.responseCode}). Falling back to cache. display={shouldRequestAgeRange} raw='{cached}'");
+						}
+					}, _ =>
+					{
+						var cached = Utils.ReadFromFile(ElephantConstants.AGE_RANGE_CHECK_DISPLAY_CACHE);
+						shouldRequestAgeRange = (!string.IsNullOrEmpty(cached) && bool.TryParse(cached, out var cachedDisplay)) ? cachedDisplay : false;
+						ElephantLog.Log("AGE_RANGE", $"Age Range check_display request failed. Falling back to cache. display={shouldRequestAgeRange} raw='{cached}'");
+					});
+					yield return checkDisplayRequest;
+				}
+
+				if (shouldRequestAgeRange)
+				{
+					ElephantLog.Log("AGE_RANGE", "Age Range check_display decision: display=true. Requesting age range.");
+					AgeRangeManager.RequestAgeRange();
+					while (!_ageRangeRequestDone)
+					{
+						yield return null;
+					}
+				}
+			}
+			else
+			{
+				var param = Params.New().Set("api_available", "False");
+				Elephant.Event("age_api_available", -1, param);
+				ElephantLog.Log("AGE_RANGE", "Age Range API is not available. Skipping check_display and request.");
+				_ageRangeRequestDone = true;
+			}
+			OnAgeRangeReceived -= OnAgeRangeReceivedForInit;
+			OnAgeRangeError -= OnAgeRangeErrorForInit;
+#endif
 
             float startTime = Time.time;
             var realTimeSinceStartup = Time.realtimeSinceStartup;
             var realTimeBeforeRequest = DateTime.Now;
-            var savedTimeSpend = Utils.ReadFromFile(ElephantConstants.TimeSpend);
-            try
-            {
-                timeSpend = !string.IsNullOrEmpty(savedTimeSpend) ? long.Parse(savedTimeSpend) : 0;
-            }
-            catch (Exception e)
-            {
-                ElephantLog.LogError("ELEPHANT", "Error on time spend: " + e.Message);
-            }
+            timeSpend = Utils.ReadLongFromFile(ElephantConstants.TimeSpend, 0);
 
             RequestIDFAAndOpen();
 
-            while (openRequestWaiting && (Time.time - startTime) < 5f)
+            while (openRequestWaiting && (Time.time - startTime) < 10f)
             {
                 yield return null;
             }
@@ -509,7 +707,7 @@ namespace ElephantSDK
             }
 #endif
 
-            _elephantComplianceManager = ElephantComplianceManager.GetInstance(openResponse);
+            ElephantComplianceManager = ElephantComplianceManager.GetInstance(openResponse);
 
             isSoundFixEnabled = RemoteConfig.GetInstance().GetBool("sound_fix_enabled", false);
             isUcEnabled = RemoteConfig.GetInstance().GetBool("usercentrics_enabled", true);
@@ -525,59 +723,6 @@ namespace ElephantSDK
             }
 
             // T1 - First check: Force Update
-#if !UNITY_EDITOR
-            if (_elephantComplianceManager.CheckForceUpdate()) yield break;
-#endif
-            // T2 - check if the user is blocked from data deletion
-            _elephantComplianceManager.ShowBlockedPopUp();
-            if (openResponse.compliance.blocked.is_blocked) yield break;
-
-            if (onOpen != null)
-            {
-                // T3 - show tos and pp (replacement for old gdpr)
-                _elephantComplianceManager.ShowTosAndPp(onOpen);
-            }
-            else
-            {
-                ElephantLog.Log("ELEPHANT INIT", "ElephantSDK onOpen event is not handled");
-            }
-
-            // T4 - start Zynga Publishing SDK
-            if (ZyngaPublishingElephantAdapter != null)
-            {
-                ZyngaPublishingElephantAdapter.ZyngaGameId = openResponse.player_data.app_id;
-                ZyngaPublishingElephantAdapter.RollicUserId = openResponse.user_id;
-            }
-            
-            // Check if Pub SDK is enabled in the remote config
-            var isPubSdkEnabledInRemoteConfig = RemoteConfig.GetInstance().GetBool("rollic_zynga_publishing_sdk_enabled", true);
-            if (isPubSdkEnabledInRemoteConfig)
-            {
-                ZyngaPublishingElephantAdapter?.Initialize();
-            }
-            else
-            {
-                ElephantLog.Log("ELEPHANT INIT", "Zynga Publishing SDK is disabled in remote config. Stopping the SDK.");
-                ZyngaPublishingElephantAdapter?.Stop();
-            }
-
-            // Log the event for the PubSDK status
-            var pubSdkStatusParams = Params.New()
-                .Set("zynga_game_id", ZyngaPublishingElephantAdapter?.ZyngaGameId)
-                .Set("rollic_user_id", ZyngaPublishingElephantAdapter?.RollicUserId)
-                .Set("has_pubsdk", ZyngaPublishingElephantAdapter != null ? 1 : 0)
-                .Set("init_status", isPubSdkEnabledInRemoteConfig ? 1 : 0);
-            Elephant.Event("pubsdk_status", -1, pubSdkStatusParams);
-
-            // T5 - if offline session flag is filled, send the data and flush it
-            var offlineFlag = Utils.ReadFromFile(ElephantConstants.OFFLINE_FLAG);
-            if (!string.IsNullOrEmpty(offlineFlag))
-            {
-                var param = Params.New().Set("sessionId", offlineFlag);
-                Elephant.Event("previous_offline_session", -1, param);
-                Utils.SaveToFile(ElephantConstants.OFFLINE_FLAG, "");
-            }
-
             if (openResponse.internal_config.helpshift_enabled)
             {
                 
@@ -590,6 +735,43 @@ namespace ElephantSDK
 #endif
                 
                 HelpShiftElephantAdapter?.Init(domainName, appId);
+            }
+#if !UNITY_EDITOR
+            if (ElephantComplianceManager.CheckForceUpdate()) yield break;
+#endif
+            // T2 - check if the user is blocked from data deletion
+            ElephantComplianceManager.ShowBlockedPopUp();
+            if (openResponse.compliance.blocked.is_blocked) yield break;
+
+            // T3 - age range block
+#if UNITY_IOS && !UNITY_EDITOR
+            if (openResponse.age_range_blocked)
+            {
+                ElephantComplianceManager.ShowAgeBlockedPopUp();
+                yield break;
+            }
+#endif
+
+            if (onOpen != null)
+            {
+                // T4 - show tos and pp (replacement for old gdpr)
+                ElephantComplianceManager.ShowTosAndPp(onOpen);
+            }
+            else
+            {
+                ElephantLog.Log("ELEPHANT INIT", "ElephantSDK onOpen event is not handled");
+            }
+
+            // T5 - start Zynga Publishing SDK
+            InitZyngaPublishing();
+
+            // T6 - if offline session flag is filled, send the data and flush it
+            var offlineFlag = Utils.ReadFromFile(ElephantConstants.OFFLINE_FLAG);
+            if (!string.IsNullOrEmpty(offlineFlag))
+            {
+                var param = Params.New().Set("sessionId", offlineFlag);
+                Elephant.Event("previous_offline_session", -1, param);
+                Utils.SaveToFile(ElephantConstants.OFFLINE_FLAG, "");
             }
 
             if (openResponse.internal_config.dynamic_events_enabled)
@@ -667,6 +849,66 @@ namespace ElephantSDK
             StartCoroutine(OpenRequest());
 #endif
         }
+        
+        private static JObject IosAgeRangeToBackendFormat(string rawJson)
+        {
+            if (string.IsNullOrEmpty(rawJson)) 
+            {
+                return null;
+            }
+            try
+            {
+                var obj = JObject.Parse(rawJson);
+                var outObj = new JObject();
+                if (obj["response"] != null)
+                {
+                    outObj["response"] = obj["response"];
+                }
+
+                if (obj["range"] is JObject range)
+                {
+                    var rangeOut = new JObject();
+                    if (range["lowerBound"] != null) rangeOut["lower_bound"] = range["lowerBound"];
+                    if (range["upperBound"] != null) rangeOut["upper_bound"] = range["upperBound"];
+                    if (range["ageRangeDeclaration"] != null) rangeOut["age_range_declaration"] = range["ageRangeDeclaration"];
+                    if (range["activeParentalControls"] != null) rangeOut["active_parental_controls"] = range["activeParentalControls"];
+                    if (range["parentalControlsRawValue"] != null) rangeOut["parental_controls_raw_value"] = range["parentalControlsRawValue"];
+                    outObj["range"] = rangeOut;
+                }
+                return outObj;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static JObject AndroidAgeRangeToBackendFormat(string rawJson)
+        {
+            if (string.IsNullOrEmpty(rawJson))
+            {
+                return null;
+            }
+            try
+            {
+                var obj = JObject.Parse(rawJson);
+                if (obj["error"] != null)
+                {
+                    return null;
+                }
+                var outObj = new JObject();
+                if (obj["userStatus"] != null) outObj["user_status"] = obj["userStatus"];
+                if (obj["ageLower"] != null) outObj["age_lower"] = obj["ageLower"];
+                if (obj["ageUpper"] != null) outObj["age_upper"] = obj["ageUpper"];
+                if (obj["installId"] != null) outObj["install_id"] = obj["installId"];
+                if (obj["mostRecentApprovalDate"] != null) outObj["most_recent_approval_date"] = obj["mostRecentApprovalDate"];
+                return outObj;
+            }
+            catch
+            {
+                return null;
+            }
+        }
 
         private IEnumerator OpenRequest()
         {
@@ -695,6 +937,27 @@ namespace ElephantSDK
                     openData.hash = tempOpenResponse.hash;
                 }
             }
+            
+#if UNITY_IOS && !UNITY_EDITOR
+            if (!string.IsNullOrEmpty(_lastAgeRangeResult))
+            {
+                openData.ios_age_range_data = IosAgeRangeToBackendFormat(_lastAgeRangeResult);
+                if (openData.ios_age_range_data == null)
+                {
+                    ElephantLog.LogError("ELEPHANT", "Failed to parse iOS age range for open request");
+                }
+            }
+            string sentIosAgeRangeJson = _lastAgeRangeResult;
+#elif UNITY_ANDROID && !UNITY_EDITOR
+            /*if (!string.IsNullOrEmpty(_lastAgeRangeResult))
+            {
+                openData.android_age_range_data = AndroidAgeRangeToBackendFormat(_lastAgeRangeResult);
+                if (openData.android_age_range_data == null)
+                {
+                    ElephantLog.LogError("ELEPHANT", "Failed to parse Android age range for open request");
+                }
+            }*/
+#endif
 
             var json = JsonConvert.SerializeObject(openData);
             var bodyJson = JsonConvert.SerializeObject(new ElephantData(json, GetCurrentSession().GetSessionID()));
@@ -833,17 +1096,9 @@ namespace ElephantSDK
         {
             if (focus)
             {
-                var savedTimeSpend = Utils.ReadFromFile(ElephantConstants.TimeSpend);
-                
-                try
-                {
-                    timeSpend = !string.IsNullOrEmpty(savedTimeSpend) ? long.Parse(savedTimeSpend) : 0;
-                }
-                catch (Exception e)
-                {
-                    ElephantLog.LogError("ELEPHANT", "Error on time spend: " + e.Message);
-                }
-                
+                Elephant.TriggerApplicationFocusTrue();
+
+                timeSpend = Utils.ReadLongFromFile(ElephantConstants.TimeSpend, 0);
                 ElephantLog.LogCustomKey("total_time_spent", timeSpend.ToString());
 
                 currentSession = SessionData.CreateSessionData();
@@ -1197,8 +1452,8 @@ namespace ElephantSDK
             //     config.deactivateSKAdNetworkHandling();
             // Adjust.start(config);
 
-            _elephantComplianceManager.ShowCcpa();
-            _elephantComplianceManager.ShowGdprAdConsent();
+            ElephantComplianceManager.ShowCcpa();
+            ElephantComplianceManager.ShowGdprAdConsent();
 #endif
         }
 
@@ -1207,25 +1462,25 @@ namespace ElephantSDK
             switch (userAction)
             {
                 case "TOS_ACCEPT":
-                    _elephantComplianceManager.SendTosAccept();
+                    ElephantComplianceManager.SendTosAccept();
                     break;
                 case "VPPA_ACCEPT":
-                    _elephantComplianceManager.SendVppaAccept();
+                    ElephantComplianceManager.SendVppaAccept();
                     break;
                 case "GDPR_AD_CONSENT_AGREE":
-                    _elephantComplianceManager.SendGdprAdConsentStatus(true);
+                    ElephantComplianceManager.SendGdprAdConsentStatus(true);
                     break;
                 case "GDPR_AD_CONSENT_DECLINE":
-                    _elephantComplianceManager.SendGdprAdConsentStatus(false);
+                    ElephantComplianceManager.SendGdprAdConsentStatus(false);
                     break;
                 case "PERSONALIZED_ADS_AGREE":
-                    _elephantComplianceManager.SendCcpaStatus(true);
+                    ElephantComplianceManager.SendCcpaStatus(true);
                     break;
                 case "PERSONALIZED_ADS_DECLINE":
-                    _elephantComplianceManager.SendCcpaStatus(false);
+                    ElephantComplianceManager.SendCcpaStatus(false);
                     break;
                 case "CALL_DATA_REQUEST":
-                    PinRequest();
+					PinRequest();
                     break;
                 case "DELETE_REQUEST_CANCEL":
                     var createNewUserJob = UserOps.CreateOrGetNewUser(response =>
@@ -1239,8 +1494,8 @@ namespace ElephantSDK
                             ZyngaPublishingElephantAdapter.RollicUserId = userId;
                         }
 
-                        _elephantComplianceManager.UpdateOpenResponse(openResponseForNewUser);
-                        _elephantComplianceManager.ShowTosAndPp(onOpen);
+                        ElephantComplianceManager.UpdateOpenResponse(openResponseForNewUser);
+                        ElephantComplianceManager.ShowTosAndPp(onOpen);
                     }, s => { ElephantLog.Log("COMPLIANCE", "Error on new user creation: " + s); });
                     StartCoroutine(createNewUserJob);
                     break;
@@ -1356,7 +1611,7 @@ namespace ElephantSDK
         }
         public bool CheckAdFreePeriod()
         {
-            var adFreeDays = RemoteConfig.GetInstance().GetInt("ad_free_days", 7);
+            var adFreeDays = RemoteConfig.GetInstance().GetInt("ad_free_days", 1);
             var daysSinceInstall = DaysSinceFirstInstall();
             var isAdFreePeriod = daysSinceInstall < adFreeDays;
 

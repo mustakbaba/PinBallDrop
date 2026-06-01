@@ -27,7 +27,11 @@ namespace ElephantSDK
             this.errorMessage = request.error;
             this.isNetworkError = request.result == UnityWebRequest.Result.ConnectionError;
             this.isHttpError = request.result == UnityWebRequest.Result.ProtocolError;
-            this.data = JsonConvert.DeserializeObject<T>(request.downloadHandler.text);
+
+            var responseText = request.downloadHandler?.text;
+            this.data = string.IsNullOrEmpty(responseText)
+                ? default
+                : JsonConvert.DeserializeObject<T>(responseText);
         }
     }
 }

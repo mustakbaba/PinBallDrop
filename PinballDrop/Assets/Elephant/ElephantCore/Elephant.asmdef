@@ -2,6 +2,7 @@
     "name": "Elephant",
     "rootNamespace": "",
     "references": [
+      "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

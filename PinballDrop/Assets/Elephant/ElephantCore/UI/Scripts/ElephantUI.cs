@@ -49,11 +49,34 @@ namespace ElephantSDK
             Debug.Log("Elephant Open Result, we can start the game or show gdpr -> " + gdprRequired);
             if (gdprRequired)
             {
+                var newUI = Elephant.UseNewPopupSystem(PopupType.Tos);
+                if (newUI)
+                {
+                    ElephantLog.Log("ELEPHANT-FLOW", "2. ElephantUI - ONOPEN - EDITOR - GDPR IS REQUIRED");
+                    ElephantLog.Log("ELEPHANT", "ShowTos - Using New Popup System");
+                    TOSPopup popup = ElephantPopupManager.Instance.ShowPopup<TOSPopup>("ElephantUI/Tos/TosPopup");
+                    if (popup != null)
+                    {
+                        popup.Initialize(
+                            tos.content,
+                            tos.terms_of_service_text,
+                            tos.terms_of_service_url,
+                            tos.privacy_policy_text,
+                            tos.privacy_policy_url,
+                            tos.consent_text_action_button,
+                            () =>
+                            {
+                                ElephantCore.Instance.ElephantComplianceManager.SendTosAccept();
+                            }
+                        );
+                    }
+                }
+                else
+                {
 #if UNITY_EDITOR
-                // no-op
-                ElephantLog.Log("ELEPHANT-FLOW", "2. ElephantUI - ONOPEN - EDITOR - GDPR IS REQUIRED");
-                LoadGameSceneWithCmp();
-                ElephantLog.Log("COMPLIANCE", "ShowToSAndPPDialog");
+                    // no-op
+                    ElephantLog.Log("COMPLIANCE", "ShowToSAndPPDialog");
+                    LoadGameSceneWithCmp();
 #elif UNITY_ANDROID
                 ElephantLog.Log("ELEPHANT-FLOW", "2. ElephantUI - ONOPEN - ANDROID - GDPR IS REQUIRED");
                  ElephantAndroid.ShowConsentDialogOnUiThread("CONTENT", tos.content, tos.consent_text_action_button, tos.privacy_policy_text,
@@ -65,6 +88,7 @@ namespace ElephantSDK
 #else
                 // no-op
 #endif
+                }
             }
             else
             {
@@ -116,11 +140,6 @@ namespace ElephantSDK
         public void PlayGame()
         {
 #if UNITY_IOS && !UNITY_EDITOR
-            if (RemoteConfig.GetInstance().GetBool("gamekit_ads_enabled", false))
-            {
-                ElephantCore.Instance.ElephantAdsAdapter?.StartAdManager();
-            }
-
             ElephantLog.Log("ELEPHANT-FLOW", "3. ELEPHANTUI - PlayGame - IOS");
             LoadGameSceneWithCmp(IdfaConsentResult.GetInstance().GetIdfaResultValue().ToLower());
 #elif UNITY_ANDROID && !UNITY_EDITOR
@@ -228,7 +247,7 @@ namespace ElephantSDK
         
         private static IEnumerator LoadGameSceneCoroutine()
         {
-            float requiredTime = RemoteConfig.GetInstance().GetFloat("elephant_minimum_time_to_load_gamescene", 1.5f);
+            float requiredTime = RemoteConfig.GetInstance().GetFloat("elephant_minimum_time_to_load_gamescene", 2.5f);
             while (Time.time - _startTime <= requiredTime)
             {
                 yield return null;

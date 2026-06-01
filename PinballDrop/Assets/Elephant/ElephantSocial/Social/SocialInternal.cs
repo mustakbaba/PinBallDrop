@@ -91,9 +91,10 @@ namespace ElephantSocial
             return Player.Clone();
         }
 
-        public void GetPlayer(string socialId, Action<Player> response, Action<string> onFailed, Action<string> onError)
+        public void GetPlayer(string socialId, Action<Player> response, Action<string> onFailed, Action<string> onError,
+            bool forceRefresh = false)
         {
-            _socialIdPlayerCache.GetPlayer(socialId, response, onFailed, onError);
+            _socialIdPlayerCache.GetPlayer(socialId, response, onFailed, onError, forceRefresh);
         }
 
         public void UpdatePlayer(Player newPlayer, Action onSuccess, Action<string> onFailed,

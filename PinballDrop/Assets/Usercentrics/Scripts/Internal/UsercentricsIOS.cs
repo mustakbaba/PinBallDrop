@@ -47,7 +47,13 @@ namespace Unity.Usercentrics
         private static extern void ucAcceptAll();
 
         [DllImport("__Internal")]
-        private static extern void ucDenyAll();
+        private static extern void ucDenyAll(string unsavedPurposeLIDecisions);
+
+        [DllImport("__Internal")]
+        private static extern void ucAcceptAllForGDPR();
+
+        [DllImport("__Internal")]
+        private static extern void ucDenyAllForGDPR();
 
         [DllImport("__Internal")]
         private static extern void ucTrack(int eventType);
@@ -72,6 +78,9 @@ namespace Unity.Usercentrics
         
         [DllImport("__Internal")]
         private static extern void ucClearUserSession();
+
+        [DllImport("__Internal")]
+        private static extern string ucSaveDecisionsForGDPR(string decisions);
 
         public void Initialize(string initArgsJson)
         {
@@ -138,9 +147,19 @@ namespace Unity.Usercentrics
             ucAcceptAll();
         }
 
-        public void DenyAll()
+        public void DenyAll(string unsavedPurposeLIDecisions = null)
         {
-            ucDenyAll();
+            ucDenyAll(unsavedPurposeLIDecisions);
+        }
+
+        public void AcceptAllForGDPR()
+        {
+            ucAcceptAllForGDPR();
+        }
+
+        public void DenyAllForGDPR()
+        {
+            ucDenyAllForGDPR();
         }
 
         public void Track(int eventType)
@@ -181,6 +200,11 @@ namespace Unity.Usercentrics
         public void ClearUserSession()
         {
             ucClearUserSession();
+        }
+        
+        public string SaveDecisionsForGDPR(string decisions)
+        {
+            return ucSaveDecisionsForGDPR(decisions);
         }
     }
 }

@@ -48,6 +48,15 @@ namespace ElephantSDK
             ElephantLog.Log("Adjust attr",adjustAttribution.Network);
         }
 
+
+        public void TrackPurchaseRevenue(string token, double revenue, string currency)
+        {
+            ElephantLog.Log("ADJUST-ELEPHANT", "TrackPurchaseRevenue is Called");
+            var adjustEvent = new AdjustEvent(token);
+            adjustEvent.SetRevenue(revenue, currency);
+            Adjust.TrackEvent(adjustEvent);
+        }
+
         public void TrackAdjustEvent(string token)
         {
             ElephantLog.Log("ADJUST-ELEPHANT", "TrackAdjustEvent is Called");

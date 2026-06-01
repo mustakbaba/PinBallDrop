@@ -5,12 +5,15 @@
 #import <mach/mach.h>
 #import <UserNotifications/UserNotifications.h>
 #import <StoreKit/StoreKit.h>
+#import "ElephantBuildConfig.h"
 
 #import <AppLovinSDK/AppLovinSDK.h>
+#if !EXCLUDE_EXTRA_NETWORKS
 #import <UnityAds/UnityAds.h>
 #import <ChartboostSDK/Chartboost.h>
 #import <IronSource/IronSource.h>
 #import <PAGAdSDK/PAGAdSDK.h>
+#endif
 
 static SKProductsRequest *currentRequest = nil;
 @interface ElephantController() <SKProductsRequestDelegate>
@@ -39,9 +42,11 @@ void showForceUpdate(const char * _ttl, const char * _msg) {
      
      NSString *ttlString = [NSString stringWithCString:_titleTextCopy encoding:NSUTF8StringEncoding];
      NSString *msgString = [NSString stringWithCString:_messsageTextCopy encoding:NSUTF8StringEncoding];
- 
-     IdfaConsentViewController *viewController = [IdfaConsentViewController sharedInstance];
-     [viewController showForceUpdate:ttlString :msgString];
+
+     dispatch_async(dispatch_get_main_queue(), ^{
+         IdfaConsentViewController *viewController = [IdfaConsentViewController sharedInstance];
+         [viewController showForceUpdate:ttlString :msgString];
+     });
 }
 
 void showAlertDialog(const char * _ttl, const char * _msg) {
@@ -51,9 +56,11 @@ void showAlertDialog(const char * _ttl, const char * _msg) {
      
      NSString *ttlString = [NSString stringWithCString:_titleTextCopy encoding:NSUTF8StringEncoding];
      NSString *msgString = [NSString stringWithCString:_messsageTextCopy encoding:NSUTF8StringEncoding];
- 
-     IdfaConsentViewController *viewController = [IdfaConsentViewController sharedInstance];
-     [viewController showAlertDialog:ttlString :msgString];
+
+     dispatch_async(dispatch_get_main_queue(), ^{
+         IdfaConsentViewController *viewController = [IdfaConsentViewController sharedInstance];
+         [viewController showAlertDialog:ttlString :msgString];
+     });
  }
  
  void openURL(const char * urlString) {
@@ -138,45 +145,50 @@ void showReturningUserPopUpView(const char * action, const char * title, const c
     NSString* privacyPolicyTextStr = [NSString stringWithCString:privacyPolicyText encoding:NSUTF8StringEncoding];
     NSString* privacyPolicyUrlStr = [NSString stringWithCString:privacyPolicyUrl encoding:NSUTF8StringEncoding];
     NSString* backToGameActionButtonTextStr = [NSString stringWithCString:backToGameActionButtonText encoding:NSUTF8StringEncoding];
-    NSArray<Hyperlink*>* hyperlinks = [[NSArray<Hyperlink*> alloc] initWithObjects:
-                                           [[Hyperlink alloc] initWithMask:[Constants privacyPolicyMask] text:privacyPolicyTextStr url:privacyPolicyUrlStr],
-                                           nil];
-    
-    ActionType actionEnum = (ActionType) [Utils getActionTypeFromString:actionStr];
-    ReturningUserPopUpView* returningUserPopUpView = [ReturningUserPopUpView createView];
-    ReturningUserPopUpViewModel* model = [[ReturningUserPopUpViewModel alloc] initWithAction:actionEnum
-                                                                                       title:titleStr
-                                                                                        text:contentStr
-                                                                        backToGameButtonTitle:backToGameActionButtonTextStr
-                                                                                    hyperlinks:hyperlinks
-                                                                                interactable:interactableHandler];
-    
-    [returningUserPopUpView configureWithModel:model];
-    [returningUserPopUpView showWithSubviewType:CONTENT];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSArray<Hyperlink*>* hyperlinks = [[NSArray<Hyperlink*> alloc] initWithObjects:
+                                               [[Hyperlink alloc] initWithMask:[Constants privacyPolicyMask] text:privacyPolicyTextStr url:privacyPolicyUrlStr],
+                                               nil];
+
+        ActionType actionEnum = (ActionType) [Utils getActionTypeFromString:actionStr];
+        ReturningUserPopUpView* returningUserPopUpView = [ReturningUserPopUpView createView];
+        ReturningUserPopUpViewModel* model = [[ReturningUserPopUpViewModel alloc] initWithAction:actionEnum
+                                                                                           title:titleStr
+                                                                                            text:contentStr
+                                                                            backToGameButtonTitle:backToGameActionButtonTextStr
+                                                                                        hyperlinks:hyperlinks
+                                                                                    interactable:interactableHandler];
+
+        [returningUserPopUpView configureWithModel:model];
+        [returningUserPopUpView showWithSubviewType:CONTENT];
+    });
 }
 
 void showCollectiblePopUpView(const char *message, const char *buttonText) {
     NSString *messageStr = [NSString stringWithCString:message encoding:NSUTF8StringEncoding];
     NSString *buttonTextStr = [NSString stringWithCString:buttonText encoding:NSUTF8StringEncoding];
-    
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil
-                                                                             message:messageStr
-                                                                      preferredStyle:UIAlertControllerStyleAlert];
-    
-    UIAlertAction *collectAction = [UIAlertAction actionWithTitle:buttonTextStr
-                                                            style:UIAlertActionStyleDefault
-                                                          handler:^(UIAlertAction * _Nonnull action) {
-        UnitySendMessage("Elephant", "ReceiveCollectibleResponse", "OK");
-    }];
-    
-    [alertController addAction:collectAction];
-    
-    UIViewController *topViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
-    while (topViewController.presentedViewController) {
-        topViewController = topViewController.presentedViewController;
-    }
-    
-    [topViewController presentViewController:alertController animated:YES completion:nil];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil
+                                                                                 message:messageStr
+                                                                          preferredStyle:UIAlertControllerStyleAlert];
+
+        UIAlertAction *collectAction = [UIAlertAction actionWithTitle:buttonTextStr
+                                                                style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction * _Nonnull action) {
+            UnitySendMessage("Elephant", "ReceiveCollectibleResponse", "OK");
+        }];
+
+        [alertController addAction:collectAction];
+
+        UIViewController *topViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
+        while (topViewController.presentedViewController) {
+            topViewController = topViewController.presentedViewController;
+        }
+
+        [topViewController presentViewController:alertController animated:YES completion:nil];
+    });
 }
 
 const char* IDFA(){
@@ -317,31 +329,34 @@ void showPopUpView(const char * popUpSubviewType, const char * text, const char 
     NSString* termsOfServiceTextStr = [NSString stringWithCString:termsOfServiceText encoding:NSUTF8StringEncoding];
     NSString* termsOfServiceUrlStr = [NSString stringWithCString:termsOfServiceUrl encoding:NSUTF8StringEncoding];
     NSString* popUpSubviewTypeStr = [NSString stringWithCString:popUpSubviewType encoding:NSUTF8StringEncoding];
-    NSMutableArray<Hyperlink*>* hyperlinks = [[NSMutableArray<Hyperlink*> alloc] initWithObjects:
-                                                  [[Hyperlink alloc] initWithMask:[Constants privacyPolicyMask] text:privacyPolicyTextStr url:privacyPolicyUrlStr],
-                                                  [[Hyperlink alloc] initWithMask:[Constants termsOfServiceMask] text:termsOfServiceTextStr url:termsOfServiceUrlStr], nil];
-    BOOL isPin = ![dataRequestTextStr isEqualToString:@""] && ![dataRequestUrlStr isEqualToString:@""];
-    
-    if (isPin) {
-        [hyperlinks addObject:[[Hyperlink alloc] initWithMask:[Constants dataRequestMask] text:dataRequestTextStr url:dataRequestUrlStr]];
-    }
-    
-    PopUpSubviewType subviewType = (PopUpSubviewType) [Utils getPopUpSubviewTypeFromString:popUpSubviewTypeStr];
-    PopUpView* popUpView = [PopUpView createView];
-    PopUpViewModel* model = [[PopUpViewModel alloc] initWithText:textStr
-                                                     buttonTitle:buttonTitleStr
-                                                      hyperlinks:hyperlinks
-                                                    interactable:interactableHandler];
-    
-    [popUpView configureWithModel:model];
-    
-    popUpView.buttonCallback = ^{
-        if (!isPin) {
-            [interactableHandler onButtonTapped:TOS_ACCEPT];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSMutableArray<Hyperlink*>* hyperlinks = [[NSMutableArray<Hyperlink*> alloc] initWithObjects:
+                                                      [[Hyperlink alloc] initWithMask:[Constants privacyPolicyMask] text:privacyPolicyTextStr url:privacyPolicyUrlStr],
+                                                      [[Hyperlink alloc] initWithMask:[Constants termsOfServiceMask] text:termsOfServiceTextStr url:termsOfServiceUrlStr], nil];
+        BOOL isPin = ![dataRequestTextStr isEqualToString:@""] && ![dataRequestUrlStr isEqualToString:@""];
+
+        if (isPin) {
+            [hyperlinks addObject:[[Hyperlink alloc] initWithMask:[Constants dataRequestMask] text:dataRequestTextStr url:dataRequestUrlStr]];
         }
-    };
-    
-    [popUpView showWithSubviewType:subviewType];
+
+        PopUpSubviewType subviewType = (PopUpSubviewType) [Utils getPopUpSubviewTypeFromString:popUpSubviewTypeStr];
+        PopUpView* popUpView = [PopUpView createView];
+        PopUpViewModel* model = [[PopUpViewModel alloc] initWithText:textStr
+                                                         buttonTitle:buttonTitleStr
+                                                          hyperlinks:hyperlinks
+                                                        interactable:interactableHandler];
+
+        [popUpView configureWithModel:model];
+
+        popUpView.buttonCallback = ^{
+            if (!isPin) {
+                [interactableHandler onButtonTapped:TOS_ACCEPT];
+            }
+        };
+
+        [popUpView showWithSubviewType:subviewType];
+    });
 }
 
 void showCcpaPopUpView(const char * action, const char * title, const char * content,
@@ -356,38 +371,43 @@ void showCcpaPopUpView(const char * action, const char * title, const char * con
     NSString* agreeActionButtonTextStr = [NSString stringWithCString:agreeActionButtonText encoding:NSUTF8StringEncoding];
     NSString* declineActionButtonTextStr = [NSString stringWithCString:declineActionButtonText encoding:NSUTF8StringEncoding];
     NSString* backToGameActionButtonTextStr = [NSString stringWithCString:backToGameActionButtonText encoding:NSUTF8StringEncoding];
-    NSArray<Hyperlink*>* hyperlinks = [[NSArray<Hyperlink*> alloc] initWithObjects:
-                                           [[Hyperlink alloc] initWithMask:[Constants privacyPolicyMask] text:privacyPolicyTextStr url:privacyPolicyUrlStr],
-                                           nil];
-    
-    ActionType actionEnum = (ActionType) [Utils getActionTypeFromString:actionStr];
-    PersonalizedAdsConsentPopUpView* personalizedAdsConsentPopUpView = [PersonalizedAdsConsentPopUpView createView];
-    PersonalizedAdsConsentPopUpViewModel* model = [[PersonalizedAdsConsentPopUpViewModel alloc] initWithAction:actionEnum
-                                                                                                         title:titleStr
-                                                                                                          text:contentStr
-                                                                                            declineButtonTitle:declineActionButtonTextStr
-                                                                                              agreeButtonTitle:agreeActionButtonTextStr
-                                                                                         backToGameButtonTitle:backToGameActionButtonTextStr
-                                                                                                    hyperlinks:hyperlinks
-                                                                                                  interactable:interactableHandler];
-    
-    [personalizedAdsConsentPopUpView configureWithModel:model];
-    [personalizedAdsConsentPopUpView showWithSubviewType:CONTENT];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSArray<Hyperlink*>* hyperlinks = [[NSArray<Hyperlink*> alloc] initWithObjects:
+                                               [[Hyperlink alloc] initWithMask:[Constants privacyPolicyMask] text:privacyPolicyTextStr url:privacyPolicyUrlStr],
+                                               nil];
+
+        ActionType actionEnum = (ActionType) [Utils getActionTypeFromString:actionStr];
+        PersonalizedAdsConsentPopUpView* personalizedAdsConsentPopUpView = [PersonalizedAdsConsentPopUpView createView];
+        PersonalizedAdsConsentPopUpViewModel* model = [[PersonalizedAdsConsentPopUpViewModel alloc] initWithAction:actionEnum
+                                                                                                             title:titleStr
+                                                                                                              text:contentStr
+                                                                                                declineButtonTitle:declineActionButtonTextStr
+                                                                                                  agreeButtonTitle:agreeActionButtonTextStr
+                                                                                             backToGameButtonTitle:backToGameActionButtonTextStr
+                                                                                                        hyperlinks:hyperlinks
+                                                                                                      interactable:interactableHandler];
+
+        [personalizedAdsConsentPopUpView configureWithModel:model];
+        [personalizedAdsConsentPopUpView showWithSubviewType:CONTENT];
+    });
 }
 
 void showSettingsView(const char * popUpSubviewType, const char * actions, BOOL showButton, const char * id) {
     NSString* actionsJson = [NSString stringWithCString:actions encoding:NSUTF8StringEncoding];
     NSString* popUpSubviewTypeStr = [NSString stringWithCString:popUpSubviewType encoding:NSUTF8StringEncoding];
     NSString* idStr = [NSString stringWithCString:id encoding:NSUTF8StringEncoding];
-    
-    ComplianceActions* complianceActions = [[ComplianceActions alloc] initWithJSONDictionary:[Utils JSONStringToJSONDictionary:actionsJson]];
-    PopUpSubviewType subviewType = (PopUpSubviewType) [Utils getPopUpSubviewTypeFromString:popUpSubviewTypeStr];
-    SettingsPopUpViewModel* model = [[SettingsPopUpViewModel alloc] initWithActions:[complianceActions actions]
-                                                                       interactable:interactableHandler];
-    SettingsView* settingsView = [SettingsView createView];
-    
-    [settingsView configureWithModel:model showButton:showButton id:idStr];
-    [settingsView showWithSubviewType:subviewType];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        ComplianceActions* complianceActions = [[ComplianceActions alloc] initWithJSONDictionary:[Utils JSONStringToJSONDictionary:actionsJson]];
+        PopUpSubviewType subviewType = (PopUpSubviewType) [Utils getPopUpSubviewTypeFromString:popUpSubviewTypeStr];
+        SettingsPopUpViewModel* model = [[SettingsPopUpViewModel alloc] initWithActions:[complianceActions actions]
+                                                                           interactable:interactableHandler];
+        SettingsView* settingsView = [SettingsView createView];
+
+        [settingsView configureWithModel:model showButton:showButton id:idStr];
+        [settingsView showWithSubviewType:subviewType];
+    });
 }
 
 void showBlockedPopUpView(const char * title, const char * content, const char * warningContent, const char * buttonTitle) {
@@ -395,41 +415,56 @@ void showBlockedPopUpView(const char * title, const char * content, const char *
     NSString* contentStr = [NSString stringWithCString:content encoding:NSUTF8StringEncoding];
     NSString* warningContentStr = [NSString stringWithCString:warningContent encoding:NSUTF8StringEncoding];
     NSString* buttonTitleStr = [NSString stringWithCString:buttonTitle encoding:NSUTF8StringEncoding];
-    BlockedPopUpView* deleteRequestPopUpView = [BlockedPopUpView createView];
-    BlockedPopUpViewModel* model = [[BlockedPopUpViewModel alloc] initWithTitle:titleStr text:contentStr warningContent:warningContentStr buttonTitle:buttonTitleStr hyperlinks:nil interactable:interactableHandler];
-    
-    [deleteRequestPopUpView configureWithModel:model];
-    [deleteRequestPopUpView showWithSubviewType:CONTENT];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        BlockedPopUpView* deleteRequestPopUpView = [BlockedPopUpView createView];
+        BlockedPopUpViewModel* model = [[BlockedPopUpViewModel alloc] initWithTitle:titleStr text:contentStr warningContent:warningContentStr buttonTitle:buttonTitleStr hyperlinks:nil interactable:interactableHandler];
+
+        [deleteRequestPopUpView configureWithModel:model];
+        [deleteRequestPopUpView showWithSubviewType:CONTENT];
+    });
 }
 
 void showNetworkOfflinePopUpView(const char * content, const char * buttonTitle) {
     NSString* contentStr = [NSString stringWithCString:content encoding:NSUTF8StringEncoding];
     NSString* buttonTitleStr = [NSString stringWithCString:buttonTitle encoding:NSUTF8StringEncoding];
-    PopUpView* popUpView = [PopUpView createView];
-    PopUpViewModel* model = [[PopUpViewModel alloc] initWithText:contentStr buttonTitle:buttonTitleStr interactable:interactableHandler];
-    
-    [popUpView configureWithModel:model];
-    
-    popUpView.buttonCallback = ^{
-        [interactableHandler onButtonTapped:RETRY_CONNECTION];
-    };
-    
-    [popUpView showWithSubviewType:CONTENT];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        PopUpView* existingPopUpView = [[Constants rootViewController] hasSubviewWithKindOfClass:[PopUpView class]];
+        if (existingPopUpView && [existingPopUpView superview] != nil) {
+            [existingPopUpView hide];
+            existingPopUpView.buttonCallback = nil;
+        }
+        
+        PopUpView* popUpView = [[PopUpView alloc] init];
+        PopUpViewModel* model = [[PopUpViewModel alloc] initWithText:contentStr buttonTitle:buttonTitleStr interactable:interactableHandler];
+        
+        [popUpView configureWithModel:model];
+        
+        popUpView.buttonCallback = ^{
+            [interactableHandler onButtonTapped:RETRY_CONNECTION];
+        };
+        
+        [popUpView showWithSubviewType:CONTENT];
+    });
 }
 
 void showVppaDialog(const char * content, const char * buttonTitle) {
     NSString* contentStr = [NSString stringWithCString:content encoding:NSUTF8StringEncoding];
     NSString* buttonTitleStr = [NSString stringWithCString:buttonTitle encoding:NSUTF8StringEncoding];
-    PopUpView* popUpView = [PopUpView createView];
-    PopUpViewModel* model = [[PopUpViewModel alloc] initWithText:contentStr buttonTitle:buttonTitleStr interactable:interactableHandler];
-    
-    [popUpView configureWithModel:model];
-    
-    popUpView.buttonCallback = ^{
-        [interactableHandler onButtonTapped:VPPA_ACCEPT];
-    };
-    
-    [popUpView showWithSubviewType:CONTENT];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        PopUpView* popUpView = [PopUpView createView];
+        PopUpViewModel* model = [[PopUpViewModel alloc] initWithText:contentStr buttonTitle:buttonTitleStr interactable:interactableHandler];
+
+        [popUpView configureWithModel:model];
+
+        popUpView.buttonCallback = ^{
+            [interactableHandler onButtonTapped:VPPA_ACCEPT];
+        };
+
+        [popUpView showWithSubviewType:CONTENT];
+    });
 }
 
 int gameMemoryUsage() {
@@ -507,6 +542,8 @@ void setAppLovinGdprConsent(bool consent) {
     }
 }
 
+#if !EXCLUDE_EXTRA_NETWORKS
+
 void setUnityAdsGdprConsent(bool consent) {
     UADSMetaData *gdprConsentMetaData = [[UADSMetaData alloc] init];
     if (consent) {
@@ -536,9 +573,25 @@ void setIronSourceGdprConsent(bool consent) {
 void setPangleGdprConsent(bool consent) {
     PAGConfig *config = [PAGConfig shareConfig];
     if (consent) {
-        config.GDPRConsent = PAGGDPRConsentTypeConsent;
+        config.PAConsent = PAGPAConsentTypeConsent;
     } else {
-        config.GDPRConsent = PAGGDPRConsentTypeNoConsent;
+        config.PAConsent = PAGPAConsentTypeNoConsent;
+    }
+}
+
+#endif
+
+void openURLInWebView(const char * urlString) {
+    if (urlString != nullptr) {
+        const char * urlStringCopy = ElephantCopyString(urlString);
+        NSString *urlNSString = [NSString stringWithCString:urlStringCopy encoding:NSUTF8StringEncoding];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSURL *url = [NSURL URLWithString:urlNSString];
+            [Utils presentURL:url];
+        });
+        
+        free((void*)urlStringCopy);
     }
 }
 

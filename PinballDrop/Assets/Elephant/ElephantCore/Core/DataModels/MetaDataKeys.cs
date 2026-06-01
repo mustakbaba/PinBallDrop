@@ -28,5 +28,6 @@ namespace ElephantSDK
         public const string KeyFirstOfferTimestamps = "elephant_first_offer_timestamps";
         public const string KeyPurchasedOffers = "elephant_purchased_offers";
         public const string KeyOfferCounts = "elephant_offer_counts";
+        public const string KeyInGameSoundEnabled = "elephant_in_game_sound_enabled";
     }
 }

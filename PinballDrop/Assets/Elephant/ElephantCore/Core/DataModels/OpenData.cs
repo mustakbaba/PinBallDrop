@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using Newtonsoft.Json.Linq;
 
 namespace ElephantSDK
 {
@@ -9,6 +10,8 @@ namespace ElephantSDK
         public bool gdpr_supported;
         public string hash;
         public string tc_string;
+        public JObject ios_age_range_data;
+        public JObject android_age_range_data;
 
         private OpenData()
         {

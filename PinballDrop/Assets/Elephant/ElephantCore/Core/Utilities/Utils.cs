@@ -208,22 +208,41 @@ namespace ElephantSDK
             try
             {
                 var path = Path.Combine(Application.persistentDataPath, filename);
-                ElephantLog.Log("ReadFromFile","filename: " + filename + "path: " + path);
+                ElephantLog.Log("ReadFromFile", "filename: " + filename + " path: " + path);
+        
                 if (File.Exists(path))
                 {
-                    return File.ReadAllText(path);
+                    var content = File.ReadAllText(path);
+
+                    const int maxPreviewLength = 200;
+                    var preview = content;
+
+                    if (!string.IsNullOrEmpty(preview))
+                    {
+                        preview = preview.Replace("\r", "\\r").Replace("\n", "\\n");
+                        if (preview.Length > maxPreviewLength)
+                        {
+                            preview = preview.Substring(0, maxPreviewLength) + "...(truncated)";
+                        }
+                    }
+
+                    ElephantLog.Log("ReadFromFile", 
+                        $"Read file '{filename}'. Content preview: '{preview}'");
+
+                    return content;
                 }
-                
+        
                 ElephantLog.Log("ReadFromFile", "File not found: " + filename);
                 return null;
             }
             catch (Exception e)
             {
-                ElephantLog.LogError("ReadFromFile",e.Message);
+                ElephantLog.LogError("ReadFromFile", e.Message);
             }
 
             return null;
         }
+
         
         public static string GetFullPath(string filename)
         {
@@ -354,6 +373,29 @@ namespace ElephantSDK
                 return value.ToString();
             }
             
+        }
+        
+        public static long ReadLongFromFile(string filename, long defaultValue = 0)
+        {
+            var raw = ReadFromFile(filename);
+
+            if (string.IsNullOrWhiteSpace(raw))
+            {
+                ElephantLog.LogError("ReadLongFromFile",
+                    $"File '{filename}' is null/empty/whitespace. Raw: '{raw}'");
+                return defaultValue;
+            }
+
+            raw = raw.Trim();
+
+            if (!long.TryParse(raw, out var value))
+            {
+                ElephantLog.LogError("ReadLongFromFile",
+                    $"File '{filename}' contains invalid long. Raw: '{raw}'");
+                return defaultValue;
+            }
+
+            return value;
         }
     }
 }

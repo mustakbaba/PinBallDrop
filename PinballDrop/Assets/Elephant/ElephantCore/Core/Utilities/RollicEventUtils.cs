@@ -151,6 +151,7 @@ namespace ElephantSDK
             var context = new Dictionary<string, object>
             {
                 { "level", _metaDataUtils.GetCurrentLevel() },
+                { "levelCompleteCount", _metaDataUtils.GetLevelCompleteCount() },
                 { "totalInterstitialCount", _metaDataUtils.GetTotalInterstitialCount() },
                 { "totalRewardedCount", _metaDataUtils.GetTotalRewardedCount() },
                 { "timespend", GetTimeSpentInMinutes() },
@@ -275,8 +276,8 @@ namespace ElephantSDK
 
         private long GetTimeSpentInMinutes()
         {
-            var totalTimeSpend = Utils.ReadFromFile(ElephantConstants.TimeSpend);
-            return Convert.ToInt64(totalTimeSpend) / 1000 / 60;
+            var totalTimeSpendMs = Utils.ReadLongFromFile(ElephantConstants.TimeSpend, 0);
+            return totalTimeSpendMs / 1000 / 60;
         }
     }
 }

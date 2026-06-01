@@ -1,12 +1,20 @@
 namespace ElephantSDK
 {
     public class ElephantConstants
-    {
+    {        
+        #region Debug Mode
+        
+        public static bool IsDevUrlEnabled { get; set; } = false;
+        
+        #endregion
+        
         #region EndPoints
 
         public const string ELEPHANT_BASE_URL = "https://newapi.rollic.gs/v3";
         private const string ElephantBaseUrlv4 = "https://newapi.rollic.gs/v4";
         public const string LIVEOPS_BASE_URL = "https://liveopsapi.rollic.gs/api/v2";
+        
+        private const string ELEPHANT_BASE_URL_DEV = "https://api-dev.rollic.gs/v3";
 
         public const string OPEN_EP = ELEPHANT_BASE_URL + "/open";
         public const string USER_EP = ELEPHANT_BASE_URL + "/user";
@@ -24,6 +32,7 @@ namespace ElephantSDK
         public const string CCPA_STATUS = ELEPHANT_BASE_URL + "/ccpa/status";
         public const string GDPR_AD_CONSENT = ELEPHANT_BASE_URL + "/gdpr/status";
         public const string SETTINGS_EP = ELEPHANT_BASE_URL + "/settings";
+        public const string AGE_RANGE_CHECK_DISPLAY_EP = ELEPHANT_BASE_URL + "/age_range/check_display";
         public const string StorageDownloadEp = ELEPHANT_BASE_URL + "/storage/download";
         public const string StorageSyncEp = ELEPHANT_BASE_URL + "/storage/sync";
         public const string CollectibleEp = LIVEOPS_BASE_URL + "/collectibles";
@@ -35,8 +44,12 @@ namespace ElephantSDK
         public const string LOGICS_EP = ELEPHANT_BASE_URL + "/event/retrieve";
         public const string ZYNGA_PLAYER_ID_EP = ELEPHANT_BASE_URL + "/user/zynga_id";
         
-        public const string MDS_EP = LIVEOPS_BASE_URL + "/mds";
-        public const string MDS_AUTH_EP = ELEPHANT_BASE_URL + "/auth/login";
+        private static string DirectStoreBaseUrl => IsDevUrlEnabled ? ELEPHANT_BASE_URL_DEV : ELEPHANT_BASE_URL;
+        
+        public static string DS_LIST_PRODUCTS => DirectStoreBaseUrl + "/direct_store/list_products";
+        public static string DS_START_CHECKOUT => DirectStoreBaseUrl + "/direct_store/start_checkout";
+        public static string DS_LIST_PAYMENTS => DirectStoreBaseUrl + "/direct_store/list_ds_payments";
+        public static string DS_MARK_PAYMENT_PROCESSED => DirectStoreBaseUrl + "/direct_store/mark_ds_payment_processed";
 
         #endregion
 
@@ -53,6 +66,8 @@ namespace ElephantSDK
         public static string STORAGE_VERSION = "STORAGE_VERSION";
         public static string STORAGE_LOCAL = "ELEPHANT_STORAGE_LOCAL";
         public static string TC_STRING = "ELEPHANT_TC_STRING";
+        public static string AGE_RANGE_CHECK_DISPLAY_CACHE = "AGE_RANGE_CHECK_DISPLAY_CACHE";
+
 
         #endregion
     }

@@ -1,7 +1,9 @@
 {
     "name": "ElephantEditor",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "Elephant"
+    ],
     "includePlatforms": [
         "Editor"
     ],

@@ -864,6 +864,11 @@ namespace ElephantSdkManager
 
         private IEnumerator DownloadSDK(Sdk sdkInfo, bool isAutomation = false)
         {
+            if (sdkInfo.sdkName.ToLower().Contains("gamekit"))
+            {
+                AdjustSettingsManager.BackupDeepLinkingSettings();
+            }
+            
             var path = Path.Combine(DownloadDirectory, sdkInfo.sdkName + ".unitypackage");
 
             if (sdkInfo.downloadUrl.Contains("xml"))
@@ -974,8 +979,11 @@ namespace ElephantSdkManager
 
         private void OnImportPackageCompleted(string packageName)
         {
+            if (!packageName.ToLower().Contains("gamekit")) return;
+    
             CheckVersions();
             CheckPackage(packageName);
+            AdjustSettingsManager.RestoreDeepLinkingSettings();
         }
 
         private void CheckPackage(string packageName)
