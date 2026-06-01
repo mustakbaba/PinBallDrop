@@ -110,7 +110,7 @@ public class BallController : MonoBehaviour
         _multiAmountText.GetComponent<MeshRenderer>().SetPropertyBlock(_propertyBlock);
 
         var a = Mathf.InverseLerp(5, 20, Properties.BallAmount);
-        var scale = Mathf.Lerp(0.5f, 2f, a);
+        var scale = Mathf.Lerp(0.5f, 1.5f, a);
         if (!isPlaying && !IsFromTunnel)
             transform.localScale = Vector3.one * scale;
 

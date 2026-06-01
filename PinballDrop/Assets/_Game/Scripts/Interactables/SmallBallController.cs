@@ -18,6 +18,8 @@ public class SmallBallController : MonoBehaviour
     public int bounceCount = 0;
     private bool _wentToVacuum;
     private ParticleSystem _trailParticle;
+    private bool _isCloseVacuum;
+    private float randForce;
 
     private void Awake()
     {
@@ -121,11 +123,25 @@ public class SmallBallController : MonoBehaviour
         }
     }
 
+    private IEnumerator RandForceShake()
+    {
+        while (true)
+        {
+            if (_goingToVacuum && _isCloseVacuum)
+            {
+                randForce = Random.Range(1f, 5f);
+                yield return new WaitForSeconds(.25f);
+            }
+
+            yield return null;
+        }
+    }
+
     private IEnumerator GoToVacuum()
     {
         _goingToVacuum = true;
         yield return new WaitForSeconds(0.3f);
-
+        StartCoroutine(RandForceShake());
         while (true)
         {
             if (_vacuum == null) yield break;
@@ -136,15 +152,18 @@ public class SmallBallController : MonoBehaviour
 
             float distance = dir.magnitude;
 
-            if (distance < 0.8f) // eşiği büyüt
+
+            if (distance < 1f) // eşiği büyüt
             {
+                _isCloseVacuum = true;
                 // _vacuum.ShootTheBall(this);
                 // yield break;
             }
 
             // Yaklaştıkça force artır
+
             float forceMult = Mathf.Clamp(1f / distance, 0.5f, 3f);
-            _rb.AddForce(dir.normalized * vacuumForce * forceMult, ForceMode.Acceleration);
+            _rb.AddForce(dir.normalized * vacuumForce * forceMult * randForce, ForceMode.Acceleration);
 
             // Hızı sınırla, geçip gitmesin
             var vel = _rb.velocity;
@@ -196,7 +215,8 @@ public class SmallBallController : MonoBehaviour
         bounceCount = 0;
         _wentToVacuum = false;
         StopAllCoroutines();
-
+        _isCloseVacuum = false;
+        randForce = 0;
         var rb = GetComponent<Rigidbody>();
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
@@ -206,8 +226,8 @@ public class SmallBallController : MonoBehaviour
     {
         PipeHolderManager pipeHolderManager = PipeHolderManager.Instance;
         var points = pipeHolderManager.PipePathTransforms;
-    
-            MoveToPoint(points.ToList(), 0);
+
+        MoveToPoint(points.ToList(), 0);
     }
 
     private void MoveToPoint(List<Transform> points, int index)
@@ -232,7 +252,7 @@ public class SmallBallController : MonoBehaviour
             randY = Random.Range(-0.5f, 0.5f);
         }
 
-        transform.DOMove(points[index].position+ new Vector3(randX,randY,0), 9f)
+        transform.DOMove(points[index].position + new Vector3(randX, randY, 0), 9f)
             .SetEase(Ease.Linear)
             .SetSpeedBased()
             .OnComplete(() => MoveToPoint(points, index + 1));
