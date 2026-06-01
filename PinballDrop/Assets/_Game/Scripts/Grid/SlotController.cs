@@ -41,10 +41,10 @@ public class SlotController : MonoBehaviour
     }
 
     // SlotController.cs
-    public const int Capacity = 18; // 3x2x3
-    public const int Columns = 3;   // X
+    public const int Capacity = 16; // 3x2x3
+    public const int Columns = 4;   // X
     public const int Depths = 2;    // Z
-    public const int Rows = 3;      // Y
+    public const int Rows = 2;      // Y
     public float Spacing = 0.5f;
 
     public bool TryAddBall(SmallBallController ball)
@@ -63,12 +63,15 @@ public class SlotController : MonoBehaviour
         int depth = (index / Columns) % Depths;
         int row = index / (Columns * Depths);
 
-    Vector3 startOffset = new Vector3(-0.21f, 0.425f, -0.17f);
+// Son 4 top için Y daha yüksek
+        float extraY = index >= Capacity - 4 ? 0.07f : 0f;
+
+        Vector3 startOffset = new Vector3(-0.335f, 0.5f + extraY, -0.17f);
 
         Vector3 localTarget = startOffset + new Vector3(
-            col * Spacing*1.5f,
+            col * Spacing * 1.5f,
             row * Spacing,
-            depth * (Spacing*1.5f)
+            depth * (Spacing * 1.5f)
         );
 
         _balls.Add(ball);
