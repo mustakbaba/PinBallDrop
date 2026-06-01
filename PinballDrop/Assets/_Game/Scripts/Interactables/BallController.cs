@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,7 @@ using SincappStudio;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEditor;
+using Random = UnityEngine.Random;
 
 public class BallController : MonoBehaviour
 {
@@ -16,14 +18,8 @@ public class BallController : MonoBehaviour
         None,
         MultiBall,
     }
-
-    public BallBlockers BallBlocker;
-
-    [ShowIf("BallBlocker", BallBlockers.MultiBall)]
-    public ColorTypes MultiColor;
-
-    [ShowIf("BallBlocker", BallBlockers.MultiBall)]
-    public int MultiAmount = 5;
+    
+    public BallProperties Properties;
 
     [Header("Ayarlar")] private float upwardForce = 12;
     private float maxY = 899f;
@@ -33,14 +29,11 @@ public class BallController : MonoBehaviour
     private bool _isClickable;
     private bool _exploded;
 
-    public int BallAmount = 10;
-    public ColorTypes ObjectColor;
     private MaterialPropertyBlock _propertyBlock;
-    [SerializeField] private TextMeshPro _amountText;
-    [SerializeField] private TextMeshPro _multiAmountText;
-    [SerializeField] private GameObject _innerBallObject;
+    [FoldoutGroup("References")][SerializeField] private TextMeshPro _amountText;
+    [FoldoutGroup("References")][SerializeField] private TextMeshPro _multiAmountText;
+    [FoldoutGroup("References")][SerializeField] private GameObject _innerBallObject;
     private MeshRenderer _meshRenderer;
-    public bool IsHidden;
     public bool IsFromTunnel { get; set; }
 
     private void Awake()
@@ -65,16 +58,16 @@ public class BallController : MonoBehaviour
     public void SetColor(bool isPlaying = false)
     {
         if (this == null) return;
-        var color = LevelManager.Instance.ObjectColors[(int)ObjectColor];
+        var color = LevelManager.Instance.ObjectColors[(int)Properties.ObjectColor];
 
         var renderer = GetComponentInChildren<MeshRenderer>();
         if (_propertyBlock == null)
             _propertyBlock = new MaterialPropertyBlock();
 
         renderer.GetPropertyBlock(_propertyBlock);
-        var clr = LevelManager.Instance.ObjectColors[(int)ObjectColor];
+        var clr = LevelManager.Instance.ObjectColors[(int)Properties.ObjectColor];
 
-        if (BallBlocker == BallBlockers.MultiBall)
+        if (Properties.BallBlocker == BallBlockers.MultiBall)
         {
             // HalfHalf materyale geç
             _multiAmountText.gameObject.SetActive(true);
@@ -84,8 +77,8 @@ public class BallController : MonoBehaviour
             _multiAmountText.transform.localPosition = Vector3.zero + Vector3.up * .55f + Vector3.left * .25f;
 
             renderer.material = LevelManager.Instance.HalfHalfMaterial;
-            _propertyBlock.SetColor("_BaseColor", LevelManager.Instance.ObjectColors[(int)ObjectColor]);
-            _propertyBlock.SetColor("_BaseColor2", LevelManager.Instance.ObjectColors[(int)MultiColor]);
+            _propertyBlock.SetColor("_BaseColor", LevelManager.Instance.ObjectColors[(int) Properties.ObjectColor]);
+            _propertyBlock.SetColor("_BaseColor2", LevelManager.Instance.ObjectColors[(int) Properties.MultiColor]);
             renderer.SetPropertyBlock(_propertyBlock);
         }
         else
@@ -103,7 +96,7 @@ public class BallController : MonoBehaviour
         clr *= 0.4f;
         clr.a = 1f;
         
-        var multiColor = LevelManager.Instance.ObjectColors[(int)MultiColor];
+        var multiColor = LevelManager.Instance.ObjectColors[(int) Properties.MultiColor];
 
         multiColor *= 0.4f;
         multiColor.a = 1f;
@@ -116,17 +109,17 @@ public class BallController : MonoBehaviour
         _propertyBlock.SetColor("_OutlineColor", multiColor);
         _multiAmountText.GetComponent<MeshRenderer>().SetPropertyBlock(_propertyBlock);
 
-        var a = Mathf.InverseLerp(5, 20, BallAmount);
-        var scale = Mathf.Lerp(0.5f, 1.5f, a);
+        var a = Mathf.InverseLerp(5, 20, Properties.BallAmount);
+        var scale = Mathf.Lerp(0.5f, 2f, a);
         if (!isPlaying && !IsFromTunnel)
             transform.localScale = Vector3.one * scale;
 
-        _amountText.text = BallAmount.ToString();
+        _amountText.text = Properties.BallAmount.ToString();
 
         if (Application.isPlaying)
             renderer.materials[0].color = color;
 
-        if (IsHidden)
+        if (Properties.IsHidden)
         {
             _amountText.text = "?";
             renderer.GetPropertyBlock(_propertyBlock);
@@ -135,7 +128,7 @@ public class BallController : MonoBehaviour
         }
 
         // Multi ball görsel
-        bool isMulti = BallBlocker == BallBlockers.MultiBall;
+        bool isMulti = Properties.BallBlocker == BallBlockers.MultiBall;
         if (_innerBallObject != null)
             _innerBallObject.SetActive(isMulti);
 
@@ -147,11 +140,11 @@ public class BallController : MonoBehaviour
                 if (_propertyBlock == null)
                     _propertyBlock = new MaterialPropertyBlock();
                 innerRenderer.GetPropertyBlock(_propertyBlock);
-                _propertyBlock.SetColor("_BaseColor", LevelManager.Instance.ObjectColors[(int)MultiColor]);
+                _propertyBlock.SetColor("_BaseColor", LevelManager.Instance.ObjectColors[(int) Properties.MultiColor]);
                 innerRenderer.SetPropertyBlock(_propertyBlock);
 
                 if (Application.isPlaying)
-                    innerRenderer.materials[0].color = LevelManager.Instance.ObjectColors[(int)MultiColor];
+                    innerRenderer.materials[0].color = LevelManager.Instance.ObjectColors[(int) Properties.MultiColor];
             }
         }
 
@@ -159,7 +152,7 @@ public class BallController : MonoBehaviour
         {
             _multiAmountText.gameObject.SetActive(isMulti);
             if (isMulti)
-                _multiAmountText.text = MultiAmount.ToString();
+                _multiAmountText.text = Properties.MultiAmount.ToString();
         }
     }
 
@@ -185,7 +178,7 @@ public class BallController : MonoBehaviour
   private void CheckClickable()
 {
     float sideOffset = transform.localScale.x * 0.25f;
-    float horizontalRayLength = transform.localScale.x * 1.25f;
+    float horizontalRayLength = transform.localScale.x * 1f;
 
     Vector3 centerOrigin = transform.position;
     Vector3 leftOrigin = transform.position + Vector3.left * sideOffset;
@@ -194,9 +187,9 @@ public class BallController : MonoBehaviour
 
     int mask = LayerMask.GetMask("Collectable", "Obstacle");
 
-    bool centerBlocked = Physics.Raycast(centerOrigin, Vector3.down, 1.5f, mask);
-    bool leftBlocked = Physics.Raycast(leftOrigin, Vector3.down, 1.5f, mask);
-    bool rightBlocked = Physics.Raycast(rightOrigin, Vector3.down, 1.5f, mask);
+    bool centerBlocked = Physics.Raycast(centerOrigin, Vector3.down, 3f, mask);
+    bool leftBlocked = Physics.Raycast(leftOrigin, Vector3.down, 3f, mask);
+    bool rightBlocked = Physics.Raycast(rightOrigin, Vector3.down, 3f, mask);
     bool leftHBlocked = Physics.Raycast(horizontalOrigin, Vector3.left, horizontalRayLength, mask);
     bool rightHBlocked = Physics.Raycast(horizontalOrigin, Vector3.right, horizontalRayLength, mask);
 
@@ -213,12 +206,11 @@ public class BallController : MonoBehaviour
     if (_isClickable)
     {
         _amountText.DOFade(1f, .1f);
-        _multiAmountText.DOFade(1f, .1f);
         _meshRenderer.material.SetFloat("_OutlineWidth", 1);
-        if (IsHidden)
+        if (Properties.IsHidden)
         {
-            IsHidden = false;
-            _amountText.text = BallAmount.ToString();
+            Properties.IsHidden = false;
+            _amountText.text = Properties.BallAmount.ToString();
             SetColor();
         }
     }
@@ -226,7 +218,6 @@ public class BallController : MonoBehaviour
     {
         _meshRenderer.material.SetFloat("_OutlineWidth", 0);
         _amountText.DOFade(.35f, .1f);
-        _multiAmountText.DOFade(.35f, .1f);
     }
 }
 
@@ -261,14 +252,14 @@ public class BallController : MonoBehaviour
             yield break;
         }
 
-        int totalNeeded = BallBlocker == BallBlockers.MultiBall ? BallAmount + MultiAmount : BallAmount;
+        int totalNeeded = Properties.BallBlocker == BallBlockers.MultiBall ? Properties.BallAmount + Properties.MultiAmount : Properties.BallAmount;
 
         if (available >= totalNeeded)
         {
             // Hepsi sığıyor, normal patlat
-            yield return StartCoroutine(SpawnBatch(BallAmount, ObjectColor, capacityManager));
-            if (BallBlocker == BallBlockers.MultiBall)
-                yield return StartCoroutine(SpawnBatch(MultiAmount, MultiColor, capacityManager));
+            yield return StartCoroutine(SpawnBatch(Properties.BallAmount, Properties.ObjectColor, capacityManager));
+            if (Properties.BallBlocker == BallBlockers.MultiBall)
+                yield return StartCoroutine(SpawnBatch(Properties.MultiAmount, Properties.MultiColor, capacityManager));
             
             OnExploded?.Invoke();
             yield return new WaitForSeconds(0.1f);
@@ -279,10 +270,10 @@ public class BallController : MonoBehaviour
             // Kısmen sığıyor — orantılı dağıt
             int mainSpawn, multiSpawn;
 
-            if (BallBlocker == BallBlockers.MultiBall)
+            if (Properties.BallBlocker == BallBlockers.MultiBall)
             {
                 // Orantılı böl
-                float ratio = (float)BallAmount / totalNeeded;
+                float ratio = (float) Properties.BallAmount / totalNeeded;
                 mainSpawn = Mathf.FloorToInt(available * ratio);
                 multiSpawn = available - mainSpawn;
             }
@@ -292,18 +283,18 @@ public class BallController : MonoBehaviour
                 multiSpawn = 0;
             }
 
-            yield return StartCoroutine(SpawnBatch(mainSpawn, ObjectColor, capacityManager));
-            if (BallBlocker == BallBlockers.MultiBall && multiSpawn > 0)
-                yield return StartCoroutine(SpawnBatch(multiSpawn, MultiColor, capacityManager));
+            yield return StartCoroutine(SpawnBatch(mainSpawn, Properties.ObjectColor, capacityManager));
+            if (Properties.BallBlocker == BallBlockers.MultiBall && multiSpawn > 0)
+                yield return StartCoroutine(SpawnBatch(multiSpawn, Properties.MultiColor, capacityManager));
 
             // Kalanları hesapla
-            BallAmount -= mainSpawn;
-            if (BallBlocker == BallBlockers.MultiBall)
-                MultiAmount -= multiSpawn;
+            Properties.BallAmount -= mainSpawn;
+            if (Properties.BallBlocker == BallBlockers.MultiBall)
+                Properties.MultiAmount -= multiSpawn;
 
             // Sıfırlandıysa yok et
-            bool mainEmpty = BallAmount <= 0;
-            bool multiEmpty = BallBlocker != BallBlockers.MultiBall || MultiAmount <= 0;
+            bool mainEmpty = Properties.BallAmount <= 0;
+            bool multiEmpty = Properties.BallBlocker != BallBlockers.MultiBall || Properties.MultiAmount <= 0;
 
             if (mainEmpty && multiEmpty)
             {
@@ -314,12 +305,12 @@ public class BallController : MonoBehaviour
             else
             {
                 // Kalan miktarla geri döndür
-                if (mainEmpty && BallBlocker == BallBlockers.MultiBall)
+                if (mainEmpty && Properties.BallBlocker == BallBlockers.MultiBall)
                 {
                     // Sadece multi kaldı, rengi güncelle
-                    ObjectColor = MultiColor;
-                    BallAmount = MultiAmount;
-                    BallBlocker = BallBlockers.None;
+                    Properties.ObjectColor = Properties.MultiColor;
+                    Properties.BallAmount = Properties.MultiAmount;
+                    Properties.BallBlocker = BallBlockers.None;
                 }
 
                 RestoreBall();
@@ -335,7 +326,7 @@ public class BallController : MonoBehaviour
         _meshRenderer.enabled = true;
         _amountText.gameObject.SetActive(true);
 
-        var a = Mathf.InverseLerp(5, 20, BallAmount);
+        var a = Mathf.InverseLerp(5, 20, Properties.BallAmount);
         var scale = Mathf.Lerp(0.5f, 2f, a);
         SetColor(true);
         transform.DOScale(Vector3.one * scale, .2f);
@@ -378,4 +369,18 @@ Debug.Log(tunnelBoost);
         capacityManager.SetAmount(amount);
         yield return null;
     }
+}
+
+[Serializable]
+public class BallProperties
+{
+    public BallController.BallBlockers BallBlocker;
+    [ShowIf("BallBlocker", BallController.BallBlockers.MultiBall)]
+    public ColorTypes MultiColor;
+    public ColorTypes ObjectColor;
+    [ShowIf("BallBlocker", BallController.BallBlockers.MultiBall)]
+    public int MultiAmount = 5;
+    public int BallAmount = 10;
+    public bool IsHidden;
+    public Vector3 Position { get; set; }
 }

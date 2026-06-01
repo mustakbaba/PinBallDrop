@@ -7,7 +7,7 @@ using UnityEditor;
 
 public class TunnelSpawnerController : MonoBehaviour
 {
-    [SerializeField] private List<BallData> _ballDatas = new List<BallData>();
+    [SerializeField] private List<BallProperties> _ballDatas = new List<BallProperties>();
     [SerializeField] private Transform _spawnPoint;      // tünel ağzı
     [SerializeField] private MeshRenderer _tunnelRenderer; // tünelin mesh'i
     [SerializeField] private int _nextColorMaterialIndex = 1; // 2. topun rengi bu indexe gidecek
@@ -15,17 +15,6 @@ public class TunnelSpawnerController : MonoBehaviour
     private int _currentIndex = 0;
     private BallController _activeBall;
 
-    [System.Serializable]
-    public class BallData
-    {
-        public ColorTypes Color;
-        public int Amount;
-        public bool IsHidden;
-        public BallController.BallBlockers BallBlocker;
-        public ColorTypes MultiColor;
-        public int MultiAmount;
-    }
-    
     
 #if UNITY_EDITOR
     private void OnValidate()
@@ -60,12 +49,7 @@ public class TunnelSpawnerController : MonoBehaviour
         ball.name = "TunnelPreview";
         ball.IsFromTunnel = true;
 
-        ball.ObjectColor = data.Color;
-        ball.BallAmount = data.Amount;
-        ball.IsHidden = data.IsHidden;
-        ball.BallBlocker = data.BallBlocker;
-        ball.MultiColor = data.MultiColor;
-        ball.MultiAmount = data.MultiAmount;
+        ball.Properties = data;
         ball.SetColor();
         ball.transform.localScale = Vector3.one * 1.2f;
 
@@ -95,12 +79,7 @@ public class TunnelSpawnerController : MonoBehaviour
         var ball = Instantiate(LevelManager.Instance.BallControllerPrefab, _spawnPoint.position, Quaternion.identity);
         ball.transform.rotation = Quaternion.Euler(-90, 0, 0);
 
-        ball.ObjectColor = data.Color;
-        ball.BallAmount = data.Amount;
-        ball.IsHidden = data.IsHidden;
-        ball.BallBlocker = data.BallBlocker;
-        ball.MultiColor = data.MultiColor;
-        ball.MultiAmount = data.MultiAmount;
+        ball.Properties = data;
         ball.SetColor();
         ball.IsFromTunnel = true;
         ball.GetComponent<Rigidbody>().isKinematic = true;
@@ -143,7 +122,7 @@ public class TunnelSpawnerController : MonoBehaviour
         }
 
         var nextData = _ballDatas[nextIndex];
-        var color = LevelManager.Instance.ObjectColors[(int)nextData.Color];
+        var color = LevelManager.Instance.ObjectColors[(int)nextData.ObjectColor];
 
         var mats = _tunnelRenderer.materials;
         var propBlock = new MaterialPropertyBlock();

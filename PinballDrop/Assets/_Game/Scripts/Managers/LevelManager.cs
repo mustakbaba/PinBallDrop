@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using SincappStudio;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -104,19 +105,10 @@ public class LevelManager : MonoSingleton<LevelManager>
     public void Save(LevelData levelToSave)
     {
         levelToSave.cells = new List<CellInfo>();
-        levelToSave.lineObjects = new List<LineInfo>();
 
         #region JamData
 
         var allCells = FindObjectsOfType<CellController>();
-        var allLineQueue = FindObjectsOfType<LineBoxHolderManager>();
-
-        foreach (var lineHolder in allLineQueue)
-        {
-            var info = new LineInfo();
-            info.TargetBoxes = lineHolder.TargetObjects;
-            levelToSave.lineObjects.Add(info);
-        }
 
 
         foreach (var cell in allCells)
@@ -131,23 +123,54 @@ public class LevelManager : MonoSingleton<LevelManager>
         }
 
         #endregion
-    }
 
+        levelToSave.BumperData = new List<BumperDatas>();
+        var allBumpers = FindObjectsOfType<BumperHolderController>();
+
+        foreach (var bumper in allBumpers)
+        {
+            var bumperData = new BumperDatas();
+
+            foreach (var target in bumper.TargetObjects)
+            {
+                var data = new BumperData
+                {
+                    IsHidden = target.IsHidden,
+                    Color = target.Color,
+                    Amount = target.Amount
+                };
+
+                bumperData.TargetObjects.Add(data);
+            }
+
+            levelToSave.BumperData.Add(bumperData);
+        }
+
+        var ballProperties = new List<BallProperties>();
+        var allBalls = FindObjectsOfType<BallController>();
+
+        foreach (var ball in allBalls)
+        {
+            var data = new BallProperties
+            {
+                BallBlocker = ball.Properties.BallBlocker,
+                MultiColor = ball.Properties.MultiColor,
+                MultiAmount = ball.Properties.MultiAmount,
+                BallAmount = ball.Properties.BallAmount,
+                ObjectColor = ball.Properties.ObjectColor,
+                IsHidden = ball.Properties.IsHidden,
+                Position = ball.transform.position
+            };
+
+            ballProperties.Add(data);
+        }
+    }
 
     public void LoadLevel(LevelData level)
     {
         var allCells = FindObjectsOfType<CellController>();
-        var allLineQueue = FindObjectsOfType<LineBoxHolderManager>();
 
         InGameUIManager.Instance.SetLevelDifficulty(level.LevelDifficulty);
-
-        for (var i = 0; i < level.lineObjects.Count; i++)
-        {
-            var info = level.lineObjects[i];
-            allLineQueue[i].TargetObjects = new List<TargetBoxData>();
-            allLineQueue[i].TargetObjects = info.TargetBoxes;
-            allLineQueue[i].SpawnPrefabs();
-        }
 
         foreach (var info in level.cells)
         {
@@ -163,8 +186,41 @@ public class LevelManager : MonoSingleton<LevelManager>
                 }
             }
         }
-    }
 
+        var allBumpers = FindObjectsOfType<BumperHolderController>();
+
+        for (int i = 0; i < level.BumperData.Count; i++)
+        {
+            if (i < allBumpers.Length)
+            {
+                var bumperData = level.BumperData[i];
+                var bumper = allBumpers[i];
+                bumper.TargetObjects = bumperData.TargetObjects;
+                bumper.SpawnPrefabs();
+            }
+        }
+
+        var allBalls = FindObjectsOfType<BallController>();
+
+        var toDestroy = allBalls.ToList();
+        
+        for (int i = toDestroy.Count - 1; i >= 0; i--)
+        {
+            if (Application.isPlaying)
+                Destroy(toDestroy[i]);
+            else
+                DestroyImmediate(toDestroy[i]);
+        }
+
+        for (int i = 0; i < level.BallData.Count; i++)
+        {
+            var ballData = level.BallData[i];
+            var ball = Instantiate(BallControllerPrefab, Vector3.zero, Quaternion.identity);
+            ball.Properties = ballData;
+            ball.transform.position = ballData.Position;
+            ball.SetColor(false);
+        }
+    }
 
     private void StopTimePuzzle()
     {
