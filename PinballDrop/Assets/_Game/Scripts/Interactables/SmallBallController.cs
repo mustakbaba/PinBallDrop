@@ -170,7 +170,7 @@ public class SmallBallController : MonoBehaviour
                 return;
             }
 
-            transform.DOJump(slot.transform.position, 1, 1, .35f)
+            transform.DOJump(slot.transform.position + Vector3.up * .3f, 1, 1, .35f)
                 .SetEase(Ease.Linear)
                 .OnComplete(() => { SlotHolderManager.Instance.TryPlaceBall(this); });
             return;

@@ -8,7 +8,8 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Custom_TCP2_HalfHalf
-  m_Shader: {fileID: 4800000, guid: 624ffd78d5fb4f64ba50b580775ed4b8, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 7338d9a2dbeb9f14ba9bbb32d2c1d5ee,
+    type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -28,19 +29,49 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _Cull: 2
     - _IndirectIntensity: 1
     - _OutlineWidth: 1.39
+    - _QueueControl: 0
+    - _QueueOffset: 0
     - _RampSmoothing: 0.359
     - _RampThreshold: 0.588
     - _ShadowColorLightAtten: 1
+    - _Smoothness: 0.55
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 0.11532295, g: 1, b: 0, a: 1}
     - _BaseColor2: {r: 0, g: 0.71046233, b: 1, a: 1}
+    - _Color_1: {r: 1, g: 1, b: 1, a: 1}
+    - _Color_2: {r: 0, g: 0, b: 0, a: 1}
     - _HColor: {r: 1, g: 1, b: 1, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _SColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
+--- !u!114 &7191851205360634849
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 7
