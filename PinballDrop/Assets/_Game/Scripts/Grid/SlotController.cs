@@ -25,6 +25,7 @@ public class SlotController : MonoBehaviour
     {
         _meshRenderer = GetComponentInChildren<MeshRenderer>();
         _defColor = _meshRenderer.material.color;
+        UpdateText();
     }
 
     private void UpdateText()
