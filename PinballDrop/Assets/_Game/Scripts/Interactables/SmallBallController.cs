@@ -219,6 +219,7 @@ public class SmallBallController : MonoBehaviour
             _rb.isKinematic = false;
             _rb.velocity = Vector3.zero;
             _rb.angularVelocity = Vector3.zero;
+            _rb.AddForce(Vector3.left * 5f, ForceMode.VelocityChange);
             if (col != null) col.enabled = true;
             return;
         }
