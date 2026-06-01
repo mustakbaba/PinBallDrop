@@ -32,8 +32,10 @@ public class BumperHolderController : MonoBehaviour
 #endif
 
 
-    private void Start()
+    private IEnumerator Start()
     {
+        yield return null;
+        
         _bumpers = GetComponentsInChildren<BumperController>();
 
         for (int i = 0; i < _bumpers.Length; i++)
