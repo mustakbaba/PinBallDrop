@@ -19,7 +19,7 @@ public class SmallBallController : MonoBehaviour
     private bool _wentToVacuum;
     private ParticleSystem _trailParticle;
     private bool _isCloseVacuum;
-    private float randForce;
+    private float randForce=1;
 
     private void Awake()
     {
@@ -129,7 +129,7 @@ public class SmallBallController : MonoBehaviour
         {
             if (_goingToVacuum && _isCloseVacuum)
             {
-                randForce = Random.Range(1f, 5f);
+                randForce = Random.Range(1.5f, 5f);
                 yield return new WaitForSeconds(.25f);
             }
 
@@ -216,7 +216,7 @@ public class SmallBallController : MonoBehaviour
         _wentToVacuum = false;
         StopAllCoroutines();
         _isCloseVacuum = false;
-        randForce = 0;
+        randForce = 1;
         var rb = GetComponent<Rigidbody>();
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
