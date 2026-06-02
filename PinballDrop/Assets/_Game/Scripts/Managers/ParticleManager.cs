@@ -7,6 +7,7 @@ public class ParticleManager : MonoSingleton<ParticleManager>
     [SerializeField] private GameObject _moneyParticle;
     [SerializeField] private GameObject _gateParticle;
     [SerializeField] private ParticleSystem _bumperHitParticle;
+    [SerializeField] private ParticleSystem _balloonPopParticle;
 
     public void MoneyParticle(Vector3 spawnPos)
     {
@@ -33,6 +34,18 @@ public class ParticleManager : MonoSingleton<ParticleManager>
         {
             var main = allParticle[i].main;
             main.startColor = LevelManager.Instance.ObjectColors[(int)colorTypes] * .76f;
+        }
+       
+    }  
+    public void BalloonPopParticle(Vector3 spawnPos, ColorTypes colorTypes)
+    {
+        var particle = Instantiate(_balloonPopParticle, spawnPos + Vector3.back, Quaternion.Euler(-90, 0, 0));
+        var allParticle = particle.GetComponentsInChildren<ParticleSystem>();
+        
+        for (var i = 0; i < allParticle.Length; i++)
+        {
+            var main = allParticle[i].main;
+            main.startColor = LevelManager.Instance.ObjectColors[(int)colorTypes] * 1.86f;
         }
        
     }
