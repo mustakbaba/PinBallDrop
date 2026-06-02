@@ -73,7 +73,7 @@ MonoBehaviour:
     MultiColor: 0
     ObjectColor: 2
     MultiAmount: 0
-    BallAmount: 10
+    BallAmount: 5
     IsHidden: 0
     Position: {x: 2.2112002, y: -0.92999476, z: 43.302998}
   - BallBlocker: 0
