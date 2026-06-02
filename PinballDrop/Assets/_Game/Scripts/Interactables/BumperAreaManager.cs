@@ -33,7 +33,7 @@ public class BumperAreaManager : MonoSingleton<BumperAreaManager>
     private void Start()
     {
         var lines = GetComponentsInChildren<BumperHolderController>().Where(x => x.SpawnedObjects.Count > 0).ToList();
-        StartCoroutine(Sincapp.WaitAndAction(0,() =>
+        StartCoroutine(Sincapp.WaitAndAction(0.01f,() =>
         {
             ActiveBumpers = GetComponentsInChildren<BumperController>().Where(x => x.IsActiveBumper).ToList();
         }));
