@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using ElephantSDK;
 using RollicGames.Advertisements;
@@ -9,12 +10,29 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoSingleton<GameManager>
 {
     private bool _isGameStarted;
+    public bool IsGameLose { get; set; }
 
     protected override void Awake()
     {
         base.Awake();
         Input.multiTouchEnabled = false;
         Application.targetFrameRate = 60;
+        IsGameLose = false;
+    }
+
+    private void OnEnable()
+    {
+        EventManager.OnGameLose += Lose;
+    }
+
+    private void OnDisable()
+    {
+        EventManager.OnGameLose -= Lose;
+    }
+
+    void Lose()
+    {
+        IsGameLose = true;
     }
 
     private void Update()
@@ -63,7 +81,7 @@ public class GameManager : MonoSingleton<GameManager>
 
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         persistData.Save();
-        
+
         if (!Application.isEditor)
         {
             LoadInterstitialAd(RollicInterstitialAd.InterstitialAdSource.LevelFail);
@@ -91,18 +109,18 @@ public class GameManager : MonoSingleton<GameManager>
         }
 
         persistData.Save();
-        
+
         if (!Application.isEditor)
         {
             LoadInterstitialAd(RollicInterstitialAd.InterstitialAdSource.LevelComplete);
         }
     }
 
-    
-public void PreviousLevel()
+
+    public void PreviousLevel()
     {
         var persistData = PersistData.Instance;
-        
+
         if (persistData.CurrentLevel > 1)
         {
             persistData.CurrentLevel--;
@@ -123,11 +141,11 @@ public void PreviousLevel()
             //PersistData.Instance.Save();
         }
     }
-    
+
     public void LoadInterstitialAd(RollicInterstitialAd.InterstitialAdSource source)
     {
         if (Application.isEditor) return;
-        
+
         var rules = RLAdvertisementManager.Instance.ShouldShowInterstitial();
 
         if (rules == AdShowResult.Allowed

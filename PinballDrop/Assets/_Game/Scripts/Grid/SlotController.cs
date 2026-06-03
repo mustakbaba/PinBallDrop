@@ -47,6 +47,7 @@ public class SlotController : MonoBehaviour
     private void OnMouseDown()
     {
         if (_balls.Count == 0 || _isClearing) return;
+        if (GameManager.Instance.IsGameLose) return;
         ClearSlot();
     }
 

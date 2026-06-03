@@ -147,6 +147,8 @@ public class EndGameUiManager :  MonoSingleton<EndGameUiManager>,IPointerDownHan
         Time.timeScale = 1;
 
         _isFailed = true;
+        _failPanelCanvasGroup.blocksRaycasts = true;
+        _failPanelCanvasGroup.interactable = true;
         StartCoroutine(Sincapp.WaitAndAction(2f,()=>
         {
             _animator.SetTrigger("Lose");

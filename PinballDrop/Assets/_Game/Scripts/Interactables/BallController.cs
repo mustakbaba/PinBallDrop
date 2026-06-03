@@ -236,6 +236,7 @@ public class BallController : MonoBehaviour
     private void OnMouseDown()
     {
         if (!_isClickable || _exploded) return;
+        if (GameManager.Instance.IsGameLose) return;
         Explode();
     }
 

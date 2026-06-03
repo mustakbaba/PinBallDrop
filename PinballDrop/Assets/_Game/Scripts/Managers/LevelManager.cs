@@ -71,7 +71,7 @@ public class LevelManager : MonoSingleton<LevelManager>
 
         if (Application.isEditor)
         {
-            // LoadLevel(levelData);
+             LoadLevel(levelData);
         }
         else
         {
