@@ -19,12 +19,23 @@ public class SlotController : MonoBehaviour
     private MeshRenderer _meshRenderer;
     private Color _defColor;
     private bool _isClearing;
-
+    private int _clearTweenId;
     private void Awake()
     {
         _meshRenderer = GetComponentInChildren<MeshRenderer>();
         _defColor = _meshRenderer.material.color;
         UpdateText();
+    }
+
+    private void OnEnable()
+    {
+        EventManager.OnGameLose += GameLose;
+    }
+
+    private void OnDisable()
+    {
+        
+        EventManager.OnGameLose -= GameLose;
     }
 
     private void UpdateText()
@@ -96,7 +107,7 @@ public class SlotController : MonoBehaviour
     {
         var capacityManager = AreaCapacityManager.Instance;
         int available = capacityManager.CapacityAmount - capacityManager.CurrentAmount;
-
+        _clearTweenId = GetInstanceID();
         if (available <= 0) return;
 
         _isClearing = true;
@@ -111,7 +122,7 @@ public class SlotController : MonoBehaviour
             var ball = ballsToProcess[i];
             if (ball == null) continue;
 
-            float delay = i * 0.15f;
+            float delay = i * 0.075f;
             ball.transform.DOKill();
             ball.transform.SetParent(null);
 
@@ -121,11 +132,11 @@ public class SlotController : MonoBehaviour
                 ball.GoToPipe();
                 _balls.Remove(ball); // tek tek çıkar
                 UpdateText();
-            });
+            }).SetId(_clearTweenId);;
         }
         
         // Son top gönderildikten sonra unlock
-        float totalDelay = (ballsToProcess.Count - 1) * 0.15f + 0.1f;
+        float totalDelay = (ballsToProcess.Count - 1) * 0.075f + 0.1f;
         DOVirtual.DelayedCall(totalDelay, () =>
         {
             _isClearing = false;
@@ -137,8 +148,21 @@ public class SlotController : MonoBehaviour
             }
 
             UpdateText();
-        });
+        }).SetId(_clearTweenId);;
         
         HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
+    }
+    private void GameLose()
+    {
+        DOTween.Kill(_clearTweenId); // delayed call'ları öldür
+    
+        foreach (var ball in _balls)
+        {
+            if (ball == null) continue;
+            ball.transform.DOKill();
+        }
+
+        _isClearing = false;
+        UpdateText();
     }
 }

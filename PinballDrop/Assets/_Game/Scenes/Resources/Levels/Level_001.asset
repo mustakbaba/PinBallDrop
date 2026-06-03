@@ -71,88 +71,11 @@ MonoBehaviour:
   BallData:
   - BallBlocker: 0
     MultiColor: 0
-    ObjectColor: 2
-    MultiAmount: 0
-    BallAmount: 5
-    IsHidden: 0
-    Position: {x: 2.2112002, y: -0.92999476, z: 43.302998}
-  - BallBlocker: 0
-    MultiColor: 0
     ObjectColor: 0
     MultiAmount: 5
-    BallAmount: 15
-    IsHidden: 0
-    Position: {x: 1.3367876, y: -0.35799956, z: 43.31}
-  - BallBlocker: 0
-    MultiColor: 0
-    ObjectColor: 1
-    MultiAmount: 5
     BallAmount: 20
     IsHidden: 0
-    Position: {x: -1.68, y: 0.8450005, z: 43.31}
-  - BallBlocker: 0
-    MultiColor: 0
-    ObjectColor: 4
-    MultiAmount: 5
-    BallAmount: 25
-    IsHidden: 0
-    Position: {x: 0.129, y: 0.21499991, z: 43.31}
-  - BallBlocker: 1
-    MultiColor: 3
-    ObjectColor: 5
-    MultiAmount: 10
-    BallAmount: 20
-    IsHidden: 0
-    Position: {x: -1.737, y: -0.42599988, z: 43.31}
-  - BallBlocker: 0
-    MultiColor: 0
-    ObjectColor: 0
-    MultiAmount: 5
-    BallAmount: 15
-    IsHidden: 0
-    Position: {x: 1.161, y: -2.4350004, z: 43.31}
-  - BallBlocker: 0
-    MultiColor: 0
-    ObjectColor: 2
-    MultiAmount: 5
-    BallAmount: 15
-    IsHidden: 0
-    Position: {x: 1.274, y: -1.0680001, z: 43.31}
-  - BallBlocker: 1
-    MultiColor: 4
-    ObjectColor: 6
-    MultiAmount: 15
-    BallAmount: 20
-    IsHidden: 0
-    Position: {x: -1.5852123, y: -1.8499964, z: 43.31}
-  - BallBlocker: 0
-    MultiColor: 0
-    ObjectColor: 1
-    MultiAmount: 5
-    BallAmount: 10
-    IsHidden: 0
-    Position: {x: 0.48, y: -0.7829998, z: 43.31}
-  - BallBlocker: 0
-    MultiColor: 0
-    ObjectColor: 3
-    MultiAmount: 5
-    BallAmount: 20
-    IsHidden: 0
-    Position: {x: -0.121, y: -1.7840003, z: 43.31}
-  - BallBlocker: 0
-    MultiColor: 0
-    ObjectColor: 6
-    MultiAmount: 5
-    BallAmount: 15
-    IsHidden: 0
-    Position: {x: -0.337, y: 1.1850004, z: 43.31}
-  - BallBlocker: 0
-    MultiColor: 0
-    ObjectColor: 5
-    MultiAmount: 5
-    BallAmount: 10
-    IsHidden: 0
-    Position: {x: -0.8412124, y: -0.3379953, z: 43.31}
+    Position: {x: 0.871, y: 1.1530004, z: 43.31}
   - BallBlocker: 1
     MultiColor: 0
     ObjectColor: 1
@@ -162,9 +85,79 @@ MonoBehaviour:
     Position: {x: 1.3467876, y: -1.8809986, z: 43.31}
   - BallBlocker: 0
     MultiColor: 0
-    ObjectColor: 0
+    ObjectColor: 5
+    MultiAmount: 5
+    BallAmount: 10
+    IsHidden: 0
+    Position: {x: -0.8412124, y: -0.3379953, z: 43.31}
+  - BallBlocker: 0
+    MultiColor: 0
+    ObjectColor: 6
+    MultiAmount: 5
+    BallAmount: 15
+    IsHidden: 0
+    Position: {x: -0.337, y: 1.1850004, z: 43.31}
+  - BallBlocker: 0
+    MultiColor: 0
+    ObjectColor: 3
     MultiAmount: 5
     BallAmount: 20
     IsHidden: 0
-    Position: {x: 0.871, y: 1.1530004, z: 43.31}
+    Position: {x: -0.121, y: -1.7840003, z: 43.31}
+  - BallBlocker: 0
+    MultiColor: 0
+    ObjectColor: 1
+    MultiAmount: 5
+    BallAmount: 10
+    IsHidden: 0
+    Position: {x: 0.48, y: -0.7829998, z: 43.31}
+  - BallBlocker: 1
+    MultiColor: 4
+    ObjectColor: 6
+    MultiAmount: 15
+    BallAmount: 20
+    IsHidden: 0
+    Position: {x: -1.5852123, y: -1.8499964, z: 43.31}
+  - BallBlocker: 0
+    MultiColor: 0
+    ObjectColor: 2
+    MultiAmount: 5
+    BallAmount: 15
+    IsHidden: 0
+    Position: {x: 1.274, y: -1.0680001, z: 43.31}
+  - BallBlocker: 0
+    MultiColor: 0
+    ObjectColor: 0
+    MultiAmount: 5
+    BallAmount: 15
+    IsHidden: 0
+    Position: {x: 1.161, y: -2.4350004, z: 43.31}
+  - BallBlocker: 1
+    MultiColor: 3
+    ObjectColor: 5
+    MultiAmount: 10
+    BallAmount: 20
+    IsHidden: 0
+    Position: {x: -1.737, y: -0.42599988, z: 43.31}
+  - BallBlocker: 0
+    MultiColor: 0
+    ObjectColor: 4
+    MultiAmount: 5
+    BallAmount: 25
+    IsHidden: 0
+    Position: {x: 0.129, y: 0.21499991, z: 43.31}
+  - BallBlocker: 0
+    MultiColor: 0
+    ObjectColor: 1
+    MultiAmount: 5
+    BallAmount: 20
+    IsHidden: 0
+    Position: {x: -1.68, y: 0.8450005, z: 43.31}
+  - BallBlocker: 0
+    MultiColor: 0
+    ObjectColor: 0
+    MultiAmount: 5
+    BallAmount: 15
+    IsHidden: 0
+    Position: {x: 1.3367876, y: -0.35799956, z: 43.31}
   LevelDifficulty: 0

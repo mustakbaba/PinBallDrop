@@ -24,8 +24,9 @@ public class EndGameUiManager :  MonoSingleton<EndGameUiManager>,IPointerDownHan
     [SerializeField] private CanvasGroup _failPanelCanvasGroup;
     Tween fadeTween;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         _animator = GetComponent<Animator>();
         _blockerSprites = Resources.LoadAll<Sprite>("BlockerSprites");
         _blockerSlider.value = PersistData.Instance.CurrentBlockerFillAmount;
@@ -146,12 +147,15 @@ public class EndGameUiManager :  MonoSingleton<EndGameUiManager>,IPointerDownHan
         Time.timeScale = 1;
 
         _isFailed = true;
-
-        _animator.SetTrigger("Lose");
-        _failPanelCanvasGroup.DOFade(1, .5f);
-        particleHolder.gameObject.SetActive(true);
-        var randIndex = Random.Range(0, _failEmojiHolder.childCount - 1);
-        _failEmojiHolder.GetChild(randIndex).gameObject.SetActive(true);
+        StartCoroutine(Sincapp.WaitAndAction(2f,()=>
+        {
+            _animator.SetTrigger("Lose");
+            _failPanelCanvasGroup.DOFade(1, .5f);
+            particleHolder.gameObject.SetActive(true);
+            var randIndex = Random.Range(0, _failEmojiHolder.childCount - 1);
+            _failEmojiHolder.GetChild(randIndex).gameObject.SetActive(true);
+        }));
+       
     }
 
 
@@ -162,6 +166,7 @@ public class EndGameUiManager :  MonoSingleton<EndGameUiManager>,IPointerDownHan
 
     private void OnLoseButtonClicked()
     {
+      
         GameManager.Instance.RestartLevel();
     }
 

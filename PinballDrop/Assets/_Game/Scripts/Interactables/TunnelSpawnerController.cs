@@ -87,6 +87,9 @@ public class TunnelSpawnerController : MonoBehaviour
         ball.transform.localScale = Vector3.zero;
         ball.transform.position = _spawnPoint.parent.position;
         ball.transform.DOMove(_spawnPoint.position, .5f);
+        
+        transform.DOShakeRotation(0.4f, new Vector3(5f, 0, 0), 22, 90, false);
+        transform.DOScale(.8f, .2f).SetLoops(2,LoopType.Yoyo);
         ball.transform.DOScale(Vector3.one * .89f, 0.4f)
             .SetDelay(0.1f);
 

@@ -360,7 +360,7 @@ public class BallController : MonoBehaviour
     private IEnumerator SpawnBatch(int amount, ColorTypes color, AreaCapacityManager capacityManager,
         bool isMulti=false)
     {
-        if (!isMulti)
+        if (!isMulti && !IsFromTunnel)
         {
             yield return new WaitForSeconds(.1f);
         }

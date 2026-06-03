@@ -159,6 +159,10 @@ public class LevelManager : MonoSingleton<LevelManager>
 
         foreach (var ball in allBalls)
         {
+            if (ball.GetComponentInParent<TunnelSpawnerController>()!=null)
+            {
+                continue;
+            }
             var data = new BallProperties
             {
                 BallBlocker = ball.Properties.BallBlocker,

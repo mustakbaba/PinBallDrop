@@ -185,6 +185,13 @@ public class SmallBallController : MonoBehaviour
             var slot = SlotHolderManager.Instance.GetAvailableSlot(ObjectColor);
             if (slot == null)
             {
+                transform.DOKill();
+                _rb.isKinematic = false;
+                _rb.useGravity = true;
+                var col = GetComponent<Collider>();
+                if (col != null) col.enabled = true;
+                _rb.constraints = RigidbodyConstraints.None;
+                _rb.AddForce(Vector3.back * 15f + Vector3.up*5f + Vector3.left*Random.Range(-3f,3f), ForceMode.VelocityChange);
                 SlotHolderManager.Instance.TryPlaceBall(this);
                 return;
             }
