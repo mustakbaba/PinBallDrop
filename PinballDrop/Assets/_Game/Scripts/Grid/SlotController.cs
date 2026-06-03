@@ -20,6 +20,7 @@ public class SlotController : MonoBehaviour
     private Color _defColor;
     private bool _isClearing;
     private int _clearTweenId;
+
     private void Awake()
     {
         _meshRenderer = GetComponentInChildren<MeshRenderer>();
@@ -34,7 +35,6 @@ public class SlotController : MonoBehaviour
 
     private void OnDisable()
     {
-        
         EventManager.OnGameLose -= GameLose;
     }
 
@@ -112,12 +112,12 @@ public class SlotController : MonoBehaviour
         if (available <= 0) return;
 
         _isClearing = true;
-
+        SoundManager.Instance.SlotClickSound();
         int sendCount = Mathf.Min(_balls.Count, available);
         capacityManager.SetAmount(sendCount);
 
         var ballsToProcess = _balls.GetRange(0, sendCount);
-        
+
         for (int i = 0; i < ballsToProcess.Count; i++)
         {
             var ball = ballsToProcess[i];
@@ -133,9 +133,10 @@ public class SlotController : MonoBehaviour
                 ball.GoToPipe();
                 _balls.Remove(ball); // tek tek çıkar
                 UpdateText();
-            }).SetId(_clearTweenId);;
+            }).SetId(_clearTweenId);
+            ;
         }
-        
+
         // Son top gönderildikten sonra unlock
         float totalDelay = (ballsToProcess.Count - 1) * 0.075f + 0.1f;
         DOVirtual.DelayedCall(totalDelay, () =>
@@ -149,14 +150,16 @@ public class SlotController : MonoBehaviour
             }
 
             UpdateText();
-        }).SetId(_clearTweenId);;
-        
+        }).SetId(_clearTweenId);
+        ;
+
         HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
     }
+
     private void GameLose()
     {
         DOTween.Kill(_clearTweenId); // delayed call'ları öldür
-    
+
         foreach (var ball in _balls)
         {
             if (ball == null) continue;

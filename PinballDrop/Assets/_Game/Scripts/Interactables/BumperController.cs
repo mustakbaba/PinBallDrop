@@ -124,6 +124,8 @@ public class BumperController : MonoBehaviour
         smallBallController.transform.DOKill();
         Destroy(smallBallController.gameObject);
         Count--;
+        SoundManager.Instance.BumperPopSound();
+
         ParticleManager.Instance.BumperBallHitParticle(transform.position, ObjectColor);
       
         if (Count <= 0)

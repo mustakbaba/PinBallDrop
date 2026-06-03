@@ -272,15 +272,17 @@ public class BallController : MonoBehaviour
         if (available >= totalNeeded)
         {
             // Hepsi sığıyor, normal patlat
-
+            
+            SoundManager.Instance.BalloonPopSound();
 
             transform.DOScale(transform.localScale.x + .35f, .1f);
 
             yield return StartCoroutine(SpawnBatch(Properties.BallAmount, Properties.ObjectColor, capacityManager
-                ));
+            ));
             if (Properties.BallBlocker == BallBlockers.MultiBall)
             {
-                yield return StartCoroutine(SpawnBatch(Properties.MultiAmount, Properties.MultiColor, capacityManager,true));
+                yield return StartCoroutine(SpawnBatch(Properties.MultiAmount, Properties.MultiColor, capacityManager,
+                    true));
             }
 
             OnExploded?.Invoke();
@@ -359,13 +361,13 @@ public class BallController : MonoBehaviour
     }
 
     private IEnumerator SpawnBatch(int amount, ColorTypes color, AreaCapacityManager capacityManager,
-        bool isMulti=false)
+        bool isMulti = false)
     {
         if (!isMulti && !IsFromTunnel)
         {
             yield return new WaitForSeconds(.1f);
         }
-    
+
 
         float radius = transform.localScale.x * 0.5f;
         Vector3 center = transform.position;
