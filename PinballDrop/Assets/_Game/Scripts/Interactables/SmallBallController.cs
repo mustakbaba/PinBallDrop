@@ -19,7 +19,7 @@ public class SmallBallController : MonoBehaviour
     private bool _wentToVacuum;
     private ParticleSystem _trailParticle;
     private bool _isCloseVacuum;
-    private float randForce=1;
+    private float randForce = 1;
 
     private void Awake()
     {
@@ -191,7 +191,12 @@ public class SmallBallController : MonoBehaviour
                 var col = GetComponent<Collider>();
                 if (col != null) col.enabled = true;
                 _rb.constraints = RigidbodyConstraints.None;
-                _rb.AddForce(Vector3.back * 15f + Vector3.up*5f + Vector3.left*Random.Range(-3f,3f), ForceMode.VelocityChange);
+                DOVirtual.DelayedCall(1, () =>
+                {
+                    _rb.constraints = RigidbodyConstraints.FreezePositionZ;
+                });
+                _rb.AddForce(Vector3.back * 3f + Vector3.up * 5f + Vector3.left * Random.Range(-3f, 3f),
+                    ForceMode.VelocityChange);
                 SlotHolderManager.Instance.TryPlaceBall(this);
                 return;
             }
