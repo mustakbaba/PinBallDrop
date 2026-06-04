@@ -51,7 +51,7 @@ Material:
     - _RampSmoothing: 0.359
     - _RampThreshold: 0.588
     - _ShadowColorLightAtten: 1
-    - _Smoothness: 0
+    - _Smoothness: -0.47
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 0.11532295, g: 1, b: 0, a: 1}
