@@ -188,7 +188,7 @@ public class BallController : MonoBehaviour
     private void CheckClickable()
     {
         float sideOffset = transform.localScale.x * 0.25f;
-        float horizontalRayLength = transform.localScale.x * 1.25f;
+        float horizontalRayLength = transform.localScale.x * 1.75f;
 
         Vector3 centerOrigin = transform.position;
         Vector3 leftOrigin = transform.position + Vector3.left * sideOffset;
