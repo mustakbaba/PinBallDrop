@@ -28,7 +28,7 @@ public class LevelManager : MonoSingleton<LevelManager>
     public LineBoxConnectorController ConnectorPrefab;
     [SerializeField] private bool _timePuzzle;
 
-    public int[] NewFeatureUnlockLevels { get; set; } = { 1, 5, 10, 20, 30 };
+    public int[] NewFeatureUnlockLevels { get; set; } = { 1, 10, 20, 30 };
     public float FillAddAmountEachLevel { get; set; }
     public Material HalfHalfMaterial;
     public Material SingleMaterial;
@@ -71,7 +71,7 @@ public class LevelManager : MonoSingleton<LevelManager>
 
         if (Application.isEditor)
         {
-             //LoadLevel(levelData);
+            // LoadLevel(levelData);
         }
         else
         {
@@ -159,10 +159,6 @@ public class LevelManager : MonoSingleton<LevelManager>
 
         foreach (var ball in allBalls)
         {
-            if (ball.GetComponentInParent<TunnelSpawnerController>()!=null)
-            {
-                continue;
-            }
             var data = new BallProperties
             {
                 BallBlocker = ball.Properties.BallBlocker,

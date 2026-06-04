@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 918a916cbc6d7cb42897910bea080f65, type: 3}
-  m_Name: Blocker_2
+  m_Name: Blocker_4
   m_EditorClassIdentifier: 
-  BlockerSprite: {fileID: 466322228, guid: 8a584271143a5ab4c8ffb2c950621884, type: 3}
-  BlockerName: Hidden Bouncer
-  Description: Hidden targets are revealed when they reach the front
+  BlockerSprite: {fileID: -1110173230, guid: 8bace8df1bbc263488a58629eaa02aff, type: 3}
+  BlockerName: Hidden Ball
+  Description: Hidden balls reveal when reachable
