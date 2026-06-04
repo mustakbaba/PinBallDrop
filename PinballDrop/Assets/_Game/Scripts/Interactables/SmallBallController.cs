@@ -55,6 +55,12 @@ public class SmallBallController : MonoBehaviour
             {
                 Physics.IgnoreCollision(other.collider, GetComponent<Collider>());
             }
+            if (!other.gameObject.GetComponent<BallController>().IsFromTunnel)
+            {
+                Vector3 pushDir = other.transform.position - transform.position;
+                pushDir.Normalize();
+                other.transform.GetComponent<Rigidbody>().AddForce(pushDir * .35f, ForceMode.VelocityChange);
+            }
         }
     }
 
