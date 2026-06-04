@@ -13,6 +13,7 @@ using Random = UnityEngine.Random;
 public class BallController : MonoBehaviour
 {
     public System.Action OnExploded;
+    public ColorTypes ObjectColor { get; set; }
 
     public enum BallBlockers
     {
@@ -67,7 +68,7 @@ public class BallController : MonoBehaviour
     {
         if (this == null) return;
         var color = LevelManager.Instance.ObjectColors[(int)Properties.ObjectColor];
-
+        ObjectColor = Properties.ObjectColor;
         var renderer = GetComponentInChildren<MeshRenderer>();
         if (_propertyBlock == null)
             _propertyBlock = new MaterialPropertyBlock();
