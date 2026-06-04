@@ -24,7 +24,12 @@ public enum ColorTypes
     Yellow,
     Purple,
     Orange,
-    Pink
+    Pink,
+    Cyan,
+    Brown,
+    White,
+    DarkBlue,
+    
 }
 
 [SelectionBase]

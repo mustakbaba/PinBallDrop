@@ -85,7 +85,7 @@ public class SlotController : MonoBehaviour
         );
 
         _balls.Add(ball);
-
+        transform.DOScale(1.15f, .1f);
         ball.transform.DOKill();
 
         var rb = ball.GetComponent<Rigidbody>();
@@ -126,6 +126,7 @@ public class SlotController : MonoBehaviour
             float delay = i * 0.075f;
             ball.transform.DOKill();
             ball.transform.SetParent(null);
+            ball.transform.localScale = Vector3.one*.27f;
 
             DOVirtual.DelayedCall(delay, () =>
             {
@@ -147,6 +148,7 @@ public class SlotController : MonoBehaviour
             {
                 SlotColor = default;
                 _meshRenderer.material.color = _defColor;
+                transform.DOScale(1f, .1f);
             }
 
             UpdateText();
