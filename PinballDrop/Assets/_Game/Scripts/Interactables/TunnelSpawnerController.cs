@@ -4,10 +4,11 @@ using System.Linq;
 using UnityEngine;
 using DG.Tweening;
 using UnityEditor;
+using UnityEngine.Serialization;
 
 public class TunnelSpawnerController : MonoBehaviour
 {
-    [SerializeField] private List<BallProperties> _ballDatas = new List<BallProperties>();
+    public List<BallProperties> BallDatas = new List<BallProperties>();
     [SerializeField] private Transform _spawnPoint;      // tünel ağzı
     [SerializeField] private MeshRenderer _tunnelRenderer; // tünelin mesh'i
     [SerializeField] private int _nextColorMaterialIndex = 1; // 2. topun rengi bu indexe gidecek
@@ -21,14 +22,14 @@ public class TunnelSpawnerController : MonoBehaviour
     {
         if (Application.isPlaying) return;
         if (!gameObject.scene.IsValid()) return;
-        if (_ballDatas == null || _ballDatas.Count == 0) return;
+        if (BallDatas == null || BallDatas.Count == 0) return;
         if (_spawnPoint == null) return;
 
         EditorApplication.delayCall -= ShowPreview;
         EditorApplication.delayCall += ShowPreview;
     }
 
-    private void ShowPreview()
+    public void ShowPreview()
     {
         if (this == null) return;
 
@@ -40,10 +41,10 @@ public class TunnelSpawnerController : MonoBehaviour
         foreach (var go in existing)
             DestroyImmediate(go);
 
-        if (_ballDatas == null || _ballDatas.Count == 0) return;
+        if (BallDatas == null || BallDatas.Count == 0) return;
         if (_spawnPoint == null) return;
 
-        var data = _ballDatas[0];
+        var data = BallDatas[0];
         var ball = PrefabUtility.InstantiatePrefab(LevelManager.Instance.BallControllerPrefab, transform) as BallController;
         ball.transform.position = _spawnPoint.position;
         ball.name = "TunnelPreview";
@@ -73,9 +74,9 @@ public class TunnelSpawnerController : MonoBehaviour
 
     private void SpawnCurrent()
     {
-        if (_currentIndex >= _ballDatas.Count) return;
+        if (_currentIndex >= BallDatas.Count) return;
 
-        var data = _ballDatas[_currentIndex];
+        var data = BallDatas[_currentIndex];
         var ball = Instantiate(LevelManager.Instance.BallControllerPrefab, _spawnPoint.position, Quaternion.identity);
         ball.transform.rotation = Quaternion.Euler(-90, 0, 0);
 
@@ -101,7 +102,7 @@ public class TunnelSpawnerController : MonoBehaviour
     {
         _currentIndex++;
 
-        if (_currentIndex >= _ballDatas.Count)
+        if (_currentIndex >= BallDatas.Count)
         {
             // Tünel bitti, next color materyali temizle
             ClearTunnelColor();
@@ -118,13 +119,13 @@ public class TunnelSpawnerController : MonoBehaviour
     private void UpdateTunnelColor()
     {
         int nextIndex = _currentIndex + 1;
-        if (nextIndex >= _ballDatas.Count)
+        if (nextIndex >= BallDatas.Count)
         {
             ClearTunnelColor();
             return;
         }
 
-        var nextData = _ballDatas[nextIndex];
+        var nextData = BallDatas[nextIndex];
         var color = LevelManager.Instance.ObjectColors[(int)nextData.ObjectColor];
 
         var mats = _tunnelRenderer.materials;
