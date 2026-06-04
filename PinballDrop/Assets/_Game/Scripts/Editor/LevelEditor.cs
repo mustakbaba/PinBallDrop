@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -11,12 +12,13 @@ public class LevelEditorWindow : EditorWindow
     Vector2 scrollPos; // SCROLL BAR pozisyonu
 
     static LevelEditorWindow _instance;
-    
+
     private void OnInspectorUpdate()
     {
         RefreshStats();
         Repaint();
     }
+
     static LevelEditorWindow()
     {
         EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
@@ -52,6 +54,7 @@ public class LevelEditorWindow : EditorWindow
         GUILayout.Space(5);
 
         GUILayout.Label("Save Level", EditorStyles.boldLabel);
+
 
         if (GUILayout.Button("📁 Save As New", GUILayout.Height(30)))
         {
@@ -97,18 +100,131 @@ public class LevelEditorWindow : EditorWindow
                 LevelManager.Instance.LoadLevel(asset); // Tıklayınca direk yükler
             }
         }
-        
+
         GUILayout.Space(10);
         GUILayout.Label("Scene Stats", EditorStyles.boldLabel);
 
-       
+
+        if (GUILayout.Button("🎲 Randomize Ball Colors", GUILayout.Height(30)))
+        {
+            RandomizeBallColors();
+        }
+
+        if (GUILayout.Button("⚖️ Balance Balls to Bumpers", GUILayout.Height(30)))
+        {
+            BalanceBallsToBumpers();
+        }
 
         DrawStats();
 
         EditorGUILayout.EndScrollView();
     }
+
     private Dictionary<ColorTypes, int> _ballStats = new Dictionary<ColorTypes, int>();
     private Dictionary<ColorTypes, int> _bumperStats = new Dictionary<ColorTypes, int>();
+
+    private void BalanceBallsToBumpers()
+    {
+        var balls = FindObjectsOfType<BallController>();
+        var bumperHolders = FindObjectsOfType<BumperHolderController>();
+        if (balls.Length == 0 || bumperHolders.Length == 0) return;
+
+        // Ball renklerinin toplam sayısını al
+        var ballCounts = new Dictionary<ColorTypes, int>();
+        foreach (var ball in balls)
+        {
+            if (!ballCounts.ContainsKey(ball.Properties.ObjectColor))
+                ballCounts[ball.Properties.ObjectColor] = 0;
+            ballCounts[ball.Properties.ObjectColor] += ball.Properties.BallAmount;
+
+            if (ball.Properties.BallBlocker == BallController.BallBlockers.MultiBall)
+            {
+                if (!ballCounts.ContainsKey(ball.Properties.MultiColor))
+                    ballCounts[ball.Properties.MultiColor] = 0;
+                ballCounts[ball.Properties.MultiColor] += ball.Properties.MultiAmount;
+            }
+        }
+
+        // Tüm renkleri listeye al ve shuffle et
+        var colorList = new List<(ColorTypes color, int amount)>();
+        foreach (var kvp in ballCounts)
+        {
+            int remaining = kvp.Value;
+            while (remaining > 0)
+            {
+                // 10'un katı, 10-30 arası parça
+                int chunk = Random.Range(1, 4) * 10; // 10, 20 veya 30
+                chunk = Mathf.Min(chunk, remaining);
+                // 10'un katına yuvarla
+                chunk = Mathf.Max(Mathf.RoundToInt(chunk / 10f) * 10, 10);
+                chunk = Mathf.Min(chunk, remaining);
+                colorList.Add((kvp.Key, chunk));
+                remaining -= chunk;
+            }
+        }
+
+        // Shuffle
+        for (int i = colorList.Count - 1; i > 0; i--)
+        {
+            int j = Random.Range(0, i + 1);
+            (colorList[i], colorList[j]) = (colorList[j], colorList[i]);
+        }
+
+        // 3 holder'a eşit böl
+        int holderCount = bumperHolders.Length;
+        var holderChunks = new List<List<(ColorTypes color, int amount)>>();
+        for (int i = 0; i < holderCount; i++)
+            holderChunks.Add(new List<(ColorTypes, int)>());
+
+        for (int i = 0; i < colorList.Count; i++)
+            holderChunks[i % holderCount].Add(colorList[i]);
+
+        // Her holder'a set et
+        Undo.RecordObjects(bumperHolders, "Balance Bumpers to Balls");
+
+        for (int h = 0; h < holderCount; h++)
+        {
+            var holder = bumperHolders[h];
+            var chunks = holderChunks[h];
+
+            Undo.RecordObject(holder, "Balance Bumpers to Balls");
+            holder.TargetObjects.Clear();
+
+            foreach (var chunk in chunks)
+            {
+                holder.TargetObjects.Add(new BumperData
+                {
+                    Color = chunk.color,
+                    Amount = chunk.amount,
+                    IsHidden = false
+                });
+            }
+
+            EditorUtility.SetDirty(holder);
+            holder.SpawnPrefabs();
+        }
+
+        RefreshStats();
+        Debug.Log($"✅ {colorList.Count} chunk {holderCount} holder'a dağıtıldı.");
+    }
+
+    private void RandomizeBallColors()
+    {
+        var balls = FindObjectsOfType<BallController>();
+        if (balls.Length == 0) return;
+
+        var allColors = System.Enum.GetValues(typeof(ColorTypes));
+
+        foreach (var ball in balls)
+        {
+            Undo.RecordObject(ball, "Randomize Ball Color");
+            ball.Properties.ObjectColor = (ColorTypes)allColors.GetValue(Random.Range(0, allColors.Length));
+            ball.SetColor();
+            EditorUtility.SetDirty(ball);
+        }
+
+        RefreshStats();
+    }
 
     private void RefreshStats()
     {
@@ -172,7 +288,7 @@ public class LevelEditorWindow : EditorWindow
             GUILayout.Label(colorType.ToString(), GUILayout.Width(80));
             GUILayout.Label(ballCount.ToString(), GUILayout.Width(60));
             GUILayout.Label(bumperCount.ToString(), GUILayout.Width(70));
-            
+
             if (ballCount == bumperCount)
             {
                 GUI.color = Color.green;
@@ -183,7 +299,7 @@ public class LevelEditorWindow : EditorWindow
                 GUI.color = Color.red;
                 GUILayout.Label("✘", GUILayout.Width(20));
             }
-            
+
             EditorGUILayout.EndHorizontal();
 
             GUI.color = prevColor;
@@ -203,6 +319,7 @@ public class LevelEditorWindow : EditorWindow
             Mathf.Clamp01(c.b + 0.2f)
         );
     }
+
     void SaveAsNewLevel()
     {
         var newLevel = ScriptableObject.CreateInstance<LevelData>();
@@ -248,5 +365,4 @@ public class LevelEditorWindow : EditorWindow
 
         Debug.Log($"✅ Level Overwritten: {levelToSave.name}");
     }
-
 }
