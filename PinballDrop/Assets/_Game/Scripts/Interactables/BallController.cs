@@ -118,7 +118,7 @@ public class BallController : MonoBehaviour
         _multiAmountText.GetComponent<MeshRenderer>().SetPropertyBlock(_propertyBlock);
 
         var a = Mathf.InverseLerp(5, 20, Properties.BallAmount);
-        var scale = Mathf.Lerp(0.8f, 1.35f, a);
+        var scale = Mathf.Lerp(0.55f, 1.35f, a);
 
         if (!isPlaying && !IsFromTunnel)
             transform.localScale = Vector3.one * scale;
@@ -187,7 +187,7 @@ public class BallController : MonoBehaviour
     private void CheckClickable()
     {
         float sideOffset = transform.localScale.x * 0.25f;
-        float horizontalRayLength = transform.localScale.x * 1f;
+        float horizontalRayLength = transform.localScale.x * 1.25f;
 
         Vector3 centerOrigin = transform.position;
         Vector3 leftOrigin = transform.position + Vector3.left * sideOffset;
@@ -356,7 +356,7 @@ public class BallController : MonoBehaviour
         _amountText.gameObject.SetActive(true);
 
         var a = Mathf.InverseLerp(5, 20, Properties.BallAmount);
-        var scale = Mathf.Lerp(0.8f, 1.75f, a);
+        var scale = Mathf.Lerp(0.55f, 1.75f, a);
         SetColor(true);
         transform.DOScale(Vector3.one * scale, .2f);
     }
