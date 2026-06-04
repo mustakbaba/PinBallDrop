@@ -10,22 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fa6c11b19bc8c2a43b751e670ab39fe0, type: 3}
-  m_Name: Level_100
+  m_Name: Level_003
   m_EditorClassIdentifier: 
   cells: []
   BumperData:
   - TargetObjects:
-    - Color: 2
+    - Color: 5
       Amount: 20
       IsHidden: 0
-    - Color: 1
+    - Color: 6
       Amount: 20
       IsHidden: 0
-    - Color: 0
-      Amount: 30
+    - Color: 8
+      Amount: 20
       IsHidden: 0
-    - Color: 2
-      Amount: 10
+    - Color: 6
+      Amount: 20
       IsHidden: 0
     - Color: 0
       Amount: 20
@@ -37,36 +37,45 @@ MonoBehaviour:
       Amount: 10
       IsHidden: 0
   - TargetObjects:
+    - Color: 5
+      Amount: 20
+      IsHidden: 0
+    - Color: 2
+      Amount: 30
+      IsHidden: 0
+    - Color: 8
+      Amount: 20
+      IsHidden: 0
+    - Color: 0
+      Amount: 10
+      IsHidden: 0
     - Color: 3
       Amount: 20
       IsHidden: 0
-    - Color: 1
+    - Color: 5
+      Amount: 10
+      IsHidden: 0
+  - TargetObjects:
+    - Color: 8
+      Amount: 20
+      IsHidden: 0
+    - Color: 2
+      Amount: 40
+      IsHidden: 0
+    - Color: 5
+      Amount: 20
+      IsHidden: 0
+    - Color: 3
+      Amount: 20
+      IsHidden: 0
+    - Color: 6
       Amount: 20
       IsHidden: 0
     - Color: 0
       Amount: 10
       IsHidden: 0
     - Color: 1
-      Amount: 20
-      IsHidden: 0
-    - Color: 3
-      Amount: 20
-      IsHidden: 0
-  - TargetObjects:
-    - Color: 3
-      Amount: 20
-      IsHidden: 0
-    - Color: 0
-      Amount: 20
-      IsHidden: 0
-    - Color: 1
-      Amount: 20
-      IsHidden: 0
-    - Color: 0
-      Amount: 20
-      IsHidden: 0
-    - Color: 1
-      Amount: 30
+      Amount: 10
       IsHidden: 0
   BallData:
   - BallBlocker: 0
