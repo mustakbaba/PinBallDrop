@@ -9,6 +9,7 @@ public class LevelData : ScriptableObject
     public List<CellInfo> cells = new List<CellInfo>();
     public List<BumperDatas> BumperData = new List<BumperDatas>();
     public List<BallProperties> BallData = new List<BallProperties>();
+    public List<TunnelData> TunnelData = new List<TunnelData>();
     public LevelDifficulties LevelDifficulty;
 
     public enum LevelDifficulties
@@ -34,4 +35,11 @@ public class CellInfo
 public class BumperDatas
 {
     public List<BumperData> TargetObjects = new List<BumperData>();
+}
+
+public class TunnelData
+{
+    public List<BallProperties> BallDatas = new List<BallProperties>();
+    public Vector3 SpawnPoint;
+    public Vector3 SpawnRotation;
 }

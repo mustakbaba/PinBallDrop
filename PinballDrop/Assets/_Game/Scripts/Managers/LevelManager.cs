@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using SincappStudio;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -22,7 +23,7 @@ public class LevelManager : MonoSingleton<LevelManager>
     public BallController BallControllerPrefab;
     public SmallBallController SmallBallPrefab;
     public GameObject FakeBumperPrefab;
-
+    public TunnelSpawnerController TunnelPrefab;
     public BumperController BumperControllerPrefab;
     public BumperHolderController BumperHolderPrefab;
     public LineBoxConnectorController ConnectorPrefab;
@@ -77,7 +78,7 @@ public class LevelManager : MonoSingleton<LevelManager>
         {
             LoadLevel(levelData);
         }
-        
+
         var currentBlockerLevel =
             NewFeatureUnlockLevels[PersistData.Instance.CurrentBlockerIndex];
         var nextBlockerLevel = LevelManager.Instance.NewFeatureUnlockLevels[
@@ -108,7 +109,6 @@ public class LevelManager : MonoSingleton<LevelManager>
             StartCoroutine(StartTimePuzzle());
         }
     }
-
 
     public void Save(LevelData levelToSave)
     {
@@ -159,6 +159,8 @@ public class LevelManager : MonoSingleton<LevelManager>
 
         foreach (var ball in allBalls)
         {
+            if (ball.IsFromTunnel) continue;
+            
             var data = new BallProperties
             {
                 BallBlocker = ball.Properties.BallBlocker,
@@ -174,6 +176,22 @@ public class LevelManager : MonoSingleton<LevelManager>
         }
 
         levelToSave.BallData = ballProperties;
+
+        var tunnels = FindObjectsOfType<TunnelSpawnerController>();
+
+        levelToSave.TunnelData = new List<TunnelData>();
+
+        foreach (var tunnel in tunnels)
+        {
+            var tunnelData = new TunnelData
+            {
+                BallDatas = tunnel.BallDatas,
+                SpawnPoint = tunnel.transform.position,
+                SpawnRotation = tunnel.transform.rotation.eulerAngles
+            };
+
+            levelToSave.TunnelData.Add(tunnelData);
+        }
     }
 
     public void LoadLevel(LevelData level)
@@ -229,6 +247,26 @@ public class LevelManager : MonoSingleton<LevelManager>
             ball.Properties = ballData;
             ball.transform.position = ballData.Position;
             ball.SetColor(false);
+        }
+
+        var tunnels = FindObjectsOfType<TunnelSpawnerController>();
+        
+        var toDestroyTunnels = tunnels.ToList();
+        
+        for (int i = toDestroyTunnels.Count - 1; i >= 0; i--)
+        {
+            if (Application.isPlaying)
+                Destroy(toDestroyTunnels[i].gameObject);
+            else
+                DestroyImmediate(toDestroyTunnels[i].gameObject);
+        }
+        
+        for (int i = 0; i < level.TunnelData.Count; i++)
+        {
+            var tunnelData = level.TunnelData[i];
+            var tunnelObj = Instantiate(TunnelPrefab, tunnelData.SpawnPoint, Quaternion.Euler(tunnelData.SpawnRotation));
+            tunnelObj.BallDatas.AddRange(tunnelData.BallDatas);
+            tunnelObj.ShowPreview();
         }
     }
 
