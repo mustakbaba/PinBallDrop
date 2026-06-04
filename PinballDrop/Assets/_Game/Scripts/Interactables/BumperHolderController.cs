@@ -92,6 +92,10 @@ public class BumperHolderController : MonoBehaviour
             obj.name = "Spawned";
             obj.InitTarget();
         }
+
+#if UNITY_EDITOR
+        EditorUtility.SetDirty(this);
+#endif
     }
 
     // BumperHolderController.cs — GetNextBumper metodu ekle
