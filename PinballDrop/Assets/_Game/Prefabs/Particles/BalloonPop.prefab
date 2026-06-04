@@ -14531,7 +14531,6 @@ GameObject:
   - component: {fileID: 8440136711697316168}
   - component: {fileID: 3038493704916434820}
   - component: {fileID: 8290660967788185321}
-  - component: {fileID: 7841678960412884810}
   m_Layer: 0
   m_Name: BalloonPop
   m_TagString: Untagged
@@ -19352,16 +19351,3 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!114 &7841678960412884810
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7902524988194510691}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 628ef9b0c7e4fd24db54868035e11237, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  randomPercent: 15
