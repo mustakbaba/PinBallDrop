@@ -172,6 +172,18 @@ public class LevelEditorWindow : EditorWindow
             GUILayout.Label(colorType.ToString(), GUILayout.Width(80));
             GUILayout.Label(ballCount.ToString(), GUILayout.Width(60));
             GUILayout.Label(bumperCount.ToString(), GUILayout.Width(70));
+            
+            if (ballCount == bumperCount)
+            {
+                GUI.color = Color.green;
+                GUILayout.Label("✔", GUILayout.Width(20));
+            }
+            else
+            {
+                GUI.color = Color.red;
+                GUILayout.Label("✘", GUILayout.Width(20));
+            }
+            
             EditorGUILayout.EndHorizontal();
 
             GUI.color = prevColor;
