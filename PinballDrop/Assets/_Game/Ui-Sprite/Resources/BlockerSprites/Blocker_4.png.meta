@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 60083cecfd210e74ea669a7421515671
+guid: 8bace8df1bbc263488a58629eaa02aff
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -123,13 +123,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Blocker_4_0
+      name: Blocker_2_0
       rect:
         serializedVersion: 2
-        x: 146
-        y: 242
-        width: 732
-        height: 540
+        x: 245
+        y: 245
+        width: 534
+        height: 534
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -137,8 +137,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 295d43a95d5ad454092d591ff418f8fa
-      internalID: 382828936
+      spriteID: bf7c527efa74b6c43af71f505008904f
+      internalID: -1110173230
       vertices: []
       indices: 
       edges: []
@@ -146,7 +146,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 46533205ced630445aed5188fc90623c
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -154,7 +154,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Blocker_4_0: 382828936
+      Blocker_2_0: -1110173230
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

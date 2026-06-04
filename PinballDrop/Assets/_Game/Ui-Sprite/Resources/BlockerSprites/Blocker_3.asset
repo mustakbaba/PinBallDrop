@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 918a916cbc6d7cb42897910bea080f65, type: 3}
-  m_Name: Blocker_2
+  m_Name: Blocker_3
   m_EditorClassIdentifier: 
-  BlockerSprite: {fileID: 466322228, guid: 8a584271143a5ab4c8ffb2c950621884, type: 3}
-  BlockerName: Hidden Bouncer
-  Description: Hidden targets are revealed when they reach the front
+  BlockerSprite: {fileID: -555847372, guid: 6618521f714bf0643ad8d96dbc11382b, type: 3}
+  BlockerName: Sticky Balls
+  Description: Balls stick together and pop as one

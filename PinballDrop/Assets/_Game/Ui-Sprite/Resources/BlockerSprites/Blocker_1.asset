@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 918a916cbc6d7cb42897910bea080f65, type: 3}
   m_Name: Blocker_1
   m_EditorClassIdentifier: 
-  BlockerSprite: {fileID: 466322228, guid: 8a584271143a5ab4c8ffb2c950621884, type: 3}
-  BlockerName: 1.Blocker Title
-  Description: 1.Blocker Desc
+  BlockerSprite: {fileID: 382828936, guid: 60083cecfd210e74ea669a7421515671, type: 3}
+  BlockerName: Pipe
+  Description: Pop the front ball to reveal the next one
