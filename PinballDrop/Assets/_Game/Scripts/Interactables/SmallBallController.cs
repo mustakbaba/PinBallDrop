@@ -1,10 +1,12 @@
 // SmallBallController.cs
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class SmallBallController : MonoBehaviour
 {
@@ -42,6 +44,17 @@ public class SmallBallController : MonoBehaviour
         {
             _grounded = true;
             StartCoroutine(GoToVacuum());
+        }
+    }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.layer==11)
+        {
+            if (other.gameObject.GetComponent<BallController>().IsFromTunnel)
+            {
+                Physics.IgnoreCollision(other.collider, GetComponent<Collider>());
+            }
         }
     }
 
