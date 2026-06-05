@@ -268,7 +268,6 @@ public class LevelManager : MonoSingleton<LevelManager>
             var tunnelData = level.TunnelData[i];
             var tunnelObj = Instantiate(TunnelPrefab, tunnelData.SpawnPoint, Quaternion.Euler(tunnelData.SpawnRotation));
             tunnelObj.BallDatas.AddRange(tunnelData.BallDatas);
-            tunnelObj.ShowPreview();
         }
     }
 
