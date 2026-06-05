@@ -49,6 +49,7 @@ public class BallController : MonoBehaviour
     private const float ClickableDelay = 1f;
     private bool _isClickableConfirmed;
     [SerializeField] private Transform _iceObjTransform;
+    [SerializeField] private TextMeshPro _iceText;
 
     private void Awake()
     {
@@ -93,9 +94,12 @@ public class BallController : MonoBehaviour
             _iceObjTransform.gameObject.SetActive(true);
             _amountText.gameObject.SetActive(false);
             _multiAmountText.gameObject.SetActive(false);
+            _iceText.gameObject.SetActive(true);
+            _iceText.SetText($"{Properties.IceAmount}");
         }
         else
         {
+            _iceText.gameObject.SetActive(false);
             _amountText.gameObject.SetActive(true);
             _iceObjTransform.gameObject.SetActive(false);
         }
@@ -229,9 +233,13 @@ public class BallController : MonoBehaviour
         if (Properties.IsIce)
         {
             Properties.IceAmount--;
+            _iceText.SetText($"{Properties.IceAmount}");
             if (Properties.IceAmount <= 0)
             {
                 Properties.IsIce = false;
+                _iceText.gameObject.SetActive(false);
+                ParticleManager.Instance.PlayIceBreakEffect(transform.position);
+                SetColor();
             }
         }
     }
@@ -408,7 +416,7 @@ public class BallController : MonoBehaviour
                 yield return StartCoroutine(SpawnBatch(Properties.MultiAmount, Properties.MultiColor, capacityManager,
                     true));
             }
-
+            EventManager.OnBallExplode?.Invoke();
             OnExploded?.Invoke();
             // yield return new WaitForSeconds(0.1f);
             _amountText.gameObject.SetActive(false);

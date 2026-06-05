@@ -8,6 +8,7 @@ public class ParticleManager : MonoSingleton<ParticleManager>
     [SerializeField] private GameObject _gateParticle;
     [SerializeField] private ParticleSystem _bumperHitParticle;
     [SerializeField] private ParticleSystem _balloonPopParticle;
+    [SerializeField] private ParticleSystem _iceExplodeParticle;
 
     public void MoneyParticle(Vector3 spawnPos)
     {
@@ -48,5 +49,10 @@ public class ParticleManager : MonoSingleton<ParticleManager>
             main.startColor = LevelManager.Instance.ObjectColors[(int)colorTypes] * 1.86f;
         }
        
+    }
+
+    public void PlayIceBreakEffect(Vector3 transformPosition)
+    {
+        Instantiate(_iceExplodeParticle, transformPosition, Quaternion.Euler(-90, 0, 0));
     }
 }
