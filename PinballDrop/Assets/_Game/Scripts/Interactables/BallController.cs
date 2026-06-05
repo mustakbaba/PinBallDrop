@@ -44,6 +44,10 @@ public class BallController : MonoBehaviour
 
     private MeshRenderer _meshRenderer;
     public bool IsFromTunnel { get; set; }
+    
+    private float _clickableTimer = 0f;
+    private const float ClickableDelay = 1f;
+    private bool _isClickableConfirmed;
 
     private void Awake()
     {
@@ -67,6 +71,10 @@ public class BallController : MonoBehaviour
     public void SetColor(bool isPlaying = false)
     {
         if (this == null) return;
+        if (Properties.BallBlocker != BallBlockers.MultiBall)
+        {
+            Properties.MultiAmount = 0;
+        }
         var color = LevelManager.Instance.ObjectColors[(int)Properties.ObjectColor];
         ObjectColor = Properties.ObjectColor;
         var renderer = GetComponentInChildren<MeshRenderer>();
@@ -118,7 +126,7 @@ public class BallController : MonoBehaviour
         _propertyBlock.SetColor("_OutlineColor", multiColor);
         _multiAmountText.GetComponent<MeshRenderer>().SetPropertyBlock(_propertyBlock);
 
-        var a = Mathf.InverseLerp(5, 30, Properties.BallAmount);
+        var a = Mathf.InverseLerp(5, 30, Properties.BallAmount+Properties.MultiAmount);
         var scale = Mathf.Lerp(0.55f, 1.325f, a);
 
         if (!isPlaying && !IsFromTunnel)
@@ -200,10 +208,63 @@ public class BallController : MonoBehaviour
         bool centerBlocked = Physics.Raycast(centerOrigin, Vector3.down, 3f, mask);
         bool leftBlocked = Physics.Raycast(leftOrigin, Vector3.down, 3f, mask);
         bool rightBlocked = Physics.Raycast(rightOrigin, Vector3.down, 3f, mask);
-        bool leftHBlocked = Physics.Raycast(horizontalOrigin, Vector3.left, horizontalRayLength, mask);
-        bool rightHBlocked = Physics.Raycast(horizontalOrigin, Vector3.right, horizontalRayLength, mask);
 
-        _isClickable = !centerBlocked || !leftBlocked || !rightBlocked || !leftHBlocked || !rightHBlocked;
+        // Yatay rayler — çarptığı noktanın ortasından aşağı kontrol
+        bool leftHBlocked = false;
+        bool rightHBlocked = false;
+
+        RaycastHit leftHit, rightHit;
+
+        if (Physics.Raycast(horizontalOrigin, Vector3.left, out leftHit, horizontalRayLength, mask))
+        {
+            Vector3 hitObjCenter = leftHit.collider.transform.position;
+            Vector3 midPoint = (transform.position + hitObjCenter) * 0.5f;
+            midPoint.y = transform.position.y;
+
+            float spread = 0.035f;
+            Vector3 midLeft = midPoint + Vector3.left * spread;
+            Vector3 midRight = midPoint + Vector3.right * spread;
+
+            bool mid1 = Physics.Raycast(midPoint, Vector3.down, 3f, mask);
+            bool mid2 = Physics.Raycast(midLeft, Vector3.down, 3f, mask);
+            bool mid3 = Physics.Raycast(midRight, Vector3.down, 3f, mask);
+
+            leftHBlocked = mid1 || mid2 || mid3; // biri bile kapalıysa engelli
+
+#if UNITY_EDITOR
+            Debug.DrawLine(midPoint, midPoint + Vector3.down * 3f, mid1 ? Color.red : Color.yellow);
+            Debug.DrawLine(midLeft, midLeft + Vector3.down * 3f, mid2 ? Color.red : Color.yellow);
+            Debug.DrawLine(midRight, midRight + Vector3.down * 3f, mid3 ? Color.red : Color.yellow);
+#endif
+        }
+
+        if (Physics.Raycast(horizontalOrigin, Vector3.right, out rightHit, horizontalRayLength, mask))
+        {
+            Vector3 hitObjCenter = rightHit.collider.transform.position;
+            Vector3 midPoint = (transform.position + hitObjCenter) * 0.5f;
+            midPoint.y = transform.position.y;
+
+            float spread = 0.035f;
+            Vector3 midLeft = midPoint + Vector3.left * spread;
+            Vector3 midRight = midPoint + Vector3.right * spread;
+
+            bool mid1 = Physics.Raycast(midPoint, Vector3.down, 3f, mask);
+            bool mid2 = Physics.Raycast(midLeft, Vector3.down, 3f, mask);
+            bool mid3 = Physics.Raycast(midRight, Vector3.down, 3f, mask);
+
+            rightHBlocked = mid1 || mid2 || mid3; // biri bile kapalıysa engelli
+
+#if UNITY_EDITOR
+            Debug.DrawLine(midPoint, midPoint + Vector3.down * 3f, mid1 ? Color.red : Color.yellow);
+            Debug.DrawLine(midLeft, midLeft + Vector3.down * 3f, mid2 ? Color.red : Color.yellow);
+            Debug.DrawLine(midRight, midRight + Vector3.down * 3f, mid3 ? Color.red : Color.yellow);
+#endif
+        }
+
+        bool leftHOpen = !leftHBlocked;   // 3ü de açıksa true
+        bool rightHOpen = !rightHBlocked; // 3ü de açıksa true
+        
+        _isClickable = !centerBlocked || !leftBlocked || !rightBlocked || leftHOpen || rightHOpen;
 
 #if UNITY_EDITOR
         Debug.DrawLine(centerOrigin, centerOrigin + Vector3.down * 3f, centerBlocked ? Color.red : Color.green);
@@ -214,6 +275,23 @@ public class BallController : MonoBehaviour
         Debug.DrawLine(horizontalOrigin, horizontalOrigin + Vector3.right * horizontalRayLength,
             rightHBlocked ? Color.red : Color.cyan);
 #endif
+        
+        bool rawClickable = !centerBlocked || !leftBlocked || !rightBlocked || leftHOpen || rightHOpen;
+
+        if (!rawClickable)
+        {
+            // Direkt kapat
+            _clickableTimer = 0f;
+            _isClickable = false;
+            _isClickableConfirmed = false;
+        }
+        else
+        {
+            // Timer'ı artır, 1sn dolunca aç
+            _clickableTimer += Time.deltaTime;
+            if (_clickableTimer >= ClickableDelay)
+                _isClickable = true;
+        }
 
         if (_isClickable)
         {
@@ -274,7 +352,7 @@ public class BallController : MonoBehaviour
         if (available >= totalNeeded)
         {
             // Hepsi sığıyor, normal patlat
-            
+
             SoundManager.Instance.BalloonPopSound();
 
             transform.DOScale(transform.localScale.x + .35f, .1f);
@@ -356,7 +434,7 @@ public class BallController : MonoBehaviour
         _meshRenderer.enabled = true;
         _amountText.gameObject.SetActive(true);
 
-        var a = Mathf.InverseLerp(5, 30, Properties.BallAmount);
+        var a = Mathf.InverseLerp(5, 30, Properties.BallAmount+Properties.MultiAmount);
         var scale = Mathf.Lerp(0.55f, 1.325f, a);
         SetColor(true);
         transform.DOScale(Vector3.one * scale, .2f);
