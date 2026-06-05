@@ -48,6 +48,8 @@ public class BallController : MonoBehaviour
     private float _clickableTimer = 0f;
     private const float ClickableDelay = 1f;
     private bool _isClickableConfirmed;
+    private int _defIceAmount;
+    private float _defIceScale;
     [SerializeField] private Transform _iceObjTransform;
     [SerializeField] private TextMeshPro _iceText;
 
@@ -78,6 +80,11 @@ public class BallController : MonoBehaviour
         }));
     }
 #endif
+    private void Start()
+    {
+        _defIceAmount = Properties.IceAmount;
+        _defIceScale = _iceObjTransform.localScale.x;
+    }
 
     private void ValidateBall() => SetColor();
 
@@ -233,6 +240,11 @@ public class BallController : MonoBehaviour
         if (Properties.IsIce)
         {
             Properties.IceAmount--;
+            var a = Mathf.InverseLerp(0, _defIceAmount, Properties.IceAmount);
+            var mult = Mathf.Lerp(.8f, 1f,a);
+            _iceObjTransform.DOScaleX(_defIceScale * mult, 0.05f);
+            _iceObjTransform.DOScaleY(_defIceScale * mult, 0.05f);
+            
             _iceText.SetText($"{Properties.IceAmount}");
             if (Properties.IceAmount <= 0)
             {
