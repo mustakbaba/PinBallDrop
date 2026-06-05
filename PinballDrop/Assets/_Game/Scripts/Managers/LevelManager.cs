@@ -165,6 +165,8 @@ public class LevelManager : MonoSingleton<LevelManager>
             {
                 BallBlocker = ball.Properties.BallBlocker,
                 MultiColor = ball.Properties.MultiColor,
+                IsIce = ball.Properties.IsIce,
+                IceAmount = ball.Properties.IceAmount,
                 MultiAmount = ball.Properties.MultiAmount,
                 BallAmount = ball.Properties.BallAmount,
                 ObjectColor = ball.Properties.ObjectColor,

@@ -174,8 +174,8 @@ MonoBehaviour:
     MultiAmount: 0
     BallAmount: 10
     IsHidden: 0
-    IsIce: 0
-    IceAmount: 0
+    IsIce: 1
+    IceAmount: 12
     Position: {x: -2.217, y: 0.68, z: 43.31}
   - BallBlocker: 0
     MultiColor: 7
@@ -183,8 +183,8 @@ MonoBehaviour:
     MultiAmount: 0
     BallAmount: 10
     IsHidden: 0
-    IsIce: 0
-    IceAmount: 0
+    IsIce: 1
+    IceAmount: 14
     Position: {x: -2.217, y: -0.060000002, z: 43.31}
   - BallBlocker: 0
     MultiColor: 7
@@ -210,8 +210,8 @@ MonoBehaviour:
     MultiAmount: 0
     BallAmount: 10
     IsHidden: 0
-    IsIce: 0
-    IceAmount: 0
+    IsIce: 1
+    IceAmount: 16
     Position: {x: -2.217, y: -0.8, z: 43.31}
   - BallBlocker: 0
     MultiColor: 7
@@ -219,8 +219,8 @@ MonoBehaviour:
     MultiAmount: 0
     BallAmount: 10
     IsHidden: 0
-    IsIce: 0
-    IceAmount: 0
+    IsIce: 1
+    IceAmount: 18
     Position: {x: -2.217, y: -1.532, z: 43.31}
   - BallBlocker: 0
     MultiColor: 7
@@ -354,8 +354,8 @@ MonoBehaviour:
     MultiAmount: 0
     BallAmount: 10
     IsHidden: 0
-    IsIce: 0
-    IceAmount: 0
+    IsIce: 1
+    IceAmount: 20
     Position: {x: -2.151, y: -2.308, z: 43.31}
   TunnelData: []
   LevelDifficulty: 0
