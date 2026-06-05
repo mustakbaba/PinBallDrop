@@ -44,16 +44,28 @@ public class BallController : MonoBehaviour
 
     private MeshRenderer _meshRenderer;
     public bool IsFromTunnel { get; set; }
-    
+
     private float _clickableTimer = 0f;
     private const float ClickableDelay = 1f;
     private bool _isClickableConfirmed;
+    [SerializeField] private Transform _iceObjTransform;
 
     private void Awake()
     {
         _meshRenderer = GetComponent<MeshRenderer>();
         _rb = GetComponent<Rigidbody>();
     }
+
+    private void OnEnable()
+    {
+        EventManager.OnBallExplode += OneBallExplode;
+    }
+
+    private void OnDisable()
+    {
+        EventManager.OnBallExplode -= OneBallExplode;
+    }
+
 
 #if UNITY_EDITOR
     private void OnValidate()
@@ -75,6 +87,19 @@ public class BallController : MonoBehaviour
         {
             Properties.MultiAmount = 0;
         }
+
+        if (Properties.IsIce)
+        {
+            _iceObjTransform.gameObject.SetActive(true);
+            _amountText.gameObject.SetActive(false);
+            _multiAmountText.gameObject.SetActive(false);
+        }
+        else
+        {
+            _amountText.gameObject.SetActive(true);
+            _iceObjTransform.gameObject.SetActive(false);
+        }
+
         var color = LevelManager.Instance.ObjectColors[(int)Properties.ObjectColor];
         ObjectColor = Properties.ObjectColor;
         var renderer = GetComponentInChildren<MeshRenderer>();
@@ -126,11 +151,17 @@ public class BallController : MonoBehaviour
         _propertyBlock.SetColor("_OutlineColor", multiColor);
         _multiAmountText.GetComponent<MeshRenderer>().SetPropertyBlock(_propertyBlock);
 
-        var a = Mathf.InverseLerp(5, 30, Properties.BallAmount+Properties.MultiAmount);
+        var a = Mathf.InverseLerp(5, 30, Properties.BallAmount + Properties.MultiAmount);
         var scale = Mathf.Lerp(0.55f, 1.325f, a);
 
         if (!isPlaying && !IsFromTunnel)
+        {
             transform.localScale = Vector3.one * scale;
+            if (Properties.BallAmount + Properties.MultiAmount >= 70)
+            {
+                transform.localScale = Vector3.one * 2f;
+            }
+        }
 
         _amountText.text = Properties.BallAmount.ToString();
 
@@ -191,6 +222,18 @@ public class BallController : MonoBehaviour
     {
         if (_exploded) return;
         CheckClickable();
+    }
+
+    private void OneBallExplode()
+    {
+        if (Properties.IsIce)
+        {
+            Properties.IceAmount--;
+            if (Properties.IceAmount <= 0)
+            {
+                Properties.IsIce = false;
+            }
+        }
     }
 
     private void CheckClickable()
@@ -261,9 +304,9 @@ public class BallController : MonoBehaviour
 #endif
         }
 
-        bool leftHOpen = !leftHBlocked;   // 3ü de açıksa true
+        bool leftHOpen = !leftHBlocked; // 3ü de açıksa true
         bool rightHOpen = !rightHBlocked; // 3ü de açıksa true
-        
+
         _isClickable = !centerBlocked || !leftBlocked || !rightBlocked || leftHOpen || rightHOpen;
 
 #if UNITY_EDITOR
@@ -275,7 +318,7 @@ public class BallController : MonoBehaviour
         Debug.DrawLine(horizontalOrigin, horizontalOrigin + Vector3.right * horizontalRayLength,
             rightHBlocked ? Color.red : Color.cyan);
 #endif
-        
+
         bool rawClickable = !centerBlocked || !leftBlocked || !rightBlocked || leftHOpen || rightHOpen;
 
         if (!rawClickable)
@@ -317,6 +360,7 @@ public class BallController : MonoBehaviour
     {
         if (!_isClickable || _exploded) return;
         if (GameManager.Instance.IsGameLose) return;
+        if (Properties.IsIce) return;
         Explode();
     }
 
@@ -434,7 +478,7 @@ public class BallController : MonoBehaviour
         _meshRenderer.enabled = true;
         _amountText.gameObject.SetActive(true);
 
-        var a = Mathf.InverseLerp(5, 30, Properties.BallAmount+Properties.MultiAmount);
+        var a = Mathf.InverseLerp(5, 30, Properties.BallAmount + Properties.MultiAmount);
         var scale = Mathf.Lerp(0.55f, 1.325f, a);
         SetColor(true);
         transform.DOScale(Vector3.one * scale, .2f);
@@ -501,5 +545,7 @@ public class BallProperties
 
     public int BallAmount = 10;
     public bool IsHidden;
+    public bool IsIce;
+    [ShowIf("IsIce")] public int IceAmount;
     public Vector3 Position;
 }
