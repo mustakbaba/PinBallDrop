@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using DG.Tweening;
+using TMPro;
 using UnityEditor;
 using UnityEngine.Serialization;
 
@@ -12,6 +13,8 @@ public class TunnelSpawnerController : MonoBehaviour
     [SerializeField] private Transform _spawnPoint;      // tünel ağzı
     [SerializeField] private MeshRenderer _tunnelRenderer; // tünelin mesh'i
     [SerializeField] private int _nextColorMaterialIndex = 1; // 2. topun rengi bu indexe gidecek
+    [SerializeField] private TextMeshPro _tunnelBallAmountText;
+    private int _currentBallAmount;
 
     private int _currentIndex = 0;
     private BallController _activeBall;
@@ -49,7 +52,7 @@ public class TunnelSpawnerController : MonoBehaviour
         ball.transform.position = _spawnPoint.position;
         ball.name = "TunnelPreview";
         ball.IsFromTunnel = true;
-
+        _currentBallAmount = BallDatas.Count;
         ball.Properties = data;
         ball.SetColor();
         ball.transform.localScale = Vector3.one * 1.2f;
@@ -60,6 +63,10 @@ public class TunnelSpawnerController : MonoBehaviour
 
     private void Start()
     {
+        _tunnelBallAmountText.transform.LookAt(Camera.main.transform);
+        _tunnelBallAmountText.transform.Rotate(0, 180, 0); // ters bakmasın
+        _currentBallAmount = BallDatas.Count;
+        SetTunnelText();
         // Editor preview'ını temizle
         var existing = GetComponentsInChildren<Transform>(true)
             .Where(t => t.name == "TunnelPreview")
@@ -72,6 +79,11 @@ public class TunnelSpawnerController : MonoBehaviour
         UpdateTunnelColor();
     }
 
+    private void SetTunnelText()
+    {
+        _tunnelBallAmountText.text = _currentBallAmount.ToString();
+    }
+
     private void SpawnCurrent()
     {
         if (_currentIndex >= BallDatas.Count) return;
@@ -79,7 +91,9 @@ public class TunnelSpawnerController : MonoBehaviour
         var data = BallDatas[_currentIndex];
         var ball = Instantiate(LevelManager.Instance.BallControllerPrefab, _spawnPoint.position, Quaternion.identity);
         ball.transform.rotation = Quaternion.Euler(-90, 0, 0);
-
+        _currentBallAmount = BallDatas.Count - _currentIndex;
+    
+        SetTunnelText();
         ball.Properties = data;
         ball.SetColor();
         ball.IsFromTunnel = true;
@@ -106,6 +120,7 @@ public class TunnelSpawnerController : MonoBehaviour
         {
             // Tünel bitti, next color materyali temizle
             ClearTunnelColor();
+                _tunnelBallAmountText.gameObject.SetActive(false);
             return;
         }
 

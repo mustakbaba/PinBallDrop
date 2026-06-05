@@ -231,15 +231,41 @@ public class LevelEditorWindow : EditorWindow
         _ballStats.Clear();
         _bumperStats.Clear();
 
+        var tunnels = FindObjectsOfType<TunnelSpawnerController>();
+        var tunnelBalls = new HashSet<BallController>();
+
+        // Tunnel child'larındaki ball'ları işaretle
+        foreach (var tunnel in tunnels)
+        {
+            var childBalls = tunnel.GetComponentsInChildren<BallController>();
+            foreach (var b in childBalls)
+                tunnelBalls.Add(b);
+
+            // Tunnel'ın BallDatas'ını say
+            foreach (var data in tunnel.BallDatas)
+            {
+                if (!_ballStats.ContainsKey(data.ObjectColor))
+                    _ballStats[data.ObjectColor] = 0;
+                _ballStats[data.ObjectColor] += data.BallAmount;
+
+                if (data.BallBlocker == BallController.BallBlockers.MultiBall)
+                {
+                    if (!_ballStats.ContainsKey(data.MultiColor))
+                        _ballStats[data.MultiColor] = 0;
+                    _ballStats[data.MultiColor] += data.MultiAmount;
+                }
+            }
+        }
+
         var balls = FindObjectsOfType<BallController>();
         foreach (var ball in balls)
         {
-            // Ana renk
+            if (tunnelBalls.Contains(ball)) continue; // tunnel child'ı, atla
+
             if (!_ballStats.ContainsKey(ball.ObjectColor))
                 _ballStats[ball.ObjectColor] = 0;
             _ballStats[ball.ObjectColor] += ball.Properties.BallAmount;
 
-            // Multi renk
             if (ball.Properties.BallBlocker == BallController.BallBlockers.MultiBall)
             {
                 if (!_ballStats.ContainsKey(ball.Properties.MultiColor))
