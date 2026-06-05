@@ -44,6 +44,10 @@ public class BallController : MonoBehaviour
 
     private MeshRenderer _meshRenderer;
     public bool IsFromTunnel { get; set; }
+    
+    private float _clickableTimer = 0f;
+    private const float ClickableDelay = 1f;
+    private bool _isClickableConfirmed;
 
     private void Awake()
     {
@@ -67,6 +71,10 @@ public class BallController : MonoBehaviour
     public void SetColor(bool isPlaying = false)
     {
         if (this == null) return;
+        if (Properties.BallBlocker != BallBlockers.MultiBall)
+        {
+            Properties.MultiAmount = 0;
+        }
         var color = LevelManager.Instance.ObjectColors[(int)Properties.ObjectColor];
         ObjectColor = Properties.ObjectColor;
         var renderer = GetComponentInChildren<MeshRenderer>();
@@ -118,7 +126,7 @@ public class BallController : MonoBehaviour
         _propertyBlock.SetColor("_OutlineColor", multiColor);
         _multiAmountText.GetComponent<MeshRenderer>().SetPropertyBlock(_propertyBlock);
 
-        var a = Mathf.InverseLerp(5, 30, Properties.BallAmount);
+        var a = Mathf.InverseLerp(5, 30, Properties.BallAmount+Properties.MultiAmount);
         var scale = Mathf.Lerp(0.55f, 1.325f, a);
 
         if (!isPlaying && !IsFromTunnel)
@@ -267,6 +275,23 @@ public class BallController : MonoBehaviour
         Debug.DrawLine(horizontalOrigin, horizontalOrigin + Vector3.right * horizontalRayLength,
             rightHBlocked ? Color.red : Color.cyan);
 #endif
+        
+        bool rawClickable = !centerBlocked || !leftBlocked || !rightBlocked || leftHOpen || rightHOpen;
+
+        if (!rawClickable)
+        {
+            // Direkt kapat
+            _clickableTimer = 0f;
+            _isClickable = false;
+            _isClickableConfirmed = false;
+        }
+        else
+        {
+            // Timer'ı artır, 1sn dolunca aç
+            _clickableTimer += Time.deltaTime;
+            if (_clickableTimer >= ClickableDelay)
+                _isClickable = true;
+        }
 
         if (_isClickable)
         {
@@ -409,7 +434,7 @@ public class BallController : MonoBehaviour
         _meshRenderer.enabled = true;
         _amountText.gameObject.SetActive(true);
 
-        var a = Mathf.InverseLerp(5, 30, Properties.BallAmount);
+        var a = Mathf.InverseLerp(5, 30, Properties.BallAmount+Properties.MultiAmount);
         var scale = Mathf.Lerp(0.55f, 1.325f, a);
         SetColor(true);
         transform.DOScale(Vector3.one * scale, .2f);
