@@ -419,7 +419,7 @@ public class BallController : MonoBehaviour
 
             SoundManager.Instance.BalloonPopSound();
 
-            transform.DOScale(transform.localScale.x + .35f, .1f);
+            transform.DOScale(transform.localScale.x + .85f, .15f);
 
             yield return StartCoroutine(SpawnBatch(Properties.BallAmount, Properties.ObjectColor, capacityManager
             ));
@@ -434,7 +434,7 @@ public class BallController : MonoBehaviour
             _amountText.gameObject.SetActive(false);
             if (_innerBallObject != null) _innerBallObject.SetActive(false);
             if (_multiAmountText != null) _multiAmountText.gameObject.SetActive(false);
-            ParticleManager.Instance.BalloonPopParticle(transform.position, Properties.ObjectColor);
+            ParticleManager.Instance.BalloonPopParticle(transform.position, Properties.ObjectColor,Properties.BallAmount);
             Destroy(gameObject);
         }
         else
@@ -513,7 +513,7 @@ public class BallController : MonoBehaviour
         }
 
 
-        float radius = transform.localScale.x * 0.5f;
+        float radius = (transform.localScale.x-.8f) * 0.5f;
         Vector3 center = transform.position;
 
         for (int i = 0; i < amount; i++)

@@ -20,6 +20,7 @@ public class SlotController : MonoBehaviour
     private Color _defColor;
     private bool _isClearing;
     private int _clearTweenId;
+    private bool _isNotEmpty;
 
     private void Awake()
     {
@@ -85,7 +86,21 @@ public class SlotController : MonoBehaviour
         );
 
         _balls.Add(ball);
-        transform.DOScale(1.15f, .1f);
+
+        transform.DOKill();
+        transform.DOScale(1.1f, .1f).SetEase(Ease.OutBack).OnComplete(() =>
+        {
+            transform.DOScale(1f, .1f).OnComplete(() =>
+            {
+                // Top gelmeyi kestikten sonra loop başlat
+                if (_balls.Count > 0)
+                {
+                    transform.DOScale(1.1f, 1f).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InOutSine);
+                    // transform.DOLocalMoveZ(.1f, 1.5f).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InOutSine);
+                }
+            });
+        });
+
         ball.transform.DOKill();
 
         var rb = ball.GetComponent<Rigidbody>();
@@ -123,10 +138,10 @@ public class SlotController : MonoBehaviour
             var ball = ballsToProcess[i];
             if (ball == null) continue;
 
-            float delay = i * 0.075f;
+            float delay = i * 0.05f;
             ball.transform.DOKill();
             ball.transform.SetParent(null);
-            ball.transform.localScale = Vector3.one*.27f;
+            ball.transform.localScale = Vector3.one * .27f;
 
             DOVirtual.DelayedCall(delay, () =>
             {
@@ -137,7 +152,9 @@ public class SlotController : MonoBehaviour
             }).SetId(_clearTweenId);
             ;
         }
-
+        transform.DOKill();
+        transform.DOScale(1f, .1f);
+        transform.DOLocalMoveZ(0, .1f);
         // Son top gönderildikten sonra unlock
         float totalDelay = (ballsToProcess.Count - 1) * 0.075f + 0.1f;
         DOVirtual.DelayedCall(totalDelay, () =>
@@ -148,7 +165,7 @@ public class SlotController : MonoBehaviour
             {
                 SlotColor = default;
                 _meshRenderer.material.color = _defColor;
-                transform.DOScale(1f, .1f);
+                _isNotEmpty = false;
             }
 
             UpdateText();
