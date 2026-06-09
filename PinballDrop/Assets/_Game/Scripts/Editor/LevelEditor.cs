@@ -144,7 +144,24 @@ public class LevelEditorWindow : EditorWindow
                 ballCounts[ball.Properties.MultiColor] += ball.Properties.MultiAmount;
             }
         }
+        // Tunnel'ların BallDatas'ı
+        var tunnels = FindObjectsOfType<TunnelSpawnerController>();
+        foreach (var tunnel in tunnels)
+        {
+            foreach (var data in tunnel.BallDatas)
+            {
+                if (!ballCounts.ContainsKey(data.ObjectColor))
+                    ballCounts[data.ObjectColor] = 0;
+                ballCounts[data.ObjectColor] += data.BallAmount;
 
+                if (data.BallBlocker == BallController.BallBlockers.MultiBall)
+                {
+                    if (!ballCounts.ContainsKey(data.MultiColor))
+                        ballCounts[data.MultiColor] = 0;
+                    ballCounts[data.MultiColor] += data.MultiAmount;
+                }
+            }
+        }
         // Tüm renkleri listeye al ve shuffle et
         var colorList = new List<(ColorTypes color, int amount)>();
         foreach (var kvp in ballCounts)
@@ -211,16 +228,25 @@ public class LevelEditorWindow : EditorWindow
     private void RandomizeBallColors()
     {
         var balls = FindObjectsOfType<BallController>();
-        if (balls.Length == 0) return;
-
+        var tunnels = FindObjectsOfType<TunnelSpawnerController>();
         var allColors = System.Enum.GetValues(typeof(ColorTypes));
 
         foreach (var ball in balls)
         {
+            if (ball.IsFromTunnel) continue;
             Undo.RecordObject(ball, "Randomize Ball Color");
             ball.Properties.ObjectColor = (ColorTypes)allColors.GetValue(Random.Range(0, allColors.Length));
             ball.SetColor();
             EditorUtility.SetDirty(ball);
+        }
+
+        foreach (var tunnel in tunnels)
+        {
+            Undo.RecordObject(tunnel, "Randomize Tunnel Ball Colors");
+            foreach (var data in tunnel.BallDatas)
+                data.ObjectColor = (ColorTypes)allColors.GetValue(Random.Range(0, allColors.Length));
+            EditorUtility.SetDirty(tunnel);
+            tunnel.ShowPreview();
         }
 
         RefreshStats();
