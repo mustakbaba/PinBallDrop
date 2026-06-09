@@ -179,13 +179,7 @@ public class BallController : MonoBehaviour
         if (Application.isPlaying)
             renderer.materials[0].color = color;
 
-        if (Properties.IsHidden)
-        {
-            _amountText.text = "?";
-            renderer.GetPropertyBlock(_propertyBlock);
-            _propertyBlock.SetColor("_BaseColor", new Color(0.3f, 0.3f, 0.3f) * .5f);
-            renderer.SetPropertyBlock(_propertyBlock);
-        }
+      
 
         // Multi ball görsel
         bool isMulti = Properties.BallBlocker == BallBlockers.MultiBall;
@@ -207,12 +201,30 @@ public class BallController : MonoBehaviour
                     innerRenderer.materials[0].color = LevelManager.Instance.ObjectColors[(int)Properties.MultiColor];
             }
         }
+     
 
         if (_multiAmountText != null)
         {
             _multiAmountText.gameObject.SetActive(isMulti);
             if (isMulti)
                 _multiAmountText.text = Properties.MultiAmount.ToString();
+        }
+        if (Properties.IsHidden)
+        {
+           
+               
+          
+
+            _amountText.text = "?";
+            _multiAmountText.text = "?";
+            renderer.GetPropertyBlock(_propertyBlock);
+          
+            if (Properties.BallBlocker == BallBlockers.MultiBall)
+            {
+                _propertyBlock.SetColor("_BaseColor2", new Color(0.3f, 0.3f, 0.3f) * .5f);
+            }
+            _propertyBlock.SetColor("_BaseColor", new Color(0.3f, 0.3f, 0.3f) * .5f);
+            renderer.SetPropertyBlock(_propertyBlock);
         }
     }
 
