@@ -22,6 +22,7 @@ public class SmallBallController : MonoBehaviour
     private ParticleSystem _trailParticle;
     private bool _isCloseVacuum;
     private float randForce = 1;
+    private float _stuckCheckTimer;
 
     private void Awake()
     {
@@ -49,17 +50,48 @@ public class SmallBallController : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.layer==11)
+        if (other.gameObject.layer == 11)
         {
             if (other.gameObject.GetComponent<BallController>().IsFromTunnel)
             {
                 Physics.IgnoreCollision(other.collider, GetComponent<Collider>());
             }
+
             if (!other.gameObject.GetComponent<BallController>().IsFromTunnel)
             {
                 Vector3 pushDir = other.transform.position - transform.position;
                 pushDir.Normalize();
                 other.transform.GetComponent<Rigidbody>().AddForce(pushDir * .35f, ForceMode.VelocityChange);
+            }
+        }
+    }
+
+    private void OnCollisionStay(Collision other)
+    {
+        if (other.gameObject.layer != 11) return;
+        if (other.gameObject.GetComponent<BallController>() == null) return;
+        if (other.gameObject.GetComponent<BallController>().IsFromTunnel) return;
+
+        _stuckCheckTimer += Time.deltaTime;
+
+        if (_stuckCheckTimer >= 3f)
+        {
+            if (Mathf.Abs(_rb.velocity.y) < 0.5f)
+            {
+                // _rb.AddForce(Vector3.down * 100f, ForceMode.Acceleration);
+                _rb.mass = 15000;
+            }
+        }
+    }
+
+    private void OnCollisionExit(Collision other)
+    {
+        if (other.gameObject.layer == 11)
+        {
+            if (other.gameObject.GetComponent<BallController>())
+            {
+                _stuckCheckTimer = 0f;
+                _rb.mass = 50;
             }
         }
     }
@@ -210,10 +242,7 @@ public class SmallBallController : MonoBehaviour
                 var col = GetComponent<Collider>();
                 if (col != null) col.enabled = true;
                 _rb.constraints = RigidbodyConstraints.None;
-                DOVirtual.DelayedCall(1, () =>
-                {
-                    _rb.constraints = RigidbodyConstraints.FreezePositionZ;
-                });
+                DOVirtual.DelayedCall(1, () => { _rb.constraints = RigidbodyConstraints.FreezePositionZ; });
                 _rb.AddForce(Vector3.back * 3f + Vector3.up * 5f + Vector3.left * Random.Range(-3f, 3f),
                     ForceMode.VelocityChange);
                 SlotHolderManager.Instance.TryPlaceBall(this);
