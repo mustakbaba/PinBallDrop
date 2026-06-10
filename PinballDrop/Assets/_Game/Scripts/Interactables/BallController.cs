@@ -84,7 +84,10 @@ public class BallController : MonoBehaviour
     {
         _defIceAmount = Properties.IceAmount;
         _defIceScale = _iceObjTransform.localScale.x;
-        _rb.isKinematic = false;
+        if (!IsFromTunnel)
+        {
+            _rb.isKinematic = false;
+        }
     }
 
     private void ValidateBall() => SetColor();
@@ -180,7 +183,6 @@ public class BallController : MonoBehaviour
         if (Application.isPlaying)
             renderer.materials[0].color = color;
 
-      
 
         // Multi ball görsel
         bool isMulti = Properties.BallBlocker == BallBlockers.MultiBall;
@@ -202,7 +204,7 @@ public class BallController : MonoBehaviour
                     innerRenderer.materials[0].color = LevelManager.Instance.ObjectColors[(int)Properties.MultiColor];
             }
         }
-     
+
 
         if (_multiAmountText != null)
         {
@@ -210,20 +212,18 @@ public class BallController : MonoBehaviour
             if (isMulti)
                 _multiAmountText.text = Properties.MultiAmount.ToString();
         }
+
         if (Properties.IsHidden)
         {
-           
-               
-          
-
             _amountText.text = "?";
             _multiAmountText.text = "?";
             renderer.GetPropertyBlock(_propertyBlock);
-          
+
             if (Properties.BallBlocker == BallBlockers.MultiBall)
             {
                 _propertyBlock.SetColor("_BaseColor2", new Color(0.3f, 0.3f, 0.3f) * .5f);
             }
+
             _propertyBlock.SetColor("_BaseColor", new Color(0.3f, 0.3f, 0.3f) * .5f);
             renderer.SetPropertyBlock(_propertyBlock);
         }
@@ -254,10 +254,10 @@ public class BallController : MonoBehaviour
         {
             Properties.IceAmount--;
             var a = Mathf.InverseLerp(0, _defIceAmount, Properties.IceAmount);
-            var mult = Mathf.Lerp(.8f, 1f,a);
+            var mult = Mathf.Lerp(.8f, 1f, a);
             _iceObjTransform.DOScaleX(_defIceScale * mult, 0.05f);
             _iceObjTransform.DOScaleY(_defIceScale * mult, 0.05f);
-            
+
             _iceText.SetText($"{Properties.IceAmount}");
             if (Properties.IceAmount <= 0)
             {
@@ -281,9 +281,9 @@ public class BallController : MonoBehaviour
 
         int mask = LayerMask.GetMask("Collectable", "Obstacle");
 
-        bool centerBlocked = Physics.Raycast(centerOrigin, Vector3.down, 3f, mask);
-        bool leftBlocked = Physics.Raycast(leftOrigin, Vector3.down, 3f, mask);
-        bool rightBlocked = Physics.Raycast(rightOrigin, Vector3.down, 3f, mask);
+        bool centerBlocked = Physics.Raycast(centerOrigin, Vector3.down, 1f, mask);
+        bool leftBlocked = Physics.Raycast(leftOrigin, Vector3.down, 1f, mask);
+        bool rightBlocked = Physics.Raycast(rightOrigin, Vector3.down, 1f, mask);
 
         // Yatay rayler — çarptığı noktanın ortasından aşağı kontrol
         bool leftHBlocked = false;
@@ -441,13 +441,15 @@ public class BallController : MonoBehaviour
                 yield return StartCoroutine(SpawnBatch(Properties.MultiAmount, Properties.MultiColor, capacityManager,
                     true));
             }
+
             EventManager.OnBallExplode?.Invoke();
             OnExploded?.Invoke();
             // yield return new WaitForSeconds(0.1f);
             _amountText.gameObject.SetActive(false);
             if (_innerBallObject != null) _innerBallObject.SetActive(false);
             if (_multiAmountText != null) _multiAmountText.gameObject.SetActive(false);
-            ParticleManager.Instance.BalloonPopParticle(transform.position, Properties.ObjectColor,Properties.BallAmount);
+            ParticleManager.Instance.BalloonPopParticle(transform.position, Properties.ObjectColor,
+                Properties.BallAmount);
             Destroy(gameObject);
         }
         else
@@ -526,7 +528,7 @@ public class BallController : MonoBehaviour
         }
 
 
-        float radius = (transform.localScale.x-.8f) * 0.5f;
+        float radius = (transform.localScale.x - .8f) * 0.5f;
         Vector3 center = transform.position;
 
         for (int i = 0; i < amount; i++)
