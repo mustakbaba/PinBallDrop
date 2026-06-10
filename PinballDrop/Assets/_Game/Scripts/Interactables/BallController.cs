@@ -84,6 +84,7 @@ public class BallController : MonoBehaviour
     {
         _defIceAmount = Properties.IceAmount;
         _defIceScale = _iceObjTransform.localScale.x;
+        _rb.isKinematic = false;
     }
 
     private void ValidateBall() => SetColor();
