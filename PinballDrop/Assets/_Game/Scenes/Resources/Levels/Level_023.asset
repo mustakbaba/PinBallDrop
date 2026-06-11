@@ -27,7 +27,7 @@ MonoBehaviour:
     - Color: 9
       Amount: 30
       IsHidden: 1
-    - Color: 10
+    - Color: 0
       Amount: 20
       IsHidden: 1
     - Color: 6
@@ -36,7 +36,7 @@ MonoBehaviour:
     - Color: 1
       Amount: 20
       IsHidden: 1
-    - Color: 0
+    - Color: 10
       Amount: 20
       IsHidden: 0
     - Color: 1
@@ -76,17 +76,17 @@ MonoBehaviour:
     - Color: 6
       Amount: 20
       IsHidden: 0
-    - Color: 7
+    - Color: 4
       Amount: 20
       IsHidden: 0
     - Color: 4
+      Amount: 10
+      IsHidden: 1
+    - Color: 7
       Amount: 20
       IsHidden: 0
     - Color: 5
       Amount: 30
-      IsHidden: 0
-    - Color: 4
-      Amount: 10
       IsHidden: 0
   - TargetObjects:
     - Color: 8
@@ -127,6 +127,78 @@ MonoBehaviour:
       IsHidden: 0
   BallData:
   - BallBlocker: 1
+    MultiColor: 5
+    ObjectColor: 7
+    MultiAmount: 10
+    BallAmount: 10
+    IsHidden: 0
+    IsIce: 0
+    IceAmount: 0
+    Position: {x: 0, y: -0.96, z: 43.31}
+  - BallBlocker: 1
+    MultiColor: 3
+    ObjectColor: 8
+    MultiAmount: 20
+    BallAmount: 20
+    IsHidden: 0
+    IsIce: 0
+    IceAmount: 0
+    Position: {x: -1.13, y: -0.41, z: 43.31}
+  - BallBlocker: 1
+    MultiColor: 4
+    ObjectColor: 5
+    MultiAmount: 10
+    BallAmount: 10
+    IsHidden: 0
+    IsIce: 0
+    IceAmount: 0
+    Position: {x: 2.07, y: -1.21, z: 43.31}
+  - BallBlocker: 1
+    MultiColor: 9
+    ObjectColor: 2
+    MultiAmount: 30
+    BallAmount: 30
+    IsHidden: 0
+    IsIce: 0
+    IceAmount: 0
+    Position: {x: 0.01, y: 0.32, z: 43.31}
+  - BallBlocker: 1
+    MultiColor: 1
+    ObjectColor: 4
+    MultiAmount: 30
+    BallAmount: 30
+    IsHidden: 0
+    IsIce: 0
+    IceAmount: 0
+    Position: {x: -1.4, y: 0.94, z: 43.31}
+  - BallBlocker: 1
+    MultiColor: 1
+    ObjectColor: 0
+    MultiAmount: 30
+    BallAmount: 30
+    IsHidden: 0
+    IsIce: 0
+    IceAmount: 0
+    Position: {x: 1.4, y: 0.94, z: 43.31}
+  - BallBlocker: 1
+    MultiColor: 3
+    ObjectColor: 10
+    MultiAmount: 20
+    BallAmount: 20
+    IsHidden: 0
+    IsIce: 0
+    IceAmount: 0
+    Position: {x: 1.17, y: -0.41, z: 43.31}
+  - BallBlocker: 1
+    MultiColor: 6
+    ObjectColor: 5
+    MultiAmount: 10
+    BallAmount: 10
+    IsHidden: 0
+    IsIce: 0
+    IceAmount: 0
+    Position: {x: -2.04, y: -1.21, z: 43.31}
+  - BallBlocker: 1
     MultiColor: 2
     ObjectColor: 6
     MultiAmount: 10
@@ -134,7 +206,7 @@ MonoBehaviour:
     IsHidden: 0
     IsIce: 0
     IceAmount: 0
-    Position: {x: 1.25, y: -2.4, z: 43.31}
+    Position: {x: 0, y: -2.03, z: 43.31}
   - BallBlocker: 1
     MultiColor: 7
     ObjectColor: 0
@@ -152,86 +224,32 @@ MonoBehaviour:
     IsHidden: 0
     IsIce: 0
     IceAmount: 0
-    Position: {x: 0, y: -2.03, z: 43.31}
-  - BallBlocker: 1
-    MultiColor: 6
-    ObjectColor: 5
-    MultiAmount: 10
-    BallAmount: 10
-    IsHidden: 0
-    IsIce: 0
-    IceAmount: 0
-    Position: {x: -2.04, y: -1.21, z: 43.31}
-  - BallBlocker: 1
-    MultiColor: 3
-    ObjectColor: 10
-    MultiAmount: 20
-    BallAmount: 20
-    IsHidden: 0
-    IsIce: 0
-    IceAmount: 0
-    Position: {x: 1.17, y: -0.41, z: 43.31}
-  - BallBlocker: 1
-    MultiColor: 1
-    ObjectColor: 0
-    MultiAmount: 30
-    BallAmount: 30
-    IsHidden: 0
-    IsIce: 0
-    IceAmount: 0
-    Position: {x: 1.4, y: 0.94, z: 43.31}
-  - BallBlocker: 1
-    MultiColor: 1
-    ObjectColor: 4
-    MultiAmount: 30
-    BallAmount: 30
-    IsHidden: 0
-    IsIce: 0
-    IceAmount: 0
-    Position: {x: -1.4, y: 0.94, z: 43.31}
-  - BallBlocker: 1
-    MultiColor: 9
-    ObjectColor: 2
-    MultiAmount: 30
-    BallAmount: 30
-    IsHidden: 0
-    IsIce: 0
-    IceAmount: 0
-    Position: {x: 0.01, y: 0.32, z: 43.31}
-  - BallBlocker: 1
-    MultiColor: 4
-    ObjectColor: 5
-    MultiAmount: 10
-    BallAmount: 10
-    IsHidden: 0
-    IsIce: 0
-    IceAmount: 0
-    Position: {x: 2.07, y: -1.21, z: 43.31}
-  - BallBlocker: 1
-    MultiColor: 3
-    ObjectColor: 8
-    MultiAmount: 20
-    BallAmount: 20
-    IsHidden: 0
-    IsIce: 0
-    IceAmount: 0
-    Position: {x: -1.13, y: -0.41, z: 43.31}
-  - BallBlocker: 1
-    MultiColor: 5
-    ObjectColor: 7
-    MultiAmount: 10
-    BallAmount: 10
-    IsHidden: 0
-    IsIce: 0
-    IceAmount: 0
-    Position: {x: 0, y: -0.96, z: 43.31}
+    Position: {x: 1.25, y: -2.4, z: 43.31}
   TunnelData:
   - BallDatas:
     - BallBlocker: 0
       MultiColor: 0
-      ObjectColor: 3
+      ObjectColor: 7
       MultiAmount: 0
       BallAmount: 10
+      IsHidden: 0
+      IsIce: 0
+      IceAmount: 0
+      Position: {x: 0, y: 0, z: 0}
+    - BallBlocker: 0
+      MultiColor: 0
+      ObjectColor: 0
+      MultiAmount: 5
+      BallAmount: 20
+      IsHidden: 0
+      IsIce: 0
+      IceAmount: 0
+      Position: {x: 0, y: 0, z: 0}
+    - BallBlocker: 0
+      MultiColor: 0
+      ObjectColor: 9
+      MultiAmount: 5
+      BallAmount: 30
       IsHidden: 0
       IsIce: 0
       IceAmount: 0
@@ -245,35 +263,8 @@ MonoBehaviour:
       IsIce: 0
       IceAmount: 0
       Position: {x: 0, y: 0, z: 0}
-    - BallBlocker: 0
-      MultiColor: 0
-      ObjectColor: 10
-      MultiAmount: 5
-      BallAmount: 20
-      IsHidden: 0
-      IsIce: 0
-      IceAmount: 0
-      Position: {x: 0, y: 0, z: 0}
-    - BallBlocker: 0
-      MultiColor: 0
-      ObjectColor: 7
-      MultiAmount: 5
-      BallAmount: 20
-      IsHidden: 0
-      IsIce: 0
-      IceAmount: 0
-      Position: {x: 0, y: 0, z: 0}
-    - BallBlocker: 0
-      MultiColor: 0
-      ObjectColor: 10
-      MultiAmount: 5
-      BallAmount: 10
-      IsHidden: 0
-      IsIce: 0
-      IceAmount: 0
-      Position: {x: 0, y: 0, z: 0}
-    SpawnPoint: {x: 0, y: 2.45, z: 43.7}
-    SpawnRotation: {x: -0, y: 270, z: 90}
+    SpawnPoint: {x: 3.24, y: 0, z: 43.7}
+    SpawnRotation: {x: 270, y: -0, z: 0}
   - BallDatas:
     - BallBlocker: 0
       MultiColor: 0
@@ -325,27 +316,9 @@ MonoBehaviour:
   - BallDatas:
     - BallBlocker: 0
       MultiColor: 0
-      ObjectColor: 7
+      ObjectColor: 3
       MultiAmount: 0
       BallAmount: 10
-      IsHidden: 0
-      IsIce: 0
-      IceAmount: 0
-      Position: {x: 0, y: 0, z: 0}
-    - BallBlocker: 0
-      MultiColor: 0
-      ObjectColor: 0
-      MultiAmount: 5
-      BallAmount: 20
-      IsHidden: 0
-      IsIce: 0
-      IceAmount: 0
-      Position: {x: 0, y: 0, z: 0}
-    - BallBlocker: 0
-      MultiColor: 0
-      ObjectColor: 9
-      MultiAmount: 5
-      BallAmount: 30
       IsHidden: 0
       IsIce: 0
       IceAmount: 0
@@ -359,6 +332,33 @@ MonoBehaviour:
       IsIce: 0
       IceAmount: 0
       Position: {x: 0, y: 0, z: 0}
-    SpawnPoint: {x: 3.24, y: 0, z: 43.7}
-    SpawnRotation: {x: 270, y: -0, z: 0}
+    - BallBlocker: 0
+      MultiColor: 0
+      ObjectColor: 10
+      MultiAmount: 5
+      BallAmount: 20
+      IsHidden: 0
+      IsIce: 0
+      IceAmount: 0
+      Position: {x: 0, y: 0, z: 0}
+    - BallBlocker: 0
+      MultiColor: 0
+      ObjectColor: 7
+      MultiAmount: 5
+      BallAmount: 20
+      IsHidden: 0
+      IsIce: 0
+      IceAmount: 0
+      Position: {x: 0, y: 0, z: 0}
+    - BallBlocker: 0
+      MultiColor: 0
+      ObjectColor: 10
+      MultiAmount: 5
+      BallAmount: 10
+      IsHidden: 0
+      IsIce: 0
+      IceAmount: 0
+      Position: {x: 0, y: 0, z: 0}
+    SpawnPoint: {x: 0, y: 2.45, z: 43.7}
+    SpawnRotation: {x: -0, y: 270, z: 90}
   LevelDifficulty: 0
