@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 918a916cbc6d7cb42897910bea080f65, type: 3}
   m_Name: Blocker_5
   m_EditorClassIdentifier: 
-  BlockerSprite: {fileID: -1110173230, guid: 8bace8df1bbc263488a58629eaa02aff, type: 3}
+  BlockerSprite: {fileID: 21300000, guid: a25f22b1ca213234dbd3d4da9b986c6f, type: 3}
   BlockerName: Frozen Ball
   Description: Pop balls to melt the ice.
