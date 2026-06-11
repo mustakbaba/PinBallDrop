@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BlockerSprite: {fileID: -1110173230, guid: 8bace8df1bbc263488a58629eaa02aff, type: 3}
   BlockerName: Frozen Ball
-  Description: Hidden balls reveal when reachable
+  Description: Pop balls to melt the ice.
