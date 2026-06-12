@@ -52,11 +52,13 @@ public class BallController : MonoBehaviour
     private float _defIceScale;
     [SerializeField] private Transform _iceObjTransform;
     [SerializeField] private TextMeshPro _iceText;
-
+private bool _checkEnabled = false;
+private float _startDelay = 2f;
     private void Awake()
     {
         _meshRenderer = GetComponent<MeshRenderer>();
         _rb = GetComponent<Rigidbody>();
+        CheckClickable();
     }
 
     private void OnEnable()
@@ -84,10 +86,15 @@ public class BallController : MonoBehaviour
     {
         _defIceAmount = Properties.IceAmount;
         _defIceScale = _iceObjTransform.localScale.x;
-        if (!IsFromTunnel)
+       
+        DOVirtual.DelayedCall(.2f, () =>
         {
-            _rb.isKinematic = false;
-        }
+            if (!IsFromTunnel)
+            {
+                _rb.isKinematic = false;
+            }
+        });
+       // DOVirtual.DelayedCall(_startDelay, () => _checkEnabled = true);
     }
 
     private void ValidateBall() => SetColor();
@@ -245,6 +252,7 @@ public class BallController : MonoBehaviour
     private void Update()
     {
         if (_exploded) return;
+        //if (!_checkEnabled) return; 
         CheckClickable();
     }
 
@@ -340,7 +348,7 @@ public class BallController : MonoBehaviour
         bool leftHOpen = !leftHBlocked; // 3ü de açıksa true
         bool rightHOpen = !rightHBlocked; // 3ü de açıksa true
 
-        _isClickable = !centerBlocked || !leftBlocked || !rightBlocked || leftHOpen || rightHOpen;
+        _isClickable = (!centerBlocked || !leftBlocked || !rightBlocked || leftHOpen || rightHOpen)&& (_clickableTimer >= ClickableDelay);
 
 #if UNITY_EDITOR
         Debug.DrawLine(centerOrigin, centerOrigin + Vector3.down * 3f, centerBlocked ? Color.red : Color.green);
