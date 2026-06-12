@@ -441,6 +441,12 @@ private float _startDelay = 2f;
             ? Properties.BallAmount + Properties.MultiAmount
             : Properties.BallAmount;
 
+
+        if (!PersistData.Instance.IsBallsTutoShown)
+        {
+            InGameUIManager.Instance.CloseBallTuto();
+            PersistData.Instance.IsBallsTutoShown = true;
+        }
         if (available >= totalNeeded)
         {
             // Hepsi sığıyor, normal patlat

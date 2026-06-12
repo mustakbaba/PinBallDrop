@@ -37,6 +37,8 @@ public class InGameUIManager : MonoSingleton<InGameUIManager>
 
     [SerializeField] private TextMeshProUGUI _blockerNameText;
     [SerializeField] private TextMeshProUGUI _blockerDescText;
+    [SerializeField] private Transform _slotTuto;
+    [SerializeField] private Transform _ballsTuto;
 
     private Animator _animator;
     [SerializeField] private CanvasGroup _noSpaceWarningCanvasGroup;
@@ -83,6 +85,35 @@ public class InGameUIManager : MonoSingleton<InGameUIManager>
     {
         EventManager.OnGameWin -= DisableInGameUI;
         EventManager.OnGameLose -= DisableInGameUI;
+    }
+
+    private void Start()
+    {
+        StartCoroutine(Sincapp.WaitAndAction(.5f, () =>
+        {
+            if (!PersistData.Instance.IsBallsTutoShown)
+            {
+                OpenBallTuto();
+            }
+        }));
+    }
+    
+    public void OpenBallTuto()
+    {
+        _ballsTuto.gameObject.SetActive(true);
+    }
+    public void CloseBallTuto()
+    {
+        _ballsTuto.gameObject.SetActive(false);
+    }
+
+    public void OpenSlotTuto()
+    {
+        _slotTuto.gameObject.SetActive(true);
+    }
+    public void CloseSlotTuto()
+    {
+        _slotTuto.gameObject.SetActive(false);
     }
 
     public void OpenBlockerPopup()
