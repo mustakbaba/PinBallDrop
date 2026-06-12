@@ -27,7 +27,7 @@ MonoBehaviour:
     - Color: 9
       Amount: 30
       IsHidden: 1
-    - Color: 10
+    - Color: 0
       Amount: 20
       IsHidden: 1
     - Color: 6
@@ -36,7 +36,7 @@ MonoBehaviour:
     - Color: 1
       Amount: 20
       IsHidden: 1
-    - Color: 0
+    - Color: 10
       Amount: 20
       IsHidden: 0
     - Color: 1
@@ -62,7 +62,7 @@ MonoBehaviour:
       Amount: 10
       IsHidden: 0
     - Color: 9
-      Amount: 30
+      Amount: 20
       IsHidden: 1
     - Color: 1
       Amount: 10
@@ -74,22 +74,19 @@ MonoBehaviour:
       Amount: 10
       IsHidden: 1
     - Color: 6
-      Amount: 10
-      IsHidden: 0
-    - Color: 7
-      Amount: 30
+      Amount: 20
       IsHidden: 0
     - Color: 4
       Amount: 20
       IsHidden: 0
-    - Color: 5
-      Amount: 30
-      IsHidden: 0
     - Color: 4
       Amount: 10
+      IsHidden: 1
+    - Color: 7
+      Amount: 20
       IsHidden: 0
-    - Color: 6
-      Amount: 10
+    - Color: 5
+      Amount: 30
       IsHidden: 0
   - TargetObjects:
     - Color: 8
@@ -126,7 +123,7 @@ MonoBehaviour:
       Amount: 10
       IsHidden: 0
     - Color: 3
-      Amount: 20
+      Amount: 10
       IsHidden: 0
   BallData:
   - BallBlocker: 1
@@ -280,6 +277,15 @@ MonoBehaviour:
       Position: {x: 0, y: 0, z: 0}
     - BallBlocker: 0
       MultiColor: 0
+      ObjectColor: 6
+      MultiAmount: 5
+      BallAmount: 20
+      IsHidden: 0
+      IsIce: 0
+      IceAmount: 0
+      Position: {x: 0, y: 0, z: 0}
+    - BallBlocker: 0
+      MultiColor: 0
       ObjectColor: 4
       MultiAmount: 5
       BallAmount: 20
@@ -290,15 +296,6 @@ MonoBehaviour:
     - BallBlocker: 0
       MultiColor: 0
       ObjectColor: 5
-      MultiAmount: 5
-      BallAmount: 20
-      IsHidden: 0
-      IsIce: 0
-      IceAmount: 0
-      Position: {x: 0, y: 0, z: 0}
-    - BallBlocker: 0
-      MultiColor: 0
-      ObjectColor: 6
       MultiAmount: 5
       BallAmount: 20
       IsHidden: 0

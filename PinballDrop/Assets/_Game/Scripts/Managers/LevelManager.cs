@@ -29,7 +29,7 @@ public class LevelManager : MonoSingleton<LevelManager>
     public LineBoxConnectorController ConnectorPrefab;
     [SerializeField] private bool _timePuzzle;
 
-    public int[] NewFeatureUnlockLevels { get; set; } = { 1, 10, 20, 30 };
+    public int[] NewFeatureUnlockLevels { get; set; } = { 1,6,12,18,24,30 };
     public float FillAddAmountEachLevel { get; set; }
     public Material HalfHalfMaterial;
     public Material SingleMaterial;
