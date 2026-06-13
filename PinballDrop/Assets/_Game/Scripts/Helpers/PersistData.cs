@@ -8,4 +8,6 @@ public class PersistData : PersistManager<PersistData>
   public int CurrentBlockerIndex = 0;
   public bool RecentlyBlockerReached;
   public float CurrentBlockerFillAmount = .1f;
+  public bool IsSlotTutoShown = false;
+  public bool IsBallsTutoShown = false;
 }

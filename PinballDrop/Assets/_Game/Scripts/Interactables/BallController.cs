@@ -46,7 +46,7 @@ public class BallController : MonoBehaviour
     public bool IsFromTunnel { get; set; }
 
     private float _clickableTimer = 0f;
-    private const float ClickableDelay = 1f;
+    private const float ClickableDelay = .35f;
     private bool _isClickableConfirmed;
     private int _defIceAmount;
     private float _defIceScale;
@@ -225,7 +225,14 @@ private float _startDelay = 2f;
             _amountText.text = "?";
             _multiAmountText.text = "?";
             renderer.GetPropertyBlock(_propertyBlock);
-
+            _amountText.GetComponent<MeshRenderer>().GetPropertyBlock(_propertyBlock);
+            _propertyBlock.SetColor("_OutlineColor", Color.black);
+            _amountText.GetComponent<MeshRenderer>().SetPropertyBlock(_propertyBlock);
+            
+            _multiAmountText.GetComponent<MeshRenderer>().GetPropertyBlock(_propertyBlock);
+            _propertyBlock.SetColor("_OutlineColor", Color.black);
+            _multiAmountText.GetComponent<MeshRenderer>().SetPropertyBlock(_propertyBlock);
+            
             if (Properties.BallBlocker == BallBlockers.MultiBall)
             {
                 _propertyBlock.SetColor("_BaseColor2", new Color(0.3f, 0.3f, 0.3f) * .5f);
@@ -434,6 +441,12 @@ private float _startDelay = 2f;
             ? Properties.BallAmount + Properties.MultiAmount
             : Properties.BallAmount;
 
+
+        if (!PersistData.Instance.IsBallsTutoShown)
+        {
+            InGameUIManager.Instance.CloseBallTuto();
+            PersistData.Instance.IsBallsTutoShown = true;
+        }
         if (available >= totalNeeded)
         {
             // Hepsi sığıyor, normal patlat

@@ -193,6 +193,9 @@ public class SmallBallController : MonoBehaviour
         _goingToVacuum = true;
         yield return new WaitForSeconds(0.3f);
         StartCoroutine(RandForceShake());
+        
+        float nearVacuumTimer = 0f;
+        
         while (true)
         {
             if (_vacuum == null) yield break;
@@ -204,9 +207,17 @@ public class SmallBallController : MonoBehaviour
             float distance = dir.magnitude;
 
 
-            if (distance < 1f) // eşiği büyüt
+            if (distance < 1.2f) // eşiği büyüt
             {
                 _isCloseVacuum = true;
+                nearVacuumTimer += Time.deltaTime;
+                if (nearVacuumTimer >= 3f)
+                {
+                    // 3sn yakında ama giremedi — sert force uygula
+                    nearVacuumTimer = 0f;
+                    _rb.velocity = Vector3.zero;
+                    _rb.AddForce(dir.normalized *35f, ForceMode.VelocityChange);
+                }
                 // _vacuum.ShootTheBall(this);
                 // yield break;
             }

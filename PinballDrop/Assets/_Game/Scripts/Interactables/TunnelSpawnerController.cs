@@ -81,7 +81,7 @@ public class TunnelSpawnerController : MonoBehaviour
 
     private void SetTunnelText()
     {
-        _tunnelBallAmountText.text = _currentBallAmount.ToString();
+        _tunnelBallAmountText.text = (_currentBallAmount-1).ToString();
     }
 
     private void SpawnCurrent()
@@ -115,6 +115,11 @@ public class TunnelSpawnerController : MonoBehaviour
     private void OnBallExploded()
     {
         _currentIndex++;
+
+        if (_currentIndex >= BallDatas.Count-1)
+        {
+            _tunnelBallAmountText.gameObject.SetActive(false);
+        }
 
         if (_currentIndex >= BallDatas.Count)
         {

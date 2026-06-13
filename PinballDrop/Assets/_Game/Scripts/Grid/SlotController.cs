@@ -86,6 +86,7 @@ public class SlotController : MonoBehaviour
         );
 
         _balls.Add(ball);
+      
 
         transform.DOKill();
         transform.DOScale(1.1f, .1f).SetEase(Ease.OutBack).OnComplete(() =>
@@ -95,6 +96,10 @@ public class SlotController : MonoBehaviour
                 // Top gelmeyi kestikten sonra loop başlat
                 if (_balls.Count > 0)
                 {
+                    if (!PersistData.Instance.IsSlotTutoShown)
+                    {
+                        InGameUIManager.Instance.OpenSlotTuto();
+                    }
                     transform.DOScale(1.1f, 1f).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InOutSine);
                     // transform.DOLocalMoveZ(.1f, 1.5f).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InOutSine);
                 }
@@ -130,6 +135,8 @@ public class SlotController : MonoBehaviour
         SoundManager.Instance.SlotClickSound();
         int sendCount = Mathf.Min(_balls.Count, available);
         capacityManager.SetAmount(sendCount);
+        
+      
 
         var ballsToProcess = _balls.GetRange(0, sendCount);
 
@@ -170,7 +177,11 @@ public class SlotController : MonoBehaviour
 
             UpdateText();
         }).SetId(_clearTweenId);
-        ;
+        if (!PersistData.Instance.IsSlotTutoShown)
+        {
+            InGameUIManager.Instance.CloseSlotTuto();
+            PersistData.Instance.IsSlotTutoShown = true;
+        }
 
         HapticPatterns.PlayPreset(HapticPatterns.PresetType.SoftImpact);
     }
