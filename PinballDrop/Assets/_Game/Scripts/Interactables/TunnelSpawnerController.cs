@@ -10,7 +10,7 @@ using UnityEngine.Serialization;
 public class TunnelSpawnerController : MonoBehaviour
 {
     public List<BallProperties> BallDatas = new List<BallProperties>();
-    [SerializeField] private Transform _spawnPoint;      // tünel ağzı
+    [SerializeField] private Transform _spawnPoint; // tünel ağzı
     [SerializeField] private MeshRenderer _tunnelRenderer; // tünelin mesh'i
     [SerializeField] private int _nextColorMaterialIndex = 1; // 2. topun rengi bu indexe gidecek
     [SerializeField] private TextMeshPro _tunnelBallAmountText;
@@ -19,7 +19,7 @@ public class TunnelSpawnerController : MonoBehaviour
     private int _currentIndex = 0;
     private BallController _activeBall;
 
-    
+
 #if UNITY_EDITOR
     private void OnValidate()
     {
@@ -48,7 +48,8 @@ public class TunnelSpawnerController : MonoBehaviour
         if (_spawnPoint == null) return;
 
         var data = BallDatas[0];
-        var ball = PrefabUtility.InstantiatePrefab(LevelManager.Instance.BallControllerPrefab, transform) as BallController;
+        var ball =
+            PrefabUtility.InstantiatePrefab(LevelManager.Instance.BallControllerPrefab, transform) as BallController;
         ball.transform.position = _spawnPoint.position;
         ball.name = "TunnelPreview";
         ball.IsFromTunnel = true;
@@ -81,7 +82,7 @@ public class TunnelSpawnerController : MonoBehaviour
 
     private void SetTunnelText()
     {
-        _tunnelBallAmountText.text = (_currentBallAmount-1).ToString();
+        _tunnelBallAmountText.text = (_currentBallAmount - 1).ToString();
     }
 
     private void SpawnCurrent()
@@ -92,7 +93,7 @@ public class TunnelSpawnerController : MonoBehaviour
         var ball = Instantiate(LevelManager.Instance.BallControllerPrefab, _spawnPoint.position, Quaternion.identity);
         ball.transform.rotation = Quaternion.Euler(-90, 0, 0);
         _currentBallAmount = BallDatas.Count - _currentIndex;
-    
+
         SetTunnelText();
         ball.Properties = data;
         ball.SetColor();
@@ -102,9 +103,9 @@ public class TunnelSpawnerController : MonoBehaviour
         ball.transform.localScale = Vector3.zero;
         ball.transform.position = _spawnPoint.parent.position;
         ball.transform.DOMove(_spawnPoint.position, .5f);
-        
+
         transform.DOShakeRotation(0.4f, new Vector3(5f, 0, 0), 22, 90, false);
-        transform.DOScale(.8f, .2f).SetLoops(2,LoopType.Yoyo);
+        transform.DOScale(.8f, .2f).SetLoops(2, LoopType.Yoyo);
         ball.transform.DOScale(Vector3.one * .89f, 0.4f)
             .SetDelay(0.1f);
 
@@ -116,7 +117,7 @@ public class TunnelSpawnerController : MonoBehaviour
     {
         _currentIndex++;
 
-        if (_currentIndex >= BallDatas.Count-1)
+        if (_currentIndex >= BallDatas.Count - 1)
         {
             _tunnelBallAmountText.gameObject.SetActive(false);
         }
@@ -125,7 +126,7 @@ public class TunnelSpawnerController : MonoBehaviour
         {
             // Tünel bitti, next color materyali temizle
             ClearTunnelColor();
-                _tunnelBallAmountText.gameObject.SetActive(false);
+            _tunnelBallAmountText.gameObject.SetActive(false);
             return;
         }
 
@@ -150,9 +151,19 @@ public class TunnelSpawnerController : MonoBehaviour
 
         var mats = _tunnelRenderer.materials;
         var propBlock = new MaterialPropertyBlock();
+        var propBlock2 = new MaterialPropertyBlock();
         _tunnelRenderer.GetPropertyBlock(propBlock, _nextColorMaterialIndex);
         propBlock.SetColor("_BaseColor", color);
         _tunnelRenderer.SetPropertyBlock(propBlock, _nextColorMaterialIndex);
+        if (nextData.BallBlocker == BallController.BallBlockers.MultiBall)
+        {
+            propBlock2.SetColor("_BaseColor", LevelManager.Instance.ObjectColors[(int)nextData.MultiColor]);
+            _tunnelRenderer.SetPropertyBlock(propBlock2, 2);
+        }
+        else
+        {
+            _tunnelRenderer.SetPropertyBlock(propBlock, 2);
+        }
     }
 
     private void ClearTunnelColor()
@@ -161,5 +172,6 @@ public class TunnelSpawnerController : MonoBehaviour
         _tunnelRenderer.GetPropertyBlock(propBlock, _nextColorMaterialIndex);
         propBlock.SetColor("_BaseColor", Color.gray);
         _tunnelRenderer.SetPropertyBlock(propBlock, _nextColorMaterialIndex);
+        _tunnelRenderer.SetPropertyBlock(propBlock, 2);
     }
 }
