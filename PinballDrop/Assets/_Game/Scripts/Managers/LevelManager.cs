@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using JetBrains.Annotations;
 using SincappStudio;
 using Sirenix.OdinInspector;
@@ -72,7 +73,7 @@ public class LevelManager : MonoSingleton<LevelManager>
 
         if (Application.isEditor)
         {
-            // LoadLevel(levelData);
+             //LoadLevel(levelData);
         }
         else
         {
@@ -199,7 +200,8 @@ public class LevelManager : MonoSingleton<LevelManager>
     public void LoadLevel(LevelData level)
     {
         var allCells = FindObjectsOfType<CellController>();
-
+        DOTween.KillAll(false);
+    
         InGameUIManager.Instance.SetLevelDifficulty(level.LevelDifficulty);
 
         foreach (var info in level.cells)

@@ -29,6 +29,11 @@ public class SlotController : MonoBehaviour
         UpdateText();
     }
 
+    private void Start()
+    {
+        _balls.Clear();
+    }
+
     private void OnEnable()
     {
         EventManager.OnGameLose += GameLose;
@@ -61,9 +66,14 @@ public class SlotController : MonoBehaviour
 
     public bool TryAddBall(SmallBallController ball)
     {
+        
+        
         if (IsFull) return false;
         if (!IsAvailable && SlotColor != ball.ObjectColor) return false;
-        if (_balls.Contains(ball)) return false;
+        if (_balls.Contains(ball))
+        {
+            return false;
+        }
 
         if (IsAvailable)
             SlotColor = ball.ObjectColor;
@@ -86,7 +96,6 @@ public class SlotController : MonoBehaviour
         );
 
         _balls.Add(ball);
-      
 
         transform.DOKill();
         transform.DOScale(1.1f, .1f).SetEase(Ease.OutBack).OnComplete(() =>
@@ -123,7 +132,7 @@ public class SlotController : MonoBehaviour
         UpdateText();
         return true;
     }
-
+    
     private void ClearSlot()
     {
         var capacityManager = AreaCapacityManager.Instance;
