@@ -325,4 +325,4 @@ MonoBehaviour:
       Position: {x: 0, y: 0, z: 0}
     SpawnPoint: {x: -0.9, y: 2.44, z: 43.7}
     SpawnRotation: {x: -0.00016050944, y: 270, z: 90}
-  LevelDifficulty: 0
+  LevelDifficulty: 2

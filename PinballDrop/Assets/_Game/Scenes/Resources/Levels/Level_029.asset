@@ -424,4 +424,4 @@ MonoBehaviour:
     IceAmount: 0
     Position: {x: 0.78, y: -1.533, z: 43.31}
   TunnelData: []
-  LevelDifficulty: 0
+  LevelDifficulty: 2
