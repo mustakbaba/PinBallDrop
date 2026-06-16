@@ -201,15 +201,19 @@ public class InGameUIManager : MonoSingleton<InGameUIManager>
 
     public void HardLevelSplash()
     {
-        _hardLevelSplash.SetActive(true);
-
-        _hardLevelSplash.transform.DOScale(Vector3.one * 4, 1f).OnComplete(() =>
+        StartCoroutine(Sincapp.WaitAndAction(0.01f,() =>
         {
-            _hardLevelSplash.transform.DOScale(Vector3.zero, 0.5f).OnComplete(() =>
+            _hardLevelSplash.SetActive(true);
+
+            _hardLevelSplash.transform.DOScale(Vector3.one * 4, 1f).OnComplete(() =>
             {
-                _hardLevelSplash.SetActive(false);
+                _hardLevelSplash.transform.DOScale(Vector3.zero, 0.5f).OnComplete(() =>
+                {
+                    _hardLevelSplash.SetActive(false);
+                });
             });
-        });
+        }));
+      
     }
 
     public void GameUIStatus(bool isOpen)
