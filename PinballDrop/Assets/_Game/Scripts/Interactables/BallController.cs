@@ -23,8 +23,9 @@ public class BallController : MonoBehaviour
 
     public BallProperties Properties;
 
-    [Header("Ayarlar")] private float upwardForce = 12;
+    [Header("Ayarlar")] private float upwardForce = 9f;
     private float maxY = 899f;
+    private float minY = -2;
     private float smallBallSpeed = 4f;
 
     private Rigidbody _rb;
@@ -248,12 +249,18 @@ private float _startDelay = 2f;
         if (_exploded) return;
         _rb.AddForce(Vector3.up * upwardForce, ForceMode.Acceleration);
 
-        if (transform.position.y >= maxY)
-        {
-            var vel = _rb.velocity;
-            vel.y = Mathf.Min(vel.y, 0f);
-            _rb.velocity = vel;
-        }
+        // if (transform.position.y >= maxY)
+        // {
+        //     var vel = _rb.velocity;
+        //     vel.y = Mathf.Min(vel.y, 0f);
+        //     _rb.velocity = vel;
+        // } 
+        // if (transform.position.y <= minY)
+        // {
+        //     var vel = _rb.velocity;
+        //     vel.y = Mathf.Min(vel.y, 0f);
+        //     _rb.velocity = vel;
+        // }
     }
 
     private void Update()
@@ -294,7 +301,7 @@ private float _startDelay = 2f;
         Vector3 rightOrigin = transform.position + Vector3.right * sideOffset;
         Vector3 horizontalOrigin = transform.position + Vector3.down * 0.1f;
 
-        int mask = LayerMask.GetMask("Collectable", "Obstacle");
+        int mask = LayerMask.GetMask("Collectable");
 
         bool centerBlocked = Physics.Raycast(centerOrigin, Vector3.down, 1f, mask);
         bool leftBlocked = Physics.Raycast(leftOrigin, Vector3.down, 1f, mask);
@@ -425,7 +432,7 @@ private float _startDelay = 2f;
     private IEnumerator SpawnSmallBalls()
     {
         // _meshRenderer.enabled = false;
-
+        yield return new WaitForSeconds(.1f);
 
         var capacityManager = AreaCapacityManager.Instance;
         int available = capacityManager.CapacityAmount - capacityManager.CurrentAmount;

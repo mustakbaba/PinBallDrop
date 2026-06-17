@@ -13,6 +13,13 @@ public class CameraSlider : MonoBehaviour
     private void Awake()
     {
         transform.SetZ_Pos(firstY,Space.Self);
-        transform.DOLocalMoveZ(secondY, durationSlide).SetDelay(1).SetEase(Ease.InOutQuart);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            transform.DOLocalMoveZ(secondY, durationSlide).SetEase(Ease.InOutQuart);
+        }
     }
 }

@@ -149,6 +149,11 @@ public class InGameUIManager : MonoSingleton<InGameUIManager>
             targetImage.localPosition = localPoint;
         }
 
+        if (Input.GetMouseButtonDown(0))
+        {
+            targetImage.GetComponent<Animator>().Play("Hand");
+        }
+
         if (LevelManager.Instance.DurationSeconds < 15)
         {
             _timeText.color = Color.Lerp(Color.white, Color.red, Mathf.PingPong(Time.time * 2, 1));
