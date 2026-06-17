@@ -384,24 +384,24 @@ private float _startDelay = 2f;
                 _isClickable = true;
         }
 
-        if (_isClickable)
-        {
-            _amountText.DOFade(1f, .1f);
-            _multiAmountText.DOFade(1f, .1f);
-            _meshRenderer.material.SetFloat("_OutlineWidth", 1);
-            if (Properties.IsHidden)
-            {
-                Properties.IsHidden = false;
-                _amountText.text = Properties.BallAmount.ToString();
-                SetColor();
-            }
-        }
-        else
-        {
-            _meshRenderer.material.SetFloat("_OutlineWidth", 0);
-            _amountText.DOFade(.35f, .1f);
-            _multiAmountText.DOFade(.35f, .1f);
-        }
+        // if (_isClickable)
+        // {
+        //     _amountText.DOFade(1f, .1f);
+        //     _multiAmountText.DOFade(1f, .1f);
+        //     _meshRenderer.material.SetFloat("_OutlineWidth", 1);
+        //     if (Properties.IsHidden)
+        //     {
+        //         Properties.IsHidden = false;
+        //         _amountText.text = Properties.BallAmount.ToString();
+        //         SetColor();
+        //     }
+        // }
+        // else
+        // {
+        //     _meshRenderer.material.SetFloat("_OutlineWidth", 0);
+        //     _amountText.DOFade(.35f, .1f);
+        //     _multiAmountText.DOFade(.35f, .1f);
+        // }
     }
 
     private void OnMouseDown()
